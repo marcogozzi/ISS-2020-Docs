@@ -1,0 +1,913 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+ 
+<style type="text/css">
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+top {
+	width: 100%;
+}
+
+
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 80%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 80%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
+pre{
+	font-family: "Consolas";
+	font-size: 85%;
+	background-color: #f5f5f5;
+	border: 1.5px solid silver;
+	padding: 5px;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	width: 700px;
+    font-size: 15px;
+}
+k{
+    color: #990000;
+	font-weight: bold;
+}
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+	padding: 10px; 
+}
+
+h2 {
+    background-color: #9ed8ff;
+    font-size: 130%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 100%;
+}
+h4 {
+    background-color: #C0F0E0;
+    font-size: 100%;
+	width: 95%;
+	border-radius: 5px;
+	padding: 2px;
+}
+h5 {
+    background-color: #d5ffb0;
+    font-size: 100%;
+	
+}    
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}       
+div.remark{
+	background-color: #E3F2FD;	
+    border: 1.5px solid #d5f2ed;
+    padding: 15px;
+    margin: 10px;
+	border-radius: 25px;
+}  
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+} 
+
+ol, ul, li {
+  margin: 0;
+  margin-left: 10px;
+  padding: 0;
+  padding-bottom: 5px;
+}     
+
+table, th, td {
+	border: 1px solid black;
+}
+
+img {
+	border: 1.5px solid #d5f2ed
+	
+}
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+div.wrapdesc{
+	width: 90%;
+	margin: auto;
+}
+
+div.imagedesc{
+	width: 85%;
+	margin: auto;
+}
+</style>
+    
+<head>
+   
+<title>LabSpringIntro</title></head>
+
+<body>
+<p>&nbsp;</p>
+<!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<div id="top">
+<h1>Qak20Robotboundary | The robotboundary problem</h1>
+</div>
+<div class="body">
+
+<ul>
+<li>
+<h3>Walk</h3>
+<table style="width: 100%;" border="1">
+<tbody>
+<tr>
+<td style="width: 25%;">UC-ID</td>
+<td>walk</td>
+</tr>
+<tr>
+<td>Actors</td>
+<td>The (logged-in) human <em>operator</em></td>
+</tr>
+<tr>
+<td>Description (<a href="https://en.wikipedia.org/wiki/User_story" target="web">User story</a>)</td>
+<td>As a <em>operator</em>, I want that the robot performs the <em>Activity</em> in autonomous way.</td>
+</tr>
+<tr>
+<td>Preconditions</td>
+<td>the <em>robot</em> is at <em>home</em> and the <em>operator</em> (is logged into the system and) has sent the command <em>start</em></td>
+</tr>
+<tr>
+<td>Activity</td>
+<td>after receiving the command <em>start</em>, the <em>robot</em> begins to <em>walk</em>, by moving along the <em>room</em> boundary, until it reaches the <em>home</em> again</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>
+ The robot has reached each wall once; during the walk from one wall to another it didn't change direction (otherwise it travelled more than the perimeter); the final position is the same as the starting position.
+  <div class="remark">
+    For formal definition see: <a href="#v1">Version 1</a> and <a href="#v2">Version 2</a> Qak models and tests
+  </div>
+ </td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<h3>stop</h3>
+<table style="width: 100%;" border="1">
+<tbody>
+<tr>
+<td style="width: 25%;">UC-ID</td>
+<td>stop</td>
+</tr>
+<tr>
+<td>Actors</td>
+<td>The (logged-in) human <em>operator</em></td>
+</tr>
+<tr>
+<td>Description (<a href="https://en.wikipedia.org/wiki/User_story" target="web">User story</a>)</td>
+<td>The <em>robot</em> must stop moving.</td>
+</tr>
+<tr>
+<td>Preconditions</td>
+<td>This command should be only received and elaborated if the human operator has given the <em>start</em> command and the robot is moving.</td>
+</tr>
+<tr>
+<td>Activity</td>
+<td>Stop the movement action of the <em>robot</em>.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>The <em>robot</em>'s state is <em>not moving</em>.</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<h3>resume</h3>
+<table style="width: 100%;" border="1">
+<tbody>
+<tr>
+<td style="width: 25%;">UC-ID</td>
+<td>resume</td>
+</tr>
+<tr>
+<td>Actors</td>
+<td>The (logged-in) human <em>operator</em></td>
+</tr>
+<tr>
+<td>Description (<a href="https://en.wikipedia.org/wiki/User_story" target="web">User story</a>)</td>
+<td>The <em>robot</em> starts moving again.</td>
+</tr>
+<tr>
+<td>Preconditions</td>
+<td>This command should be only received and elaborated if the human operator has given the <em>start</em> command followed by the <em>stop</em> command and the robot is <em>not moving</em>.</td>
+</tr>
+<tr>
+<td>Activity</td>
+<td>The <em>robot</em> starts moving to complete the <em>walk</em> command.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>The <em>robot</em>'s state is <em>moving</em>.</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<h3>init</h3>
+<table style="width: 100%;" border="1">
+<tbody>
+<tr>
+<td style="width: 25%;">UC-ID</td>
+<td>init</td>
+</tr>
+<tr>
+<td>Actors</td>
+<td>The (logged-in) human <em>operator</em> when giving the <em>start</em> command.</td>
+</tr>
+<tr>
+<td>Description (<a href="https://en.wikipedia.org/wiki/User_story" target="web">User story</a>)</td>
+<td>The <em>robot</em> starts moving again.</td>
+</tr>
+<tr>
+<td>Preconditions</td>
+<td>The <em>robot</em> is in the <em>home</em> location.</td>
+</tr>
+<tr>
+<td>Activity</td>
+<td>The <em>robot</em> starts itself so that it can receive commands.</td>
+</tr>
+<tr>
+<td>Postconditions</td>
+<td>The <em>robot</em> is capable of receiving the <em>start</em> command.</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<br /> <br /> <br />
+<ul>
+<li>A Qak model can help us in capturing the requirements in a more fruitful way.
+<br/>Testing is done by analysing the <em>state log</em> after the operations.
+<br/>It has to match a <em>formal sequence</em> expressed using <a href="https://en.wikipedia.org/wiki/Regular_expression" target="web">Regular Expression</a> <br /> </li>
+</ul>
+
+
+
+
+<table>
+<tbody>
+<tr>
+<td><a id="v1"><em>Version 1, model and test, qak</em></a></td>
+<td><a id="v1"><em>Version 2, model and test, qak</em></a></td>
+</tr>
+
+<tr>
+<td><br/>
+	Version 1:
+	<ul>
+		<li>The state is only the current FSM state the QAK actor is in</li>
+		<li>Therefore, the testplan only checks if the correct sequence of states was followed, according to the given regular expression</li>
+		<li>Not really correct: a <em>wall</em> state can be reached by touching the <em>same wall</em> multiple times</li>
+	</ul>
+<br/></td>
+<td><br/>
+	Version 2:
+	<ul>
+		<li>The state is kept in Coap technology as a Prolog fact
+		<code style="font-size:11px">
+		<br/>robot($RobotDirection,$RobotMovement,FSMState)
+		<br/>RobotDirection = {n,o,s,e} //cardinal direction
+		<br/>RobotMovement = {h,w,s,r,l,a,d} //as high level robot cmd</code></li>
+		<li>As before, the testplan checks if the correct sequence of states was followed, according to the given regular expression <em>BUT</em></li>
+		<li>The fact that a given <em>wall</em> must be reached one time can be checked: there must be a <em>state</em> that matches <span style="font-size:22px"><em>robot( [n|o|s|e],h,wall )</em></span></li>
+	</ul>
+<br/></td>
+</tr>
+
+<tr>
+	<td>
+		<details>
+			<summary>Image robotboundaryanalysis.qak Version 1</summary> 
+			<img src="https://raw.githubusercontent.com/marcogozzi/ISS-2020-Docs/master/1.png" />
+		</details>
+	</td>
+<td>
+		<details>
+			<summary>Image robotboundaryanalysis.qak Version 2</summary> 
+			<img src="https://raw.githubusercontent.com/marcogozzi/ISS-2020-Docs/master/2.png" />
+		</details>
+	</td>
+</tr>
+<tr>
+<td>
+	<details>
+	<summary>Code robotboundaryanalysis1.qak</summary> 
+	<pre>//Cognome_rbAnalisi.pdf
+System robotboundary
+
+Dispatch start : start(X)
+Dispatch stop : stop(X)
+Dispatch resume : resume(X)
+
+Context ctxrobotboundary ip [host="localhost" port=8500 ] 
+
+QActor robotboundary context ctxrobotboundary{
+	[#	var numOfWalls 	  = 0
+		var TimeLeft      = 1000L
+	    var StartTime     = 0L    
+	   	var TimeDone      = 0L  	#]
+	
+	State s0 initial{
+		println("Robot started, waiting start command")
+	}	
+	Transition t0 whenMsg start -> init
+		
+	State init{
+		println("Doing some init operations...")
+		updateResource [#"init"#]
+		[#	numOfWalls = 0
+			TimeLeft = 1000	#]
+	}
+	//some time for simulating the operations...
+	Transition t0 whenTime 2000 -> walk
+	
+	State walk{
+		println("Doing the walk...")
+		updateResource [#"walk"#]
+		memoCurrentTime StartTime
+	}
+	Transition t1 
+		whenTimeVar TimeLeft -> wall  
+		whenMsg stop -> stop
+		
+	State wall{
+		[#	numOfWalls++
+			TimeLeft = 1000 	#]
+		println("Wall found... turning left ($numOfWalls)")
+		updateResource [#"wall"#]
+	}
+	Goto walk if [#numOfWalls < 4#] else end
+	
+	State stop{
+		setDuration TimeDone from StartTime
+		[# TimeLeft = TimeLeft - TimeDone #] //calculate time left in current "step"
+		println("Stopped after $TimeDone...Still $TimeLeft to do")
+		updateResource [#"stop"#]
+	}
+	Transition t2
+		whenMsg resume -> walk
+		
+	State end{
+		println("Finish walk")
+		updateResource [#"finish"#]
+	}
+}</pre>
+</details>
+</td>
+<td><br><details>
+	<summary>Code robotboundaryanalysis2.qak</summary> 
+	<pre>//Cognome_rbAnalisi.pdf
+System robotboundary
+
+Dispatch start : start(X)
+Dispatch stop : stop(X)
+Dispatch resume : resume(X)
+
+Context ctxrobotboundary2 ip [host="localhost" port=8500 ] 
+
+
+QActor robotboundary2 context ctxrobotboundary2{
+	//Robot (Coap) state as a Prolog fact: robot($RobotDirection,$RobotMovement,FSMState)
+	//RobotDirection = {n,o,s,e} cardinal direction
+	//RobotMovement as high level robot cmd = {h,w,s,r,l,a,d}
+	[#
+		var numOfWalls 	  = 0
+		var TimeLeft      = 1000L
+	    var StartTime     = 0L    
+	   	var TimeDone      = 0L
+	   	var RobotDirection	  = "s"
+	   	var RobotMovement = "h"
+	#]
+	
+	State s0 initial{
+		println("Robot started, waiting start command")
+	}	
+	Transition t0 whenMsg start -> init
+		
+	State init{
+		println("Doing some init operations...")
+		// Assumption: the robot is in the north-left corner facing south
+		[#	
+			RobotDirection	  = "s"
+	   	    RobotMovement = "h"
+			numOfWalls = 0
+			TimeLeft = 1000
+		#]
+		updateResource [#"robot($RobotDirection,$RobotMovement,init)"#]
+	}
+	//some time for simulating the operations...
+	Transition t0 whenTime 2000 -> walk
+	
+	State walk{
+		println("Doing the walk...")
+		[# RobotMovement = "w" #]
+		updateResource [#"robot($RobotDirection,$RobotMovement,walk)"#]
+		memoCurrentTime StartTime
+	}
+	Transition t1 
+		whenTimeVar TimeLeft -> wall  
+		whenMsg stop -> stop
+		
+	State wall{
+		println("Wall $numOfWalls found...")
+		[# 	
+			RobotMovement = "h" //Robot stops
+			numOfWalls++
+			TimeLeft = 1000
+		#]
+		updateResource [#"robot($RobotDirection,$RobotMovement,wall)"#]
+		delay 100
+		[#
+			when(RobotDirection){
+				"n" -> RobotDirection = "o"
+				"o" -> RobotDirection = "s"
+				"s" -> RobotDirection = "e"
+				"e" -> RobotDirection = "n"
+			}
+			RobotMovement = "l"
+		#]
+		println("Turning left to point $RobotDirection")
+		updateResource [#"robot($RobotDirection,$RobotMovement,wall)"#]
+		delay 200
+	}
+	Goto walk if [#numOfWalls < 4#] else end
+	
+	State stop{
+		setDuration TimeDone from StartTime
+		[# 
+			TimeLeft = TimeLeft - TimeDone  //calculate time left in current "step"
+			RobotMovement = "h"
+		#]
+		println("Stopped after $TimeDone...Still $TimeLeft to do")
+		updateResource [#"robot($RobotDirection,$RobotMovement,stop)"#]
+	}
+	Transition t2
+		whenMsg resume -> walk
+		
+	State end{
+		[# 
+			RobotMovement = "h"
+		#]
+		println("Finish walk")
+		updateResource [#"robot($RobotDirection,$RobotMovement,finish)"#]
+	}
+		
+}</pre>
+</details><br></td>
+</tr>
+<tr>
+<td>
+		<details>
+			<summary>Immagine parziale test Versione 1, test principale</summary> 
+			<img src="https://raw.githubusercontent.com/marcogozzi/ISS-2020-Docs/master/test1_crop.png" />
+		</details>
+	</td>
+<td>
+		<details>
+			<summary>Immagine parziale test Versione 2, test principale</summary>
+			<img src="https://raw.githubusercontent.com/marcogozzi/ISS-2020-Docs/master/test2_crop.png" />
+		</details>
+	</td>
+<tr>
+<td>
+	<details>
+		<summary>Code testBoundary.kt</summary> 
+		<pre>package test
+
+import org.junit.Before
+import org.junit.After
+import org.junit.Test
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.delay
+import it.unibo.kactor.ActorBasic
+import it.unibo.kactor.MsgUtil
+import it.unibo.kactor.MqttUtils
+import org.eclipse.californium.core.CoapClient
+import org.eclipse.californium.core.CoapResponse
+ 
+class testVirtualrobot {
+
+	val testName 	  = "testBoundary"	
+	var robot             : ActorBasic? = null
+	val mqttTest   	      = MqttUtils(testName) 
+	val initDelayTime     = 1500L   // 
+	val useMqttInTest 	  = false
+	val mqttbrokerAddr    = "tcp://broker.hivemq.com"
+
+	val context     = "ctxrobotboundary"
+	val destactor   = "robotboundary"
+	val addr        = "localhost:8500"
+    val client      = CoapClient()
+    val uriStr      = "coap://$addr/$context/$destactor"
+	
+	val coapHistory = CoapObserverString()
+		
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	@Before
+	fun systemSetUp() { 		
+   		kotlin.concurrent.thread(start = true) {
+			client.uri = uriStr
+			client.observe(CoapObserverLogger("/home/marco/coapLog.txt"))
+			client.observe(coapHistory)
+			it.unibo.ctxrobotboundary.main() // start the analysis model
+			println("$testName systemSetUp done")
+
+ 	} 
+}	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	@After
+	fun terminate() {
+		println("$testName terminated")
+	}
+	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun forwardToRobot(msgId: String, payload:String){
+		//println(" --- forwardToRobot --- $msgId:$payload")
+		if( robot != null )  MsgUtil.sendMsg( "test",msgId, payload, robot!!  )
+	}
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun requestToRobot(msgId: String, payload:String){
+		if( robot != null ){
+			val msg = MsgUtil.buildRequest("test",msgId, payload,robot!!.name)
+			MsgUtil.sendMsg( msg, robot!!  )		
+		}  
+	}
+	
+	fun checkResource(value: String){
+		val respGet : CoapResponse = client.get( )
+		val v = respGet.getResponseText()
+		println("	checkResource |  $v value=$value ")
+		//assertTrue( v == value)
+	}
+		
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun testWalk(){
+		println("=========== testWalk =========== ")
+ 			forwardToRobot( "start", "start(h)" )
+			checkResource("init")					//some time for init requirement
+			delay(4000)
+			checkResource("walk")					//some time for init requirement
+	}
+	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun testStopResume(){
+		println("=========== testStopResume =========== ")
+			delay(500)
+ 			forwardToRobot( "stop", "stop(h)" )
+			delay(500)
+			checkResource("stop")					
+	 		forwardToRobot( "resume", "resume(h)" )
+			delay(500)
+			checkResource("walk")					
+			forwardToRobot( "stop", "stop(h)" )
+	 		forwardToRobot( "resume", "resume(h)" )
+			forwardToRobot( "stop", "stop(h)" )
+	 		forwardToRobot( "resume", "resume(h)" )
+	}
+
+		
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun testReqSensor(){ //ASSUMPTION: obstacle
+		println(" ===========  testReqSensor =========== ")
+			forwardToRobot( "cmd", "cmd(w)" )
+			delay(3000)
+			checkResource("obstacle") 
+ 	}
+ 
+	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+@Test
+	fun testRobotBoundary(){
+	/*
+ 		init i
+ 		(
+ 			(	walk w
+ 				stop s
+ 			) *
+ 			(	walk w
+ 				wall l
+ 			)
+ 		)	{4}
+ 		finish f
+ 		i((ws)*(wl)){4}f									//without linefeed, single character per status
+ 		i\n((w\ns\n)*(w\nl\n)){4}f							//with linefeed		single character per status
+ 		init\((walk\nstop\n)*(walk\nwall\n)){4}finish		//with linefeed		single word 	 per status
+	 */
+	 	runBlocking{
+			while( robot == null ){
+				delay(initDelayTime)  //time for robot to start
+				robot = it.unibo.kactor.sysUtil.getActor(destactor)				
+			}
+			delay( 1000 )
+			testWalk()						
+			testStopResume()
+			delay( 6000 )
+			checkResource("finish") 
+
+		}
+	println("CoapHistory was: ${coapHistory.getHistory()}")
+	 	//val pattern = "i((ws)*(wl)){4}".toRegex()
+	 	val pattern = """init\n((walk\nstop\n)*(walk\nwall\n)){4}finish""".toRegex()
+			assertTrue(pattern.matches(coapHistory.getHistory()))
+	 	println("testVirtualRobot BYE  ")  
+	}
+
+}</pre>
+	</details>
+</td>
+<td>
+	<details>
+		<summary>Code testBoundary2.kt</summary> 
+		<pre>package test
+
+
+import org.junit.Before
+import org.junit.After
+import org.junit.Test
+import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.delay
+import it.unibo.kactor.ActorBasic
+import it.unibo.kactor.MsgUtil
+import it.unibo.kactor.MqttUtils
+import org.eclipse.californium.core.CoapClient
+import org.eclipse.californium.core.CoapResponse
+ 
+ 
+
+class testVirtualrobot2 {
+
+	val testName 	  = "testBoundary2"	
+	var robot             : ActorBasic? = null
+	val mqttTest   	      = MqttUtils(testName) 
+	val initDelayTime     = 1500L   // 
+	val useMqttInTest 	  = false
+	val mqttbrokerAddr    = "tcp://broker.hivemq.com"
+
+	
+	val context     = "ctxrobotboundary2"
+	val destactor   = "robotboundary2"
+	val addr        = "localhost:8500"
+    val client      = CoapClient()
+    val uriStr      = "coap://$addr/$context/$destactor"
+	
+	val coapHistory = CoapObserverString()
+       
+		
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	@Before
+	fun systemSetUp() { 		
+   		kotlin.concurrent.thread(start = true) {
+			client.uri = uriStr
+			client.observe(CoapObserverLogger("/home/marco/coapLog.txt"))
+			client.observe(coapHistory)
+			it.unibo.ctxrobotboundary2.main() // start the analysis model
+			println("$testName systemSetUp done")
+
+ 	} 
+}	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	@After
+	fun terminate() {
+		println("$testName terminated")
+	}
+	
+ 	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun forwardToRobot(msgId: String, payload:String){
+		//println(" --- forwardToRobot --- $msgId:$payload")
+		if( robot != null )  MsgUtil.sendMsg( "test",msgId, payload, robot!!  )
+	}
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun requestToRobot(msgId: String, payload:String){
+		if( robot != null ){
+			val msg = MsgUtil.buildRequest("test",msgId, payload,robot!!.name)
+			MsgUtil.sendMsg( msg, robot!!  )		
+		}  
+	}
+	
+	fun checkResource(value: String){
+		val respGet : CoapResponse = client.get( )
+		val v = respGet.getResponseText()
+		//println("	checkResource |  $v value=$value ")
+		//assertTrue( v == value)
+	}
+	
+		
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun testWalk(){
+		println("=========== testWalk =========== ")
+ 			forwardToRobot( "start", "start(h)" )
+			checkResource("init")					//some time for init requirement
+			delay(4000)
+			checkResource("walk")					//some time for init requirement
+	}
+	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun testStopResume(){
+		println("=========== testStopResume =========== ")
+			delay(500)
+ 			forwardToRobot( "stop", "stop(h)" )
+			delay(500)
+			checkResource("stop")					//some time for init requirement
+	 		forwardToRobot( "resume", "resume(h)" )
+			delay(500)
+			checkResource("walk")					//some time for init requirement
+	
+			forwardToRobot( "stop", "stop(h)" )
+	 		forwardToRobot( "resume", "resume(h)" )
+			forwardToRobot( "stop", "stop(h)" )
+	 		forwardToRobot( "resume", "resume(h)" )
+	}
+
+		
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+	suspend fun testReqSensor(){ //ASSUMPTION: obstacle
+		println(" ===========  testReqSensor =========== ")
+			forwardToRobot( "cmd", "cmd(w)" )
+			delay(3000)
+			checkResource("obstacle") 
+ 	}
+ 
+	
+@kotlinx.coroutines.ObsoleteCoroutinesApi
+@kotlinx.coroutines.ExperimentalCoroutinesApi
+@Test
+	fun testRobotBoundary(){
+	 	runBlocking{
+			while( robot == null ){
+				delay(initDelayTime)  //time for robot to start
+				robot = it.unibo.kactor.sysUtil.getActor(destactor)				
+			}
+			delay( 1000 )
+			testWalk()
+			testStopResume()
+			delay( 5000 )
+		}
+	 	println("CoapHistory was:\n${coapHistory.getHistory()}")
+	 	//val pattern = """init\n((walk\nstop\n)*(walk\nwall\n)){4}finish""".toRegex()
+		//patternNotWorking perchè interpreta "troppo letteralmente" tabulazioni, spazi e newline
+		val patternNotWorking =	"""robot\(s,h,init\)\n
+						(
+							(	robot\([nose],w,walk\)\n
+								robot\([nose],h,stop\)\n
+							)*
+							robot\([nose],w,walk\)\n
+							robot\([nose],h,wall\)\n
+							robot\([nose],l,wall\)\n
+						){4}
+						robot\(s,h,finish\)""".toRegex()
+		//pattern is LOGICALLY the same as patternNotWorking BUT without spaces and newlines
+	    val pattern = """robot\(s,h,init\)\n((robot\([nose],w,walk\)\nrobot\([nose],h,stop\)\n)*robot\([nose],w,walk\)\nrobot\([nose],h,wall\)\nrobot\([nose],l,wall\)\n){4}robot\(s,h,finish\)"""
+			.toRegex()
+		//val patternProva = """robot\([nose],h,init\)\n""".toRegex()
+		//assertTrue(patternProva.matches("robot(n,h,init)\n"))
+		//val patternProva2 = """robot\([nose],h,finish\)""".toRegex()
+	 	//assertTrue(patternProva2.matches("robot(n,h,finish)"))
+		//println("testRobotBoundary ASSERT Prova vera: robot(n,h,init)\\n")  
+		assertTrue(pattern.matches(coapHistory.getHistory()))
+	 	println("testRobotBoundary BYE  ")  
+	}
+
+}</pre>
+	</details>
+</td>
+</tr>
+</tbody>
+</table>
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+
+
+<!--
+<details>
+	<summary>robotboundaryanalysis.qak</summary> 
+	<pre></pre>
+</details>
+
+
+-->
