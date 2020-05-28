@@ -1,0 +1,870 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<style type="text/css">
+<!--
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin: 10;
+    margin-right: 15px;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+    border-bottom: 1px solid #242424;
+}
+
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+}
+
+h2 {
+    background-color: #d9fbff;
+    font-size: 110%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 80%;
+}
+h4 {
+    background-color: #99ffcc;
+    font-size: 100%;
+	width: 750px;
+}
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 80%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #ccffff;
+    color: #0033cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 80%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+k{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #990000;
+	 
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
+pre{
+	font-family: "Helvetica";
+	font-size: 60%;
+	background-color: #fcf8c7;
+	border: 1px solid blue;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	width: 800px;
+    font-size: 18px;
+}    
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}       
+div.remark{
+	background-color: #FFFC33;     
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}  
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}         
+li{
+    LINE-HEIGHT:23px;
+    margin-top: 0.6em ;
+  margin-bottom: 0.6em ;
+}
+    
+  -->
+</style>
+    
+<head>
+   
+<title>Vacuum robot - Marco Gozzi</title></head>
+    
+<body>
+
+
+
+
+
+
+
+
+
+
+
+<div id="top">
+<h1>LABORATORIO DI SISTEMI SOFTWARE - Sistema Vacuum Robot - Marco Gozzi</h1>
+</div>
+<br/>
+<ol>
+<li><a href="#reql">Requirement analysis</a></li>
+<li><a href="#h13skaqlr7hd1fj5y0lnjxrvsol7mag">Test plan</a></li>
+<li><a href="#h19skaqlrll91maz95tftjl6ug6wmei">Problem analysis</a></li>
+</ol>
+<br/>
+<!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+-->
+<div id="top">
+</div>
+<div class="body">
+<h2>Introduction</h2>
+Remember our motto:<br /> there is no code without a project, no project without problem analysis and no problem without requirements.
+<h2>Requirements</h2>
+<div class="remark">Design and build a software system to control a vacuum cleaner robot.</div>
+<br />
+<div>When not in use the robot stays in its home station.<br /> The robot is able to collect the dust on the floor of a room, in a systematic and autonomous way; when the cleaning is done the robot returns to its home station.<br />At any time the cleaning can be cancelled: the robot returns to its home station as soon as possible.<br />It shows (in real time) to the user (on a smart device) a picture of the cleaned space.</div>
+<h2 id="req">Requirement analysis</h2>
+<div class="remark">Requirements:</div>
+<ul>
+<li class="remark"><em>collect</em> the dust (on the floor of a room, autonomously): the robot must explore all of the floor to complete the work; it starts from its <em>home station</em> and returns to it at the end</li>
+<li class="remark"><em>cancel</em> the current cleaning; the robot must return to its <em>home station</em></li>
+<li class="remark"><em>show</em> the current cleaning progress in a way that can be accessed by a smart device</li>
+</ul>
+<div class="remark">Vocabulary:</div>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Differential_wheeled_robot">robot</a>: an entity that can move in space; a formal definition could be the one given by the virtual robot from Pierfrancesco Soffritti</li>
+<li><em>floor of a room</em>: plane area surrounded on each side by obstacles (e.g. walls)</li>
+<li><em>home station</em>: a specific spot of the floor that can only be occupied by the robot</li>
+<li><em>smart device</em>: any device that can access the internet and display web pages</li>
+<li><em>real time</em>: under 500ms</li>
+</ul>
+<h3>Tools for model definition</h3>
+<p>We already have a system (Virtual Robot + BasicRobotQak) capable of simulating a robot that moves in a room, so the analysis will exploit it to <em>shorten</em> the time required to <em>build an executable model</em></p>
+<table>
+<tbody>
+<tr>
+<td>vacuumrobotV1.qak</td>
+<td>vacuumrobotV2.qak</td>
+</tr>
+<tr>
+<td>
+<p>Considerations</p>
+<ul>
+<li>The robot bounces off the walls in a <em>not precise</em> way: after a certain number of bounces the error is big enough that the map support is <em>out of synchronization</em></li>
+<li>No obstacles involved in this stage</li>
+<li>The <em>cancel</em> and <em>show</em> requirements are not satisfied by this model</li>
+</ul>
+</td>
+<td>
+<p>Considerations</p>
+<ul>
+<li>The bouncing problem from V1 has been reduced to a good level but sometimes the robots does not build a correct map of the room</li>
+<li>No obstacles involved in this stage</li>
+<li><em>Cancel</em> requirement is now working</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<pre>/*
+ * Marco Gozzi
+ * vacuumrobot.qak
+ * ANALYSIS MODEL
+ * ASSUMPTIONS: NO OBSTACLES, ROBOT start from TOP LEFT corner of the room facing DOWN
+ */
+System vacuumrobot   
+
+Dispatch collect	: collect(ARG)
+Dispatch cancel 	: cancel(ARG)
+Dispatch resume  	: resume(ARG)
+Dispatch cmd  		: cmd(ARG)
+ 
+Request step       : step( TIME )	
+Reply   stepdone   : stepdone(V)  
+Reply   stepfail   : stepfail(DURATION, CAUSE)
+ 
+Context ctxvacuumrobot 		ip [host="localhost" port=8018]  
+Context ctxbasicrobot		ip [host="127.0.0.1" port=8020] 
+  
+ExternalQActor basicrobot context ctxbasicrobot 
+<br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+QActor vacuumrobot context ctxvacuumrobot  {   
+	[#		
+		var expanding 	= false
+		var	NumStep 	= 0
+		val StepTime     = 340
+		var StartTime    = 0L
+		var Workduration = 0L 
+		val stepFailCoeff = 0.85
+	#] 
+<br /><br /><br /><br /><br />
+	State s0 initial { 	  
+		println("vacuumrobot | START...")	
+		delay 3000
+		discardMsg Off  //WE MUST RECEIVE cancel
+		updateResource [# "initial" #]
+	}
+	Transition t0 whenMsg collect -&gt; startWork 
+ 	
+ 	State startWork{	//just to store the StartTime
+		memoCurrentTime StartTime	
+  	}    
+ 	Goto work
+  	<br />
+	State work{
+		println("vacuumrobot | working")
+		//Activate the motors to go ahead
+ 		request basicrobot -m step : step( $StepTime  )
+		updateResource [# "working" #]
+ 	} 
+	Transition t0 whenReply stepdone -&gt; stepDone
+				  whenReply stepfail -&gt; stepFail
+	
+	State stepDone{ //change the map
+	    updateResource [# "stepDone" #]
+		run mapRoomKotlin.mapUtil.doMove("w")
+		run mapRoomKotlin.mapUtil.showMap()
+		delay 500
+	}
+	Transition t1 
+				  whenTime  10  -&gt;  work 
+				  whenMsg  cancel -&gt; returnHome   
+	
+	State stepFail{//when robot bumps into north/south wall
+		printCurrentMessage
+		//change the map
+		run mapRoomKotlin.mapUtil.doMove("h") 
+		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
+			[# 
+				var Dt = payloadArg(0).toLong()
+				NumStep++
+			#] 
+			if [# Dt &lt; StepTime*stepFailCoeff  #] {   
+				forward basicrobot -m cmd : cmd( s )
+				delayVar Dt
+				forward basicrobot -m cmd : cmd( h )
+			}	
+			updateResource [# "stepFail" #]
+			delay 1000		    
+		}		
+	}
+	Goto toNewColumn
+	<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+	State toNewColumn{
+		println("vacuumrobot | to new column")
+		if [# mapRoomKotlin.mapUtil.isRobotAtTop()#]{
+			forward basicrobot -m cmd : cmd(r)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("r")
+		}
+		if[# mapRoomKotlin.mapUtil.isRobotAtBottom() #]{
+			forward basicrobot -m cmd : cmd(l)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("l")
+		}
+		//robot is turned right; try to go to a new map column
+ 		request basicrobot -m step : step( $StepTime  )
+	}
+	Transition t2 whenReply stepdone -&gt; inNewColumn
+				  whenReply stepfail -&gt; noNewColumn
+			<br /><br />	  
+	State noNewColumn{//when robot bumps into right wall
+		println("vacuumrobot | no new column")
+	  	run mapRoomKotlin.mapUtil.doMove("h") 
+		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
+			[# 
+				var Dt = payloadArg(0).toLong()
+				NumStep++
+			#] 
+			if [# Dt &lt; StepTime*stepFailCoeff  #] {    
+				forward basicrobot -m cmd : cmd( s )
+				delayVar Dt
+				forward basicrobot -m cmd : cmd( h )
+			}	
+			updateResource [# "stepFail" #]
+			delay 1000		    
+		}
+	}
+	Goto returnHome
+<br /><br />
+	State inNewColumn{
+		println("vacuumrobot | in new column")		
+	    updateResource [# "stepDone" #]
+		run mapRoomKotlin.mapUtil.doMove("w")
+		run mapRoomKotlin.mapUtil.showMap()
+		delay 500
+		
+		if [# mapRoomKotlin.mapUtil.isRobotAtTop()#]{
+			forward basicrobot -m cmd : cmd(r)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("r")
+		}
+		if[# mapRoomKotlin.mapUtil.isRobotAtBottom() #]{
+			forward basicrobot -m cmd : cmd(l)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("l")
+		}		
+	}
+ 	Transition t0 whenTime  100  -&gt;  work 
+ 	              whenMsg  cancel -&gt; faceRight 
+ 	              
+ 	             <br /><br /><br /><br /><br /> 
+ 	// from here on, there are the states that handle the return home logic
+ 	   <br /><br /><br /><br /><br />           
+	State faceRight{
+		//robot was going either UP or DOWN
+		if [# mapRoomKotlin.mapUtil.robotDirection != mapRoomKotlin.Direction.UP #]{
+			forward basicrobot -m cmd : cmd(l)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("l")
+		}
+	}  
+	Goto returnHome
+  	
+	State returnHome{ 
+		println("vacuumrobot | returning home")	
+		updateResource [# "stopped" #]
+	}
+	Goto returnHomeFromTop if [# mapRoomKotlin.mapUtil.isRobotAtTop() #] else returnHomeFromBottom
+	
+	State returnHomeFromTop{
+		//turn around 180 degrees
+		forward basicrobot -m cmd : cmd(r)
+		delay 500 //change the map
+		run mapRoomKotlin.mapUtil.doMove("r")
+		
+		delay 500
+		
+		forward basicrobot -m cmd : cmd(r)
+		delay 500 //change the map
+		run mapRoomKotlin.mapUtil.doMove("r")
+
+		request basicrobot -m step : step( $StepTime  )
+	}
+	Transition t0 whenReply stepdone -&gt; toTheLeft
+				  whenReply stepfail -&gt; errorState
+ 
+ 	State returnHomeFromBottom{
+ 		//we are in the bottom left corner facing right
+		forward basicrobot -m cmd : cmd(l)
+		delay 500 //change the map
+		run mapRoomKotlin.mapUtil.doMove("l")
+		//now pointing upwards
+		request basicrobot -m step : step( $StepTime  )
+ 	}
+ 	Transition t0 whenReply stepdone -&gt; toTheTop
+				  whenReply stepfail -&gt; faceToTheLeft
+ 
+ 	State toTheTop{
+		println("vacuumrobot | to the top")
+ 		updateResource [# "stepDone" #]
+		run mapRoomKotlin.mapUtil.doMove("w")
+		run mapRoomKotlin.mapUtil.showMap()
+		delay 500
+		request basicrobot -m step : step( $StepTime  )
+	}
+	Transition t0 whenReply stepdone -&gt; toTheTop
+				  whenReply stepfail -&gt; faceToTheLeft
+				  
+	State faceToTheLeft{
+		//if coming from toTheTop
+		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
+			run mapRoomKotlin.mapUtil.doMove("h") 
+			[# 
+				var Dt = payloadArg(0).toLong()
+				NumStep++
+			#] 
+			if [# Dt &lt; StepTime*stepFailCoeff  #] {   
+				forward basicrobot -m cmd : cmd( s )
+				delayVar Dt
+				forward basicrobot -m cmd : cmd( h )
+			}	
+			updateResource [# "stepFail" #]
+			delay 1000	
+			
+			forward basicrobot -m cmd : cmd(l)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("l")	    
+		}
+		request basicrobot -m step : step( $StepTime  )
+	}
+	Transition t0 whenReply stepdone -&gt; toTheLeft
+				  whenReply stepfail -&gt; endWork
+	
+	State toTheLeft{
+		println("vacuumrobot | to the left")
+		updateResource [# "stepDone" #]
+		run mapRoomKotlin.mapUtil.doMove("w")
+		run mapRoomKotlin.mapUtil.showMap()
+		delay 500
+		request basicrobot -m step : step( $StepTime  )
+	}
+	Transition t0 whenReply stepdone -&gt; toTheLeft
+				  whenReply stepfail -&gt; endWork
+	 
+ 	State endWork{
+	
+		forward basicrobot -m cmd : cmd(l)
+		delay 500 //change the map
+		run mapRoomKotlin.mapUtil.doMove("l")	  
+		
+ 		setDuration Workduration from StartTime
+		println("vacuumrobot | ends; duration=$Workduration")
+		updateResource [# "terminated" #]
+		terminate 0
+ 	}
+ 	
+ 	State errorState{
+ 		println("-----This state should not be reachable-----")
+ 	}
+ 
+}
+
+QActor starter context ctxvacuumrobot{
+	State s0 initial{
+		forward vacuumrobot -m collect : collect(1)
+	}
+}
+
+  </pre>
+</td>
+<td>
+<pre>  /*
+ * Marco Gozzi
+ * vacuumrobot.qak
+ * ANALYSIS MODEL
+ * ASSUMPTIONS: NO OBSTACLES, ROBOT start from TOP LEFT corner of the room facing DOWN
+ */
+System vacuumrobot   
+
+Dispatch collect	: collect(ARG)
+Dispatch cancel 	: cancel(ARG)
+Dispatch resume  	: resume(ARG)
+Dispatch cmd  		: cmd(ARG)
+ 
+Request step       : step( TIME )	
+Reply   stepdone   : stepdone(V)  
+Reply   stepfail   : stepfail(DURATION, CAUSE)
+ 
+Context ctxvacuumrobot 		ip [host="localhost" port=8018]  
+Context ctxbasicrobot		ip [host="127.0.0.1" port=8020] 
+  
+ExternalQActor basicrobot context ctxbasicrobot 
+
+
+QActor starter context ctxvacuumrobot{
+	[# val DelayTimeRandom = (Math.random() * 20000).toLong() #]
+	State s0 initial{
+		//forward vacuumrobot -m collect : collect(1)
+		//delayVar DelayTimeRandom
+		//forward vacuumrobot -m cancel : cancel(1)
+	}
+}
+
+QActor vacuumrobot context ctxvacuumrobot  {   
+	[#		
+		var	NumStep 	= 0
+		val StepTime     = 350L
+		var StartTime    = 0L
+		var Workduration = 0L 
+		
+		var LastWallCollisionDirection = mapRoomKotlin.Direction.DOWN
+		val StepTimeWait	= StepTime * 2
+		val stepFailCoeff 	= 0.75 				//if the robot fails the step after StepTime*stepFailCoeff it will not bounce 
+		var StepNum 		= 0					//number of steprequest sent
+		val mapErrorStep 	= ArrayList() 	//it contains al the steprequest numbers when there might have been a problem
+		var mapError 		= false
+	#] 
+
+	State s0 initial { 	  
+		println("vacuumrobot | START...")	
+		discardMsg Off  //WE MUST RECEIVE cancel
+		updateResource [# "initial" #]
+	}
+	Transition t0 whenMsg collect -&gt; startWork 
+ 	
+ 	State startWork{	//just to store the StartTime
+		memoCurrentTime StartTime	
+  	}    
+ 	Goto work
+<br />
+	State work{
+ 		request basicrobot -m step : step( $StepTime  )
+ 		[# println("Requested step ${++StepNum} in work") #]
+		updateResource [# "working" #]
+ 	} 
+	Transition t0 whenReply stepdone -&gt; stepDone
+				  whenReply stepfail -&gt; stepFail
+	<br />
+	State stepDone{
+		[# NumStep = 0 #]
+	    updateResource [# "stepDone" #]
+	    println("\\nStepDone")
+		run mapRoomKotlin.mapUtil.doMove("w")
+		run mapRoomKotlin.mapUtil.showMap()
+	}
+	Transition t1 
+				  whenTime  100  -&gt;  work 
+				  whenMsg  cancel -&gt; returnHome   
+	
+	State stepFail{
+		// SHOULD -&gt; when robot bumps into north/south wall
+		// ACTUALLY -&gt; also when the map is out of sync
+		run mapRoomKotlin.mapUtil.doMove("h") 
+		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
+			[# 
+				LastWallCollisionDirection = mapRoomKotlin.mapUtil.robotDirection
+				NumStep++
+				var Dt = payloadArg(0).toLong()
+			#] 
+			if [# Dt &lt; StepTime*stepFailCoeff  #] {   
+				forward basicrobot -m cmd : cmd( s )
+				delayVar Dt
+				forward basicrobot -m cmd : cmd( h )
+			}	
+			updateResource [# "stepFail" #]	 
+			/*println("-----\tFAILED HERE\t-----")
+			run mapRoomKotlin.mapUtil.showMap()	   
+			println("RobotPosition:\t ${mapRoomKotlin.mapUtil.robotPosition}")	*/
+		}
+	}
+	Goto toNewColumn if [# mapRoomKotlin.mapUtil.isRobotAtTop().or(mapRoomKotlin.mapUtil.isRobotAtBottom()) #]
+					else mapNotSync
+	
+	State mapNotSync{
+		if [# NumStep == 3 #]{
+			println("-----\tTRYING TO SYNC THE MAP\t-----")
+			run mapRoomKotlin.mapUtil.doMove("w")
+			run mapRoomKotlin.mapUtil.showMap()
+			println("-----\tTRYING TO SYNC THE MAP\t-----")
+			[# 
+				mapError = true	
+				mapErrorStep.add(StepNum)
+			#]
+		}
+	}
+	Goto  toNewColumn  if [# NumStep == 4 #] else work
+	
+	State toNewColumn{
+		//println("vacuumrobot | to new column")
+		// workaround to the DSL to implement if- else if - else syntax
+		[# if(mapRoomKotlin.mapUtil.isRobotAtTop()) { #]
+			forward basicrobot -m cmd : cmd(r)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("r")
+		[# } else if(mapRoomKotlin.mapUtil.isRobotAtBottom()) { #]
+			forward basicrobot -m cmd : cmd(l)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("l")
+		[# } else { println("Where am I?") }#]
+	    updateResource [# "tryingtoNewColumn" #]
+		//robot is turned right; try to go to a new map column
+ 		request basicrobot -m step : step( $StepTime  )
+ 		[# println("Requested step ${++StepNum} in toNewColumn") #]
+ 		delayVar StepTime
+	}
+	Transition t2 whenReply stepdone -&gt; inNewColumn
+				  whenReply stepfail -&gt; noNewColumn
+				  
+	State noNewColumn{//when robot bumps into right wall
+		//println("vacuumrobot | no new column")
+	    updateResource [# "mapExplored" #]
+	  	run mapRoomKotlin.mapUtil.doMove("h") 
+		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
+			[# 
+				LastWallCollisionDirection = mapRoomKotlin.mapUtil.robotDirection
+				var Dt = payloadArg(0).toLong()
+			#] 
+			// if not commented there's a high probability of map error
+			//if [# Dt &lt; StepTime*stepFailCoeff  #] {    
+				forward basicrobot -m cmd : cmd( s )
+				delayVar Dt
+				forward basicrobot -m cmd : cmd( h )
+			//}	
+			updateResource [# "stepFail" #]
+			delay 200		    
+		}
+	}
+	Goto returnHome
+
+	State inNewColumn{
+		//println("vacuumrobot | in new column")		
+	    updateResource [# "newColumnToExplore" #]
+		run mapRoomKotlin.mapUtil.doMove("w")
+		run mapRoomKotlin.mapUtil.showMap()
+		delay 200
+		
+		if [# mapRoomKotlin.mapUtil.isRobotAtTop()#]{
+			forward basicrobot -m cmd : cmd(r)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("r")
+		}
+		if[# mapRoomKotlin.mapUtil.isRobotAtBottom() #]{
+			forward basicrobot -m cmd : cmd(l)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("l")
+		}		
+	}
+ 	Transition t0 whenTime  100  -&gt;  work 
+ 	              whenMsg  cancel -&gt; returnHome 
+ 	              
+ 	              
+ 	              
+ 	              
+ 	              
+ 	              
+ 	              
+ 	// from here on, there are the states that handle the return home logic
+ 
+ 	//DIVIDE ET IMPERA
+  	//same entry point for all previous states
+  	//returning home is a different problem than exploration
+  	//Policy: go straight to the TOP and straight to the LEFT
+	State returnHome{ 
+		println("vacuumrobot | returning home")	
+		updateResource [# "setupReturnHome" #]
+	}
+	Goto endWork if [# mapRoomKotlin.mapUtil.isRobotAtHome() #] else returnHomeReal
+		
+	State returnHomeReal{		
+		if [# mapRoomKotlin.mapUtil.robotDirection == mapRoomKotlin.Direction.DOWN #]{
+			forward basicrobot -m cmd : cmd(l)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("l")
+		}
+		if [# mapRoomKotlin.mapUtil.robotDirection == mapRoomKotlin.Direction.RIGHT #]{
+			forward basicrobot -m cmd : cmd(l)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("l")
+		}
+		//now facing UP (or LEFT but it's ok)
+		request basicrobot -m step : step( $StepTime  )
+ 		[# println("Requested step ${++StepNum}") #]
+	}
+	Transition t0 whenReply stepdone -&gt; walk
+				  whenReply stepfail and [#   mapRoomKotlin.mapUtil.isRobotAtHome() #] -&gt; endWork
+				  whenReply stepfail and [#  ! mapRoomKotlin.mapUtil.isRobotAtHome() #] -&gt; rotateLeft
+				  //whenReply stepdone and [#  ! mapRoomKotlin.mapUtil.isRobotAtHome() #] -&gt; walk
+				  //else Goto endWork if [# mapRoomKotlin.mapUtil.isRobotAtHome() #]
+	
+ 
+ 	State walk{// walk + rotateLeft are basically a boundary robot
+		println("vacuumrobot | walking ${mapRoomKotlin.mapUtil.robotDirection}")
+ 		updateResource [# "stepDoneToHome" #]
+		run mapRoomKotlin.mapUtil.doMove("w")
+		run mapRoomKotlin.mapUtil.showMap()
+		delay 200
+		request basicrobot -m step : step( $StepTime  )
+ 		[# println("Requested step ${++StepNum} in walk") #]
+	}
+	Transition t0 whenReply stepdone -&gt; walk
+					//this means that we have reached the REAL home location, but probably the map is out of sync
+				  whenReply stepfail and [#   mapRoomKotlin.mapUtil.robotDirection == mapRoomKotlin.Direction.LEFT &amp;&amp;
+				  								LastWallCollisionDirection == mapRoomKotlin.Direction.UP
+				  						  #] -&gt; endWork
+				  whenReply stepfail and [# mapRoomKotlin.mapUtil.isRobotAtHome() #] -&gt; endWork
+				  whenReply stepfail and [#  ! mapRoomKotlin.mapUtil.isRobotAtHome() #] -&gt; rotateLeft
+				  
+	/* Transition else not yet implemented
+	Transition t0 whenReply stepdone and [# ! mapRoomKotlin.mapUtil.isRobotAtTop() #] -&gt; toTheTop
+				  whenReply stepfail and [# ! mapRoomKotlin.mapUtil.isRobotAtTop() #] -&gt; faceToTheLeft
+				else Goto faceToTheLeft	 	
+	*/	
+	
+				  
+	State rotateLeft{
+		onMsg(stepfail : stepfail(DURATION, CAUSE) ){
+			run mapRoomKotlin.mapUtil.doMove("h") 
+			[# 	
+				LastWallCollisionDirection = mapRoomKotlin.mapUtil.robotDirection
+				var Dt = payloadArg(0).toLong()
+			#] 
+			if [# Dt &lt; StepTime*stepFailCoeff  #] {   
+				forward basicrobot -m cmd : cmd( s )
+				delayVar Dt
+				forward basicrobot -m cmd : cmd( h )
+			}	
+			updateResource [# "stepFailToHome" #]
+			delay 200	
+			
+			forward basicrobot -m cmd : cmd(l)
+			delay 500 //change the map
+			run mapRoomKotlin.mapUtil.doMove("l")	    
+		}
+		request basicrobot -m step : step( $StepTime  )
+ 		[# println("Requested step ${++StepNum} in rotateLeft") #]
+	}
+	Transition t0 whenReply stepdone -&gt; walk
+	 			  //should not happen: hit a wall, rotate left and still facing a wall
+				  whenReply stepfail and [# ! mapRoomKotlin.mapUtil.isRobotAtHome() #] -&gt; rotateLeft
+			<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />	  
+ 	State endWork{
+ 		
+ 		forward basicrobot -m cmd : cmd( s )
+		delay 100
+		forward basicrobot -m cmd : cmd( h )
+		
+		//quicker than iterating on a state
+		[#while(mapRoomKotlin.mapUtil.robotDirection != mapRoomKotlin.Direction.DOWN){#]
+			delay 300 
+			forward basicrobot -m cmd : cmd(l)
+			run mapRoomKotlin.mapUtil.doMove("l")	  
+		[#}#]
+ 		setDuration Workduration from StartTime
+		println("vacuumrobot | ends; duration=$Workduration")
+		run mapRoomKotlin.mapUtil.showMap()
+		
+		//final resourceupdate and debug prints...
+		delay 1000 
+		if [# ! mapRoomKotlin.mapUtil.isRobotAtHome() #]{
+			updateResource [# "terminated_not_home" #]
+			println("$tt vacuumrobot | ended but not at home location")
+		}
+		if [# mapError #]{
+			updateResource [# "terminated_with_error" #]
+			println("$tt vacuumrobot | ended with error at steps $mapErrorStep")
+			println("$tt there might be one ROW or COLUMN that should not be there")
+		}
+		else{
+			updateResource [# "terminated" #]
+		}
+			
+		terminate 0
+ 	}
+ 	
+ 	State errorState{
+ 		println("-----\tThis state should not be reachable\t-----")
+ 		println("-----\tThere was an error with the infrastructure (?)\t-----")
+ 	}
+ 
+}</pre>
+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="h13skaqlr7hd1fj5y0lnjxrvsol7mag">Test plan</h3>
+<pre>    suspend fun testCollect( ) {
+		println("$prefix testCollect $robot ")
+		forwardToRobot("collect", "collect(0)" )
+        
+ 		if( robot != null) robot!!.waitTermination()	
+		assertTrue( mapUtil.isRoomExplored() )
+		assertTrue( mapUtil.robotPosition == Pair(0,0) )
+		assertTrue( mapUtil.robotDirection == Direction.DOWN )
+	}
+    
+    suspend fun testCancel( ) {
+		println("$prefix testCancel $robot ")
+		forwardToRobot("collect", "collect(0)" )
+		delay(Math.random() * 20000).toLong())
+		forwardToRobot("cancel", "cancel(0)" )
+        
+ 		if( robot != null) robot!!.waitTermination()
+		assertTrue( mapUtil.isRobotAtHome() )
+		assertTrue( mapUtil.robotDirection == Direction.DOWN )
+	}
+  </pre>
+In mapUtil there are a few more utility functions
+<pre>  val robotDirection : Direction
+		get() = state.direction 
+        
+  val robotPosition : Pair&lt;Int, Int&gt;
+		get() = Pair(state.x, state.y)
+        
+  fun isRoomExplored() = ! map.toString().contains("0")
+	
+  fun isRobotAtTop() = state.y == 0
+	
+  fun isRobotAtBottom() = (state.y == (map.dimY - 1))
+	
+  fun isRobotAtHome() = (state.x == 0).and(state.y == 0)
+</pre>
+<h2 id="h19skaqlrll91maz95tftjl6ug6wmei">Problem analysis</h2>
+<div class="remark">Missing elements and problems:</div>
+<ul>
+<li class="remark">Even if the given model assumes the room has no obstacles, the states needed to solve the problem are too many because the exploration algorithm is embedded into the model itself (it makes the model less readable and more prone to errors -&gt; is it still a model? )</li>
+<li class="remark">An <em>oracle</em> could greatly reduce the complexity of the model by moving non-essential aspects of the problem out of the model itself<br/>(see <a href="https://en.wikipedia.org/wiki/Oracle_machine">oracle</a>: in this case an entity that given the current position and the destination returns the correct sequence of movements to reach the destination) </li>
+<li class="remark">Exploration and return-to-home algorithms are embedded in the model</li>
+<li class="remark">Latency seems to cause the majority of problems: the project MUST take it into consideration</li>
+<li class="remark">The sensors included into the Virtual Robot (collision detection) may not be enough to build a good final system</li>
+<li class="">There should be some way to synchronize the map state of the robot with the real environment <span style="text-decoration: line-through;">(e.g. by using a limited location system such a proximity sensor built into the home location or by letting the user set the current location as home location)</span></li>
+</ul>
+<br /><br /></div>
+<div style="background-color: rgba(86, 56, 253, 0.7); width: 40%; text-align: left; color: white;">By Marco Gozzi email: marco.gozzi3@studio.unibo.it <br/>
+<img src="https://i.imgur.com/tP7NJWO.png" alt="mbot" width="25%" height="25%" align=""/>
+</div>
+
+
+
+
+
+
+
+
+</body>
+</html>
