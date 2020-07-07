@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <title>Robot WebGui</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link href="/main.css" rel="stylesheet">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js"
+type="text/javascript"></script>
+    <script>
+    function myIp() {
+      var ip = location.host;
+    }
+  </script>
+    <style>
+      pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+    
+    td.free 		{background-color: #f1f1c1; width:50px; height:50px; border: 3px solid black; }
+    td.robot 		{background-color: #10ff10; width:23px; height:23px; border: 1px solid black; }
+    td.robotfree 	{background-color: #f1f1c1; width:23px; height:23px; border: 1px solid black; }
+    td.obstacle 	{background-color: #ff6060; width:50px; height:50px; border: 3px solid black; } 
+    td.dirty 		{background-color: #555555; width:50px; height:50px; border: 3px solid black; }
+    </style>
+    <script>
+  
+	</script>
+    <script>connect()</script>
+  </head>
+  <body onload="myIp()"> <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being
+    enabled. Please enable
+    Javascript and reload this page!</h2></noscript>
+    <div id="main-content" class="container">
+      <div class="row">
+        <h1>Tearoom virtuale</h1>
+        <h4>Input view</h4>
+        <span style="color:blue" th:text="${arg}">Tearoom</span>
+        <hr>
+        <h2> </h2>
+        <table style="width: 100%;  table-layout: fixed;" border="0">
+          <tbody>
+            <tr>
+              <td colspan="2">
+                <h2>External People state</h2>
+                <p id="clientstate">...</p>
+                <form class="form-inline"> <button id="client" class="btn btn-default"
+                    type="submit"> Progress state </button> <button id="clientstateupdate"
+                    class="btn btn-default" type="submit"> Update client state </button>
+                </form>
+              </td>
+            </tr>
+            <tr>
+              <td style="max-width:50%">
+                <h3>Tearoom state</h3>
+                <p id="applmsgs" >...</p>
+                <form class="form-inline"> <button id="update" class="btn btn-default"
+                    type="submit"> Show state </button> </form>
+              </td>
+              <td id="map"><br>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <hr><br>
+        <table style="width: 100%" border="1">
+          <tbody>
+            <tr>
+              <td colspan="3" style="vertical-align: middle; height:100px;">
+                <form class="form-inline"> <button id="manual" class="btn btn-default"
+                    style="width:100%; height:100px;" type="submit"> Switch to
+                    Manual Control </button> </form>
+              </td>
+            </tr>
+            <tr id="btnrow" style="text-align: center; vertical-align: middle; height: 100px; display: none;">
+              <td>
+                <form class="form-inline"> <button id="left" class="btn btn-default"
+                    style="width:100%; height:100px;" type="submit"> turn Left </button>
+                </form>
+              </td>
+              <td>
+                <form class="form-inline"> <button id="step" class="btn btn-default"
+                    style="width:100%; height:100px; " type="submit"> Step
+                    forward </button> </form>
+              </td>
+              <td>
+                <form class="form-inline"> <button id="right" class="btn btn-default"
+                    style="width:100%; height:100px;" type="submit"> turn Right
+                  </button> </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div id="mqttstates"> </div>
+      </div>
+    </div>
+    <!--
+    <h3> mqtt test </h3>    <button onclick="myFunction(){client.publish(" testtopic="" hello","web="" mqtt=""      button")}"="">Click me</button>    <p id="mqttp"> ... </p>-->
+  </body>
+</html>

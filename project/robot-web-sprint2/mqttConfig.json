@@ -1,0 +1,1 @@
+{"brokerhost":"tcp://localhost:1883", "maptopic":"unibo/qak/robot/map", "controltopic":"unibo/qak/robot/control", "statetopic":"unibo/qak/+/state"}

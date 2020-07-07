@@ -1,0 +1,872 @@
+System tearoom
+mqttBroker "localhost" : 1883 eventTopic "unibo/gozzi/events"
+
+//Client - Smartbell, Entering
+Request notify : notify(TEMP)
+Reply deny : deny(X)
+Reply accept : accept(CID)
+Reply full : full(CID, WTIME)
+
+//Smartbell - Waiter, Free Table
+Request table : table(CID)
+Reply available : available(CID)
+Reply full : full(CID, WTIME)
+Dispatch clientatentrance : clientatentrance(Cid) // self message
+Dispatch clientonhold : clientonhold(Cid) // self message
+Event attable : attable(Cid)	// for client simulation purpose
+
+//Client - Waiter - Barman, Requesting+serving tea
+Dispatch placeorder : placeorder(CID)
+Request relayorder : relayorder(Cid)
+Reply orderready : orderready(Cid)
+//---------------------------------------------------------
+Event delivered : delivered($Cid) 	// for client simulation purpose
+//---------------------------------------------------------
+
+//Client - Waiter, Requesting payment
+Dispatch payment : payment(Cid)
+//---------------------------------------------------------
+Event attable: attable(Cid)			// for client simulation purpose
+Event paymentOk : paymentOk(Cid)	// for client simulation purpose
+Event exitOk : exitOk(Cid)			// for client simulation purpose
+//---------------------------------------------------------
+
+Dispatch cleantable : cleantable(Num) //self message, when teatable Num is dirty and free
+//Dispatch cleantableok : cleantableok(Num) //self message, when teatable Num has been cleaned
+
+//Waiter - robot, movement
+Request moveTo : moveTo(OldX, OldY, X, Y)	//start pos + destination pos
+Reply moveOk : moveOk(X,Y)					//reached destination pos
+Reply moveKo : moveKo(X,Y)	 				//current pos != moveTo
+//---------------------------------------------------------
+//Tell the planner to stop current plan
+//The planner will either send a moveKo
+//		or moveOk if CurrentPlan completed at the same time as robot received stopPlan
+//		The waiter must wait for the answer or we risk to lose the synchronism
+//		i.e. every future moveTo will be replied with the previous moveOk that was put in the queue msgQueueStore
+Dispatch stopPlan : stopPlan(a)
+//---------------------------------------------------------
+
+//Robot - basicrobot
+Dispatch doMove : doMove(M)
+Request step       : step( TIME )	
+Reply   stepdone   : stepdone(V)  
+Reply   stepfail   : stepfail(DURATION, CAUSE)
+Dispatch cmd       : cmd(MOVE)  
+
+//Web interaction
+Dispatch manual : manual(x)
+
+Context ctxwaiter ip [host="localhost" port=8050]  			+mqtt
+Context ctxsmartbell ip [host="localhost" port=8051]		+mqtt
+//Context ctxhall ip [host="localhost" port=8052]			+mqtt
+Context ctxbarman ip [host="localhost" port=8056]			+mqtt
+Context ctxbasicrobot ip [host="192.168.31.141" port=8020] 		+mqtt
+
+
+
+//implements planner
+QActor robot context ctxwaiter{
+	
+	[# 
+		var CurrentPlannedMove = ""
+		val mapname                    = "teaRoomExplored"
+		var Started			            = false
+//		val StepTime                   = 600L //firefox f11 on laptop registrazione
+//		val StepTime                   = 800L //firefox f11 on monitor registrazione
+//		val StepTime                   = 600L //firefox f11 on monitor no registrazione
+		var X = ""
+		var Y = ""
+		var Debug = false
+		var StepTime = 500L
+		var StepFailWaitTime = 5000L
+		var Fails = 1
+		var StepFailTime = 150L
+		var LastTurn = ""
+		val Name = name
+		val MapTopic = "unibo/qak/robot/map"
+		val ControlTopic = "unibo/qak/robot/control"
+	#]	 
+
+	State s0 initial{
+		println("robot init")
+		
+		solve( consult("tearoomKB-project-sprint2.pl") )
+		
+		solve( stepTime(X) ) ifSolved { [# StepTime = getCurSol("X").toString().toLong() #] println("robot StepTime = $StepTime") }
+		solve( stepFailWaitTime(X) ) ifSolved { [# StepFailWaitTime = getCurSol("X").toString().toLong() #] println("robot StepFailWaitTime = $StepFailWaitTime") }
+		solve( debug($Name,true) ) ifSolved { [# Debug = true #]	println("robot Debug = $Debug") }
+		
+		run itunibo.planner.plannerUtil.initAI()
+		run itunibo.planner.plannerUtil.loadRoomMap( mapname )
+		[# val Map = itunibo.planner.plannerUtil.getMapHTML() #]
+    	[# publish(Map, MapTopic) #]
+		if [# Debug #] {
+			println("INITIAL MAP") 
+			run itunibo.planner.plannerUtil.showMap()
+		}
+		updateResource[# "robot planner ok" #]
+    			
+	}Goto waitRequest
+	
+	State waitRequest{
+		[# publish("Robot automatically controlled, press to switch to manual", ControlTopic) #]
+	}
+	Transition t0
+		whenMsg 	manual -> manualControl
+		whenRequest moveTo -> planForMoves		
+	
+	State manualControl{ 
+		[# publish("Robot manually controlled, press to switch to auto", ControlTopic) #]
+		[# val Map = itunibo.planner.plannerUtil.getMapHTML() #]
+    	[# publish(Map, MapTopic) #]
+	} Transition t0 whenMsg manual -> waitRequest
+	
+	State planForMoves{
+		[#if(Debug)#]println("robot planForMoves")
+		onMsg(moveTo : moveTo(A,B,X,Y)){
+			[#
+				val A = payloadArg(0)
+				val B = payloadArg(1)
+				X = payloadArg(2)
+				Y = payloadArg(3)
+				itunibo.planner.plannerUtil.planForGoal(X,Y)
+				if(Debug){
+					println("Invio per iniziare da $A $B a goal $X $Y")
+					println("Le mosse sono ${itunibo.planner.plannerUtil.getActions()}")
+					readLine()
+				}
+			#]
+		}
+	}
+	Transition t0
+		whenTime 200 -> execPlannedMoves
+		whenMsg stopPlan -> replyKo
+ 
+	State execPlannedMoves{ //list of moves to do
+		[#if(Debug)#]println("robot execPlannedMoves")
+		printCurrentMessage
+		onMsg(stepdone : stepdone(A)){
+			if [# Fails > 1 #]{ // post serie di rimbalzini, arretro un po' dall'ostacolo
+				forward basicrobot -m cmd : cmd(s)
+				delay 50
+				forward basicrobot -m cmd : cmd(h)
+				delay 50
+			}
+			[# Fails = 1 #]
+			if [# Debug #] {[#
+				val msg = "robot: stepdone $CurrentPlannedMove : ${payloadArg(0)}"
+				itunibo.planner.plannerUtil.showMap() 
+				itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,msg)
+			#]}
+    		else{
+    			run	itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,"")
+				[# val Map = itunibo.planner.plannerUtil.getMapHTML() #]
+    			[# publish(Map, MapTopic) #]
+    		}
+    	}
+    	
+ 		[#  
+ 			CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()
+ 			if(Debug){
+	 			println("Invio per vedere mosse rimanenti")
+				readLine()
+				itunibo.planner.plannerUtil.showMap() 
+				println("Now $CurrentPlannedMove in ${itunibo.planner.plannerUtil.getActions()}")
+			}
+		#]
+ 		
+ 	}
+ 	Transition t0 	
+ 			whenTime 100 -> maybeExecTheMove
+ 			whenMsg stopPlan -> replyKo   	 	  	
+   	
+   	// basically implement a whenTime 100 and [# CurrentPlannedMove.length > 0 #]
+   	State maybeExecTheMove{
+		println("maybeExecTheMove")
+   		if [# CurrentPlannedMove.length == 0 #] {//	no moves left to do, arrived at the goal
+	   		replyTo moveTo with moveOk : moveOk($X, $Y)
+			[#if(Debug)#] println("Plan completed successfully")
+			[#if(Debug)#] run itunibo.planner.plannerUtil.showMap() 
+   		}
+   	}
+   	Goto execTheMove if [# CurrentPlannedMove.length > 0 #] else waitRequest
+   	
+  	State execTheMove{ // do one of the moves at a time, either step or 90degree turn
+		[#if(Debug)#]println("robot execTheMove")
+		if [# CurrentPlannedMove == "w" #] { 	// o la mossa è w
+			request basicrobot -m step : step($StepTime)
+		}
+		else{ // o è l/r	
+			forward basicrobot -m cmd : cmd($CurrentPlannedMove)
+			[#if(Debug)#]run itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,"robot: turning $CurrentPlannedMove")
+			[#else#]run itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,"")
+			[# val Map = itunibo.planner.plannerUtil.getMapHTML() #]
+			[# publish(Map, MapTopic) #]
+			[# LastTurn = CurrentPlannedMove #]
+			delay 300
+		}
+ 		 		
+  	} 
+    Goto execPlannedMoves if [# CurrentPlannedMove != "w" #] else waitStepReply
+    
+    State waitStepReply{ // in case of a step request
+		[#if(Debug)#]println("robot waitReply")
+    }
+    Transition t0
+    	whenReply stepdone -> execPlannedMoves
+    	whenReply stepfail -> handleStepFailure
+    
+    State handleStepFailure{
+    	onMsg(stepfail : stepfail(D,C)){
+    		println("robot replyWithFailure")
+			forward basicrobot -m cmd : cmd(s)
+			[#delay((Fails++) * StepFailTime )#]
+			forward basicrobot -m cmd : cmd(h)
+			delay 50
+	    	[#
+	    		val NewX = itunibo.planner.plannerUtil.get_curPos().first
+	    		val NewY = itunibo.planner.plannerUtil.get_curPos().second
+	    		
+	    		/*if( Fails > 6){    	
+	    			println("Move Robot manually to the r cell then press Enter to resume")
+	    			itunibo.planner.plannerUtil.showMap() 
+	    			readLine()
+		    	}*/
+		    	
+	    	#]
+	    	replyTo moveTo with moveKo : moveKo($NewX, $NewY)
+    	}
+		
+    	
+    }Goto handleFailRebounce if [# Fails > ((StepTime / StepFailTime) + 1) #] else waitRequest
+    
+    State handleFailRebounce{
+	    [# if(LastTurn == "l") { #]
+	    	forward basicrobot -m cmd : cmd(r)
+	    	delay 400
+	    	forward basicrobot -m cmd : cmd(s)
+	    	delay 150
+	    	forward basicrobot -m cmd : cmd(h)
+	    	delay 50
+	    	forward basicrobot -m cmd : cmd(l)
+	    [# } else if(LastTurn == "r") { #]
+	    	forward basicrobot -m cmd : cmd(l)
+	    	delay 400
+	    	forward basicrobot -m cmd : cmd(s)
+	    	delay 150
+	    	forward basicrobot -m cmd : cmd(h)
+	    	delay 50
+	    	forward basicrobot -m cmd : cmd(r)
+	    [# } 
+	    	println("DEBUG --------------- handleFailRebounce with last turn = $LastTurn ")
+//	    	val RecoverStepTime = Fails * StepFailTime - 50
+			itunibo.planner.plannerUtil.showMap() 
+			//readLine()
+	    #]
+    }
+    Goto waitRequest
+//	Transition t0 
+//	whenReply stepdone -> execPlannedMoves
+//	whenReply stepfail -> replyKo
+
+	State replyKo{ // in case a plan fails
+		[# val NewX = itunibo.planner.plannerUtil.get_curPos().first
+	       val NewY = itunibo.planner.plannerUtil.get_curPos().second #]
+	    replyTo moveTo with moveKo : moveKo($NewX, $NewY)
+	}Goto waitRequest
+
+}
+
+
+//implements actuator
+ExternalQActor basicrobot context ctxbasicrobot
+
+//ExternalQActor barman context ctxbarman
+QActor barman context ctxbarman{
+	
+	State s0 initial{
+	}
+	Transition t0
+		whenRequest relayorder -> prepareTea
+	
+	State prepareTea{
+		onMsg( relayorder : relayorder(Cid) ){
+			[# val Cid = payloadArg(0) #]
+			delay 1000 // time to prepare tea
+			replyTo relayorder with orderready : orderready($Cid)
+			updateResource [# "tea prepared for $Cid" #]
+		}
+	}
+	Transition t0
+		whenRequest relayorder -> prepareTea
+}
+
+QActor smartbell context ctxsmartbell{
+	
+	[# 
+		val MaxTemp = 37.5 
+		var Cid = 1
+	#]
+	
+	State s0 initial{
+	}
+	Transition t0
+		whenRequest notify -> checkTemp
+		
+	State checkTemp{
+		onMsg(notify : notify(Temp)){
+			if [# payloadArg(0).toDouble() < MaxTemp #] {
+				request waiter -m table : table($Cid) // case (a)
+			}
+			else{
+				replyTo notify with deny : deny(0) //case (b)
+			}
+		}
+	}
+	Transition t1
+		whenRequest 	notify 		-> checkTemp 	//in case (b)
+		whenReply 		available 	-> replyClient 	//in case (a)
+		whenReply 		full 		-> replyClient 	//in case (a)
+		
+	State replyClient{
+		onMsg(available : available(CID)){
+			replyTo notify with accept : accept($Cid)
+		}
+		onMsg(full : full(CID,WTIME)){
+			[# val WaitTime = payloadArg(0) #]
+			replyTo notify with full : full($Cid, $WaitTime)
+		}
+		[# Cid++ #] //new CID for next Client
+	}
+	Transition t2
+		whenRequest notify -> checkTemp
+}
+
+
+QActor waiter context ctxwaiter {
+	
+	[#
+		val MaxStayTime 	= 100000L	
+		val DelayTime 		= 1000L
+		val RestWaitTime 	= 10000L
+		var CurrentCid		= ""
+		val Name = name
+		var TeatableToClean	= true
+		var IsWaiterAtHome  = true
+		
+		var Debug = true
+	#]
+	
+	State s0 initial{
+		discardMsg Off
+		solve( consult("tearoomKB-project-sprint2.pl") )
+		solve( debug($Name,true) ) ifSolved{ [# Debug = true #] }
+		println("waiter starting, debug is $Debug")
+		solve( roomstate(S) ) 
+		ifSolved { //Documentation says: #S => ${getCurSol("S").toString()}
+			updateResource[# getCurSol("S").toString() #]
+		}
+	}Goto waitState
+	
+	State waitState{
+		solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }
+		[#if(Debug)#]println(@S)
+		solve(waiter(_,0,0)) ifSolved { [# IsWaiterAtHome = true #] } else{ [# IsWaiterAtHome = false #] }
+	}
+	Transition t0
+		whenTime 	100		-> maybeRest				//chosen if no other msg arrives soon, check if there is a dirty table, else wait for real rest
+		whenRequest table 				-> checkTableAvail
+		whenMsg 	clientatentrance 	-> reach
+		whenMsg 	placeorder 			-> takeOrder
+		whenReply 	orderready 			-> serveOrder
+		whenMsg 	payment 			-> getPayment
+		whenMsg		cleantable and [# TeatableToClean #]			-> thinkCleanTable
+
+	
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//this state implements requirements "accept" and "inform"
+	State checkTableAvail{
+		[#if(Debug)#]println("waiter checkTableAvail")
+		onMsg(table : table(Cid)){
+			[# CurrentCid = payloadArg(0) #]
+			solve( updateWaiterState(X,checkAvailability($CurrentCid)) )
+			solve( occupyHall($CurrentCid) )
+			solve( reserveTable(Num, $CurrentCid) )//accept
+			ifSolved {
+				replyTo table with available : available($CurrentCid)
+				forward waiter -m clientatentrance : clientatentrance($CurrentCid) //so that the waiter will eventually do the "reach" task
+			}
+			else{//inform				
+				forward waiter -m clientonhold : clientonhold($CurrentCid) //so that the waiter will eventually do the "reach" task
+				replyTo table with full : full($CurrentCid, $MaxStayTime)
+				solve( assert( client($CurrentCid, onhold) ) )
+			}
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+		[#if(Debug)#]println(@S)
+	}
+	Goto waitState
+	
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//this state implements requirement "reach"
+	State reach{//goto entrance + goto table
+		[#if(Debug)#]println("waiter reach")
+		onMsg(clientatentrance : clientatentrance(CurrentCid)){
+			[# CurrentCid = payloadArg(0) #]
+			solve(updateWaiterState(X,reach($CurrentCid)))
+		}
+		onMsg(moveKo : moveKo(X, Y)){//in case the move failed update where the robot has arrived
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(A,$X,$Y))
+		}
+		//solve(pos(entrancedoor, X, Y)) 
+		//----------------------------------------------------------------------------------------------------
+		//request robot -m moveTo : moveTo(#X, #Y) //-------------------- no implementation for #VarRefInStr ?
+		//----------------------------------------------------------------------------------------------------
+		solve(coordinatesTo(entrancedoor, OldX, OldY, X, Y))//move to entrancedoor
+		ifSolved { 
+			[#  val OldX = getCurSol("OldX").toString()
+				val OldY = getCurSol("OldY").toString()
+				val X = getCurSol("X").toString()
+				val Y = getCurSol("Y").toString()		#]
+			request robot -m moveTo : moveTo($OldX, $OldY, $X, $Y)
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+		[#if(Debug)#]println(@S)
+	}
+	Transition t0
+		whenReply moveOk -> reachp2//now at the entrancedoor
+		whenReply moveKo -> reach  //retry
+	
+	
+	State reachp2{//at entrance + goto table
+		[#if(Debug)#]println("waiter reachp2")
+		onMsg(moveKo : moveKo(X, Y)){//in case the move failed update where the robot has arrived
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(_,$X,$Y))
+		}
+		onMsg(moveOk : moveOk(X,Y)){
+			solve( freeHall($CurrentCid) )//client "collected"		
+			solve( updateClient($CurrentCid, entering) )
+			solve( updateWaiterLoc(entrancedoor,X,Y) )
+			solve( updateWaiterState(X,at(entrancedoor)) )
+		}
+		solve( teatable(Num, reserved($CurrentCid), clean) ) // find reserved table
+		[# val TableNum = getCurSol("Num").toString() #]
+		
+		solve(coordinatesTo(teatable($TableNum), OldX, OldY, X, Y))//move to teatable
+		ifSolved { 
+			[#  val OldX = getCurSol("OldX").toString()
+				val OldY = getCurSol("OldY").toString()
+				val X = getCurSol("X").toString()
+				val Y = getCurSol("Y").toString()		#]
+			request robot -m moveTo : moveTo($OldX, $OldY, $X, $Y)
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #][#if(Debug)#]println(@S) } 
+	}
+	Transition t0
+		whenReply moveOk -> reachp3	 //now at the table
+		whenReply moveKo -> reachp2  //retry
+	
+	State reachp3{//at table
+		[#if(Debug)#]println("waiter reachp3")
+		solve( teatable(Num, reserved($CurrentCid), clean) ) // find reserved table
+		[# val TableNum = getCurSol("Num").toString() #]
+		solve( updateWaiterState(X, deployed($CurrentCid,$TableNum)) )
+		solve( updateWaiterLoc(teatable($TableNum),X,Y))
+		solve( engageTable($TableNum, $CurrentCid) ) // occupy table
+		emit attable : attable($CurrentCid)
+		solve( updateClient($CurrentCid, choosing) )
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #][#if(Debug)#]println(@S) } 
+	}
+	Goto waitState
+	
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//this state implements requirement "take"
+	State takeOrder{//goto table + request relayorder
+		[#if(Debug)#]println("waiter takeOrder")
+		onMsg(moveKo : moveKo(X, Y)){//in case the move failed update where the robot has arrived
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(S,$X,$Y))
+		}
+		onMsg(placeorder : placeorder(CurrentCid)){
+			[# CurrentCid = payloadArg(0) #]
+			solve(updateWaiterState(X, goTakeOrder($CurrentCid)))
+			solve( updateClient($CurrentCid, placeorder) )
+			}
+		solve( teatable(Num, busy($CurrentCid), dirty) ) // find correct table
+		[# val TableNum = getCurSol("Num").toString() #]
+		solve(coordinatesTo(teatable($TableNum), OldX, OldY, X, Y))//move to teatable
+		ifSolved { 
+			[#  val OldX = getCurSol("OldX").toString()
+				val OldY = getCurSol("OldY").toString()
+				val X = getCurSol("X").toString()
+				val Y = getCurSol("Y").toString()		#]
+			request robot -m moveTo : moveTo($OldX, $OldY, $X, $Y)
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #][#if(Debug)#]println(@S) } 
+	}
+	Transition t0
+		whenReply moveOk -> takeOrderp2	 //now at the table
+		whenReply moveKo -> takeOrder  //retry
+		
+		
+		
+	State takeOrderp2{//at table + request relayorder
+		solve( teatable(Num, busy($CurrentCid), dirty) ) // find correct table
+		[# val TableNum = getCurSol("Num").toString() #]
+		solve( updateWaiterLoc(teatable($TableNum),X,Y))
+		solve( updateWaiterState(X, takingOrder($CurrentCid)) )
+		solve( updateClient($CurrentCid, orderplaced) )
+		request barman -m relayorder : relayorder($CurrentCid) //real task BL
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #][#if(Debug)#]println(@S) } 
+	}
+	Goto waitState	
+		
+		
+		
+		
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//this state implements requirement "serve"
+	State serveOrder{//goto bar + goto table
+		[#if(Debug)#]println("waiter serveOrder")
+		onMsg(orderready : orderready(CurrentCid)){
+			[# CurrentCid = payloadArg(0) #]
+			solve(updateWaiterState(X, getOrder($CurrentCid)))
+		}
+		onMsg(moveKo : moveKo(X, Y)){//in case the move failed update where the robot has arrived
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(S,$X,$Y))
+		}
+		solve(coordinatesTo(barman, OldX, OldY, X, Y))//move to barman
+		ifSolved { 
+			[#  val OldX = getCurSol("OldX").toString()
+				val OldY = getCurSol("OldY").toString()
+				val X = getCurSol("X").toString()
+				val Y = getCurSol("Y").toString()	#]		
+			request robot -m moveTo : moveTo($OldX, $OldY, $X, $Y)
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #][#if(Debug)#]println(@S) } 
+	}
+	Transition t0
+		whenReply moveOk -> serveOrderp2	 //now at the table
+		whenReply moveKo -> serveOrder  //retry
+		
+		
+	State serveOrderp2{//at bar, goto table
+		onMsg(moveKo : moveKo(X, Y)){//in case the move failed update where the robot has arrived
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(_,$X,$Y))
+		}
+		onMsg(moveOk : moveOk(X,Y)){
+			solve( updateWaiterState(X, bar($CurrentCid)) )
+			solve( updateWaiterLoc(barman,X,Y) )
+		}
+		solve( teatable(Num, busy($CurrentCid), dirty) ) // find correct table
+		[# val TableNum = getCurSol("Num").toString() #]
+		solve(coordinatesTo(teatable($TableNum), OldX, OldY, X, Y))//move to teatable
+		ifSolved { 
+			[#  val OldX = getCurSol("OldX").toString()
+				val OldY = getCurSol("OldY").toString()
+				val X = getCurSol("X").toString()
+				val Y = getCurSol("Y").toString() #]
+			request robot -m moveTo : moveTo($OldX, $OldY, $X, $Y)
+		}		
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #][#if(Debug)#]println(@S) } 
+	}
+	Transition t0
+		whenReply moveOk -> serveOrderp3	 //now at the table
+		whenReply moveKo -> serveOrderp2  //retry
+		
+	State serveOrderp3{//at table
+		onMsg(moveOk : moveOk(X,Y)){
+			solve( teatable(Num, busy($CurrentCid), dirty) ) // find correct table
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   
+				val TableNum = getCurSol("Num").toString()	#]
+			solve( updateWaiterLoc(teatable($TableNum),$X,$Y) )
+			solve( updateWaiterState(X, serving($CurrentCid)) )
+			solve( updateClient($CurrentCid, consuming) )
+			//-------------------------------------------
+			emit delivered : delivered($CurrentCid) //just for simulation, in real life the client would see that the waiter has brought the tea
+			//-------------------------------------------
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #][#if(Debug)#]println(@S) } 
+	}
+	Goto waitState
+		
+		
+		
+		
+	
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	//this state implements requirements "collect" and "exit"
+	State getPayment{//goto table + goto exitdoor
+		[#if(Debug)#]println("waiter getPayment")
+		onMsg(payment : payment(CurrentCid)){
+			[# CurrentCid = payloadArg(0) #]
+			solve(updateWaiterState(X, getPayment($CurrentCid)))
+		}
+		onMsg(moveKo : moveKo(X, Y)){//in case the move failed update where the robot has arrived
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(_,$X,$Y))
+		}
+		solve( teatable(Num, busy($CurrentCid), dirty) ) // find correct table
+		[# val TableNum = getCurSol("Num").toString() #]
+		solve(coordinatesTo(teatable($TableNum), OldX, OldY, X, Y))//move to teatable
+		ifSolved { 
+			[#  val OldX = getCurSol("OldX").toString()
+				val OldY = getCurSol("OldY").toString()
+				val X = getCurSol("X").toString()
+				val Y = getCurSol("Y").toString()		#]
+			request robot -m moveTo : moveTo($OldX, $OldY, $X, $Y)
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+	}
+	Transition t0
+		whenReply moveOk -> getPaymentp2	 //now at the table
+		whenReply moveKo -> getPayment  //retry
+		
+	State getPaymentp2{//at table + goto exitdoor
+		onMsg(moveOk : moveOk(X,Y)){
+			solve( teatable(Num, busy($CurrentCid), dirty) ) // find correct table
+			[# val TableNum = getCurSol("Num").toString() #]
+			solve( updateWaiterState(X, paymentatteatable($TableNum)) ) 
+			solve( updateWaiterLoc(teatable($TableNum),X,Y) )
+			solve( updateClient($CurrentCid, paying) )
+			delay 2000
+			solve( freeTable($TableNum, $CurrentCid) )
+			emit paymentOk : paymentOk($CurrentCid)
+			solve( updateClient($CurrentCid, leaving) )
+			forward waiter -m cleantable : cleantable($TableNum) // remember to clean the table
+		}
+		onMsg(moveKo : moveKo(X, Y)){//in case the move failed update where the robot has arrived
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve( updateWaiterLoc(_,$X,$Y) )
+			solve( updateClient($CurrentCid, leaving) )
+		}
+		
+		solve(coordinatesTo(exitdoor, OldX, OldY, X, Y))//move to exitdoor
+		ifSolved { 
+			[#  
+				val OldX = getCurSol("OldX").toString()
+				val OldY = getCurSol("OldY").toString()
+				val X = getCurSol("X").toString()
+				val Y = getCurSol("Y").toString()
+			#]
+			request robot -m moveTo : moveTo($OldX, $OldY, $X, $Y)	 // current xtext but not efficient
+			//request robot -m moveTo : moveTo(#OldX, #OldY, #X, #Y) // current xtext not working
+			//request robot -m moveTo : moveTo(^OldX, ^OldY, ^X, ^Y) // my xtext test
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+	}
+	Transition t0
+		whenReply moveOk -> escortToExit	 //goto exitdoor
+		whenReply moveKo -> getPaymentp2  //retry
+		
+	State escortToExit{//at exitdoor
+		onMsg(moveOk : moveOk(X,Y)){
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			emit exitOk : exitOk($CurrentCid)
+			solve( updateWaiterLoc(at(exitdoor),$X,$Y) )
+			solve( updateWaiterState(X, at(exitdoor)) ) 
+			solve( updateClient($CurrentCid, left) )
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+	}Goto waitState
+	
+	
+	
+//----------------------------------------------------------------------------------------------------
+	State thinkCleanTable{
+		onMsg(cleantable : cleantable(Num)){
+			[# val TableNum = payloadArg(0) #]
+			solve( updateWaiterState(X, gocleanteatable($TableNum)) )
+		}
+		onMsg(moveKo : moveKo(X, Y)){//in case the move failed update where the robot has arrived
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve( updateWaiterLoc(gocleanteatable(Num),$X,$Y) )
+		}
+		solve( waiter(gocleanteatable(Num), _, _) )
+		[# val TableNum = getCurSol("Num").toString() #]
+		solve( coordinatesTo(teatable($TableNum), OldX, OldY, X, Y) ) //move to teatable
+		ifSolved { 
+		[#  val OldX = getCurSol("OldX").toString()
+			val OldY = getCurSol("OldY").toString()
+			val X = getCurSol("X").toString()
+			val Y = getCurSol("Y").toString()		#]
+		request robot -m moveTo : moveTo($OldX, $OldY, $X, $Y)
+		}
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+	}//task can be interrupted so always check if there are other messages
+	Transition t0
+		whenReply moveOk -> cleanTable	 	 //now at the table
+		whenReply moveKo -> thinkCleanTable  //retry
+		whenRequest table 				-> cancelCurrentPlan
+		whenMsg 	clientatentrance 	-> cancelCurrentPlan
+		whenMsg 	placeorder 			-> cancelCurrentPlan
+		whenReply 	orderready 			-> cancelCurrentPlan
+		whenMsg 	payment 			-> cancelCurrentPlan
+		
+	State cancelCurrentPlan{
+		printCurrentMessage
+		// in case the plan cancelled was for cleantable
+		// the information that the teatable needs cleaning is LOST (msg elaborated)
+		// therefore the waiter needs to be reminded
+//		solve( teatable(Num, free, dirty) ) 
+//		ifSolved{
+//			[# val TableNum = getCurSol("Num").toString() #]
+//			forward waiter -m cleantable : cleantable($TableNum)
+//		}
+		[# autoMsg(currentMsg) #] // remember to process the ApplMsg that caused plan abortion
+		forward robot -m stopPlan : stopPlan(0)
+		if [#Debug#]{println("end of cancelCurrentPlan") [# readLine() #]}
+	}
+	Transition t0
+		whenReply moveOk -> handlePlanCancel
+		whenReply moveKo -> handlePlanCancel
+		
+	State handlePlanCancel{
+		onMsg(moveOk : moveOk(X, Y)){
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(_,$X,$Y))
+		}
+		onMsg(moveKo : moveKo(X, Y)){
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(_,$X,$Y))
+		}
+		solve( updateWaiterState(X, cancelplan) )
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+		if [#Debug#]{println("end of handlePlanCancel") [# readLine() #]}
+	}
+	Goto waitState
+		
+		
+	State cleanTable{//actually at the table that needs cleaning
+		[#if(Debug)#]println("waiter cleanTable")
+		onMsg(moveOk : moveOk(X, Y)){
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(teatable(Num),$X,$Y))
+			[# val TableNum = getCurSol("Num").toString() #]	
+			solve( updateWaiterState(X, atteatable($TableNum)) ) 
+			solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+		}
+	}
+	Transition t0
+		// if no client makes a request start cleaning
+		whenTime	100					-> doClean	
+		// else serve the request
+		whenRequest table 				-> checkTableAvail
+		whenMsg 	clientatentrance 	-> reach	
+		whenMsg 	placeorder 			-> takeOrder
+		whenReply 	orderready 			-> serveOrder
+		whenMsg 	payment 			-> getPayment
+		
+	State doClean{//cleaning is still one single activity i.e. not stoppable
+		[#if(Debug)#]println("waiter doClean")
+		
+		solve(updateWaiterState(atteatable(TableNum), cleaning(TableNum)))
+		[# val TableNum = getCurSol("TableNum").toString() #]
+	
+		delayVar DelayTime // clean table, waiter cannot process incoming messages
+		
+		solve( cleanTable($TableNum) )
+		solve( updateWaiterState(X, cleaned($TableNum)) )
+		solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }
+	}
+	Goto checkClientOnHold
+	
+	// added to accept a client that was given the full room reply after a table has been cleaned
+	State checkClientOnHold{
+		[#if(Debug)#]println("table cleaned letting somebody in")
+//		solve( teatable(N, free, clean) )// free teatable ? in this model only one waiter, so always yes
+//		ifSolved{
+//		[#if(Debug)#]println("ok, table is really cleaned")
+		[# if(Debug) #]solve(clients(L))
+		[# if(Debug) println("clients are: ${getCurSol("L").toString()}") #]
+		solve( client(Cid, onhold) ) // there is a client on hold
+		ifSolved{
+			[# val OnHoldCid = getCurSol("Cid").toString() #]
+			[# if(Debug)println("ok, client waiting is num: $OnHoldCid") #]
+			if [# Debug #] {solve( roomstate(S) ) ifSolved { [# println("------------------------------------pre solves ${getCurSol("S").toString()}") #] }}
+			solve( retract( client($OnHoldCid, onhold)) )
+			solve( reserveTable(N,$OnHoldCid) )
+			ifSolved {// client waiting in the hall can enter
+				solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }
+				[#if(Debug) println("DEBUG ---------- sending clientatantrence($OnHoldCid)  ------------") #] 
+				forward waiter -m clientatentrance : clientatentrance($OnHoldCid) //so that the waiter will eventually do the "reach" task
+			}			
+			if [# Debug #] {solve( roomstate(S) ) ifSolved { [# println("------------------------------------post solves ${getCurSol("S").toString()}") #] } }
+			// check if there's another table to clean
+			solve( teatable(Num, free, dirty) )  ifSolved{ [# val TableNum = getCurSol("Num").toString() #] forward waiter -m cleantable : cleantable($TableNum)}
+		}
+//		}
+	}
+	Goto waitState
+		
+			
+//----------------------------------------------------------------------------------------------------		
+	//maybeRest because a NonEmptyTransition can only begin with a Timeout
+	//and Timeout cannot be guarded (i.e. "whenTime 1000 and [# Guard #]" is not correct syntax)
+	State maybeRest{ }
+	Goto waitState if [# IsWaiterAtHome #] else checkDirtyTable
+	State checkDirtyTable{ solve( teatable(Num, free, dirty) )  ifSolved{ [# val TableNum = getCurSol("Num").toString() #] forward waiter -m cleantable : cleantable($TableNum)} }
+	Transition t0
+		whenTimeVar RestWaitTime -> rest
+		whenMsg cleantable -> thinkCleanTable
+		whenMsg 	clientatentrance 	-> reach
+		whenMsg 	placeorder 			-> takeOrder
+		whenReply 	orderready 			-> serveOrder
+		whenMsg 	payment 			-> getPayment
+		
+	State rest{
+		[#if(Debug)#]println("waiter rest")
+		onMsg(moveKo : moveKo(X, Y)){//in case the move failed update where the robot has arrived
+			[#  val X = payloadArg(0)
+				val Y = payloadArg(1)   #]
+			solve(updateWaiterLoc(_,$X,$Y))
+			solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+		}
+		solve(coordinatesTo(home, OldX, OldY, X, Y))//move to teatable
+		ifSolved { 
+			[#  val OldX = getCurSol("OldX").toString()
+				val OldY = getCurSol("OldY").toString()
+				val X = getCurSol("X").toString()
+				val Y = getCurSol("Y").toString()		#]
+			request robot -m moveTo : moveTo($OldX, $OldY, $X, $Y)
+		}
+		}
+	Transition t0
+		whenReply moveOk -> atHome	 //now at the table
+		whenReply moveKo -> rest  //retry
+		whenRequest table 				-> cancelCurrentPlan
+		whenMsg 	clientatentrance 	-> cancelCurrentPlan
+		whenMsg 	placeorder 			-> cancelCurrentPlan
+		whenReply 	orderready 			-> cancelCurrentPlan
+		whenMsg 	payment 			-> cancelCurrentPlan
+		whenMsg 	cleantable 			-> thinkCleanTable
+		
+	State atHome{
+		[#if(Debug)#]println("waiter athome")
+		solve( updateWaiterState(X, rest ) )
+		solve( updateWaiterLoc(home,X,Y) )
+		solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+	}
+	Goto waitState
+	
+}
+
