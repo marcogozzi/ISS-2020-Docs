@@ -27,7 +27,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						println("project waiter starting")
 						discardMessages = false
-						solve("consult('tearoomKB_Proj.pl')","") //set resVar	
+						solve("consult('tearoomKB-project-sprint1.pl')","") //set resVar	
 						solve("debugwaiter(X)","") //set resVar	
 						if( currentSolution.isSuccess() ) { Debug = true  
 						}

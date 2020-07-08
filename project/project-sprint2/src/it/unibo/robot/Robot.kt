@@ -74,8 +74,9 @@ class Robot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 					action { //it:State
 						 publish("Robot automatically controlled, press to switch to manual", ControlTopic)  
 					}
-					 transition(edgeName="t00",targetState="manualControl",cond=whenDispatch("manual"))
-					transition(edgeName="t01",targetState="planForMoves",cond=whenRequest("moveTo"))
+					 transition(edgeName="t00",targetState="waitRequest",cond=whenDispatch("stopPlan"))
+					transition(edgeName="t01",targetState="manualControl",cond=whenDispatch("manual"))
+					transition(edgeName="t02",targetState="planForMoves",cond=whenRequest("moveTo"))
 				}	 
 				state("manualControl") { //this:State
 					action { //it:State
@@ -83,7 +84,7 @@ class Robot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 						 val Map = itunibo.planner.plannerUtil.getMapHTML()  
 						 publish(Map, MapTopic)  
 					}
-					 transition(edgeName="t02",targetState="waitRequest",cond=whenDispatch("manual"))
+					 transition(edgeName="t03",targetState="waitRequest",cond=whenDispatch("manual"))
 				}	 
 				state("planForMoves") { //this:State
 					action { //it:State
@@ -106,8 +107,8 @@ class Robot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 						stateTimer = TimerActor("timer_planForMoves", 
 							scope, context!!, "local_tout_robot_planForMoves", 200.toLong() )
 					}
-					 transition(edgeName="t03",targetState="execPlannedMoves",cond=whenTimeout("local_tout_robot_planForMoves"))   
-					transition(edgeName="t04",targetState="replyKo",cond=whenDispatch("stopPlan"))
+					 transition(edgeName="t04",targetState="execPlannedMoves",cond=whenTimeout("local_tout_robot_planForMoves"))   
+					transition(edgeName="t05",targetState="replyKo",cond=whenDispatch("stopPlan"))
 				}	 
 				state("execPlannedMoves") { //this:State
 					action { //it:State
@@ -146,8 +147,8 @@ class Robot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 						stateTimer = TimerActor("timer_execPlannedMoves", 
 							scope, context!!, "local_tout_robot_execPlannedMoves", 100.toLong() )
 					}
-					 transition(edgeName="t05",targetState="maybeExecTheMove",cond=whenTimeout("local_tout_robot_execPlannedMoves"))   
-					transition(edgeName="t06",targetState="replyKo",cond=whenDispatch("stopPlan"))
+					 transition(edgeName="t06",targetState="maybeExecTheMove",cond=whenTimeout("local_tout_robot_execPlannedMoves"))   
+					transition(edgeName="t07",targetState="replyKo",cond=whenDispatch("stopPlan"))
 				}	 
 				state("maybeExecTheMove") { //this:State
 					action { //it:State
@@ -194,8 +195,8 @@ class Robot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 						if(Debug) 
 						println("robot waitReply")
 					}
-					 transition(edgeName="t07",targetState="execPlannedMoves",cond=whenReply("stepdone"))
-					transition(edgeName="t08",targetState="handleStepFailure",cond=whenReply("stepfail"))
+					 transition(edgeName="t08",targetState="execPlannedMoves",cond=whenReply("stepdone"))
+					transition(edgeName="t09",targetState="handleStepFailure",cond=whenReply("stepfail"))
 				}	 
 				state("handleStepFailure") { //this:State
 					action { //it:State

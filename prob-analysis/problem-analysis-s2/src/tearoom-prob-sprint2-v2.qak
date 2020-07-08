@@ -37,249 +37,63 @@ Dispatch cleantable : cleantable(Num) //self message, when teatable Num is dirty
 Request moveTo : moveTo(OldX, OldY, X, Y)	//start pos + destination pos
 Reply moveOk : moveOk(X,Y)					//reached destination pos
 Reply moveKo : moveKo(X,Y)	 				//current pos != moveTo
-//---------------------------------------------------------
-//Tell the planner to stop current plan
-//The planner will either send a moveKo
-//		or moveOk if CurrentPlan completed at the same time as robot received stopPlan
-//		The waiter must wait for the answer or we risk to lose the synchronism
-//		i.e. every future moveTo will be replied with the previous moveOk that was put in the queue msgQueueStore
-Dispatch stopPlan : stopPlan(a)
-//---------------------------------------------------------
-
-//Robot - basicrobot
-Request step       : step( TIME )	
-Reply   stepdone   : stepdone(V)  
-Reply   stepfail   : stepfail(DURATION, CAUSE)
-Dispatch cmd       : cmd(MOVE)  
-
-//Web interaction
-Dispatch manual : manual(x)
+Dispatch stopPlan : stopPlan(a)				//Tell the planner to stop current plan
 
 Context ctxwaiter ip [host="localhost" port=8050]  			+mqtt
 Context ctxsmartbell ip [host="localhost" port=8051]		+mqtt
 //Context ctxhall ip [host="localhost" port=8052]			+mqtt
 Context ctxbarman ip [host="localhost" port=8056]			+mqtt
-Context ctxbasicrobot ip [host="192.168.31.141" port=8020] 		+mqtt
 
 
 
-//implements planner
+// blackbox of physical robot (planner + actuator)
 QActor robot context ctxwaiter{
 	
-	[# 
-		var CurrentPlannedMove = ""
-		val mapname                    = "teaRoomExplored"
-		var Started			            = false
-//		val StepTime                   = 600L //firefox f11 on laptop registrazione
-//		val StepTime                   = 800L //firefox f11 on monitor registrazione
-//		val StepTime                   = 600L //firefox f11 on monitor no registrazione
-		var X = ""
-		var Y = ""
-		var Debug = false
-		var StepTime = 500L
-		var StepFailWaitTime = 5000L
-		var Fails = 1
-		var StepFailTime = 150L
-		var LastTurn = ""
-		val Name = name
-		val MapTopic = "unibo/qak/robot/map"
-		val ControlTopic = "unibo/qak/robot/control"
-	#]	 
-
+	[#
+		var GoalX = ""
+		var GoalY = ""	
+	#]
+	
 	State s0 initial{
 		println("robot init")
-		
-		solve( consult("tearoomKB-project-sprint2.pl") )
-		
-		solve( stepTime(X) ) ifSolved { [# StepTime = getCurSol("X").toString().toLong() #] println("robot StepTime = $StepTime") }
-		solve( stepFailWaitTime(X) ) ifSolved { [# StepFailWaitTime = getCurSol("X").toString().toLong() #] println("robot StepFailWaitTime = $StepFailWaitTime") }
-		solve( debug($Name,true) ) ifSolved { [# Debug = true #]	println("robot Debug = $Debug") }
-		
-		run itunibo.planner.plannerUtil.initAI()
-		run itunibo.planner.plannerUtil.loadRoomMap( mapname )
-		[# val Map = itunibo.planner.plannerUtil.getMapHTML() #]
-    	[# publish(Map, MapTopic) #]
-		if [# Debug #] {
-			println("INITIAL MAP") 
-			run itunibo.planner.plannerUtil.showMap()
-		}
-		updateResource[# "robot planner ok" #]
-    			
-	}Goto waitRequest
+		updateResource [# "init" #]
+	}
+	Goto waitRequest
 	
 	State waitRequest{
-		[# publish("Robot automatically controlled, press to switch to manual", ControlTopic) #]
-	}
-	Transition t0		
-		whenMsg		stopPlan -> waitRequest // consume dangling dispatch
-		whenMsg 	manual -> manualControl
-		whenRequest moveTo -> planForMoves		
-	
-	State manualControl{ 
-		[# publish("Robot manually controlled, press to switch to auto", ControlTopic) #]
-		[# val Map = itunibo.planner.plannerUtil.getMapHTML() #]
-    	[# publish(Map, MapTopic) #]
-	} Transition t0 whenMsg manual -> waitRequest
-	
-	State planForMoves{
-		[#if(Debug)#]println("robot planForMoves")
-		onMsg(moveTo : moveTo(A,B,X,Y)){
-			[#
-				val A = payloadArg(0)
-				val B = payloadArg(1)
-				X = payloadArg(2)
-				Y = payloadArg(3)
-				itunibo.planner.plannerUtil.planForGoal(X,Y)
-				if(Debug){
-					println("Invio per iniziare da $A $B a goal $X $Y")
-					println("Le mosse sono ${itunibo.planner.plannerUtil.getActions()}")
-					readLine()
-				}
-			#]
-		}
+		updateResource [# "wait request" #]
 	}
 	Transition t0
-		whenTime 200 -> execPlannedMoves
-		whenMsg stopPlan -> replyKo
- 
-	State execPlannedMoves{ //list of moves to do
-		[#if(Debug)#]println("robot execPlannedMoves")
-		printCurrentMessage
-		onMsg(stepdone : stepdone(A)){
-			if [# Fails > 1 #]{ // post serie di rimbalzini, arretro un po' dall'ostacolo
-				forward basicrobot -m cmd : cmd(s)
-				delay 50
-				forward basicrobot -m cmd : cmd(h)
-				delay 50
-			}
-			[# Fails = 1 #]
-			if [# Debug #] {[#
-				val msg = "robot: stepdone $CurrentPlannedMove : ${payloadArg(0)}"
-				itunibo.planner.plannerUtil.showMap() 
-				itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,msg)
-			#]}
-    		else{
-    			run	itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,"")
-				[# val Map = itunibo.planner.plannerUtil.getMapHTML() #]
-    			[# publish(Map, MapTopic) #]
-    		}
-    	}
-    	
- 		[#  
- 			CurrentPlannedMove = itunibo.planner.plannerUtil.getNextPlannedMove()
- 			if(Debug){
-	 			println("Invio per vedere mosse rimanenti")
-				readLine()
-				itunibo.planner.plannerUtil.showMap() 
-				println("Now $CurrentPlannedMove in ${itunibo.planner.plannerUtil.getActions()}")
-			}
-		#]
- 		
- 	}
- 	Transition t0 	
- 			whenTime 100 -> maybeExecTheMove
- 			whenMsg stopPlan -> replyKo   	 	  	
-   	
-   	// basically implement a whenTime 100 and [# CurrentPlannedMove.length > 0 #]
-   	State maybeExecTheMove{
-		println("maybeExecTheMove")
-   		if [# CurrentPlannedMove.length == 0 #] {//	no moves left to do, arrived at the goal
-	   		replyTo moveTo with moveOk : moveOk($X, $Y)
-			[#if(Debug)#] println("Plan completed successfully")
-			[#if(Debug)#] run itunibo.planner.plannerUtil.showMap() 
-   		}
-   	}
-   	Goto execTheMove if [# CurrentPlannedMove.length > 0 #] else waitRequest
-   	
-  	State execTheMove{ // do one of the moves at a time, either step or 90degree turn
-		[#if(Debug)#]println("robot execTheMove")
-		if [# CurrentPlannedMove == "w" #] { 	// o la mossa è w
-			request basicrobot -m step : step($StepTime)
+		whenMsg stopPlan -> waitRequest // consume stop msgs
+		whenRequest moveTo -> move
+	
+	State move{
+		//println("robot move")
+		//printCurrentMessage
+		onMsg(moveTo : moveTo(A,B,X,Y)){
+			[#
+				GoalX = payloadArg(2)
+				GoalY = payloadArg(3)
+			#]
 		}
-		else{ // o è l/r	
-			forward basicrobot -m cmd : cmd($CurrentPlannedMove)
-			[#if(Debug)#]run itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,"robot: turning $CurrentPlannedMove")
-			[#else#]run itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,"")
-			[# val Map = itunibo.planner.plannerUtil.getMapHTML() #]
-			[# publish(Map, MapTopic) #]
-			[# LastTurn = CurrentPlannedMove #]
-			delay 300
-		}
- 		 		
-  	} 
-    Goto execPlannedMoves if [# CurrentPlannedMove != "w" #] else waitStepReply
-    
-    State waitStepReply{ // in case of a step request
-		[#if(Debug)#]println("robot waitReply")
-    }
-    Transition t0
-    	whenReply stepdone -> execPlannedMoves
-    	whenReply stepfail -> handleStepFailure
-    
-    State handleStepFailure{
-    	onMsg(stepfail : stepfail(D,C)){
-    		println("robot replyWithFailure")
-			forward basicrobot -m cmd : cmd(s)
-			[#delay((Fails++) * StepFailTime )#]
-			forward basicrobot -m cmd : cmd(h)
-			delay 50
-	    	[#
-	    		val NewX = itunibo.planner.plannerUtil.get_curPos().first
-	    		val NewY = itunibo.planner.plannerUtil.get_curPos().second
-	    		
-	    		/*if( Fails > 6){    	
-	    			println("Move Robot manually to the r cell then press Enter to resume")
-	    			itunibo.planner.plannerUtil.showMap() 
-	    			readLine()
-		    	}*/
-		    	
-	    	#]
-	    	replyTo moveTo with moveKo : moveKo($NewX, $NewY)
-    	}
+		updateResource [# "move request to $GoalX $GoalY" #]
+	}
+	Transition t0
+		whenTime 1000 -> moveOk	// simulate real movement
+		whenMsg stopPlan -> moveKo
 		
-    	
-    }Goto handleFailRebounce if [# Fails > ((StepTime / StepFailTime) + 1) #] else waitRequest
-    
-    State handleFailRebounce{
-	    [# if(LastTurn == "l") { #]
-	    	forward basicrobot -m cmd : cmd(r)
-	    	delay 400
-	    	forward basicrobot -m cmd : cmd(s)
-	    	delay 150
-	    	forward basicrobot -m cmd : cmd(h)
-	    	delay 50
-	    	forward basicrobot -m cmd : cmd(l)
-	    [# } else if(LastTurn == "r") { #]
-	    	forward basicrobot -m cmd : cmd(l)
-	    	delay 400
-	    	forward basicrobot -m cmd : cmd(s)
-	    	delay 150
-	    	forward basicrobot -m cmd : cmd(h)
-	    	delay 50
-	    	forward basicrobot -m cmd : cmd(r)
-	    [# } 
-	    	println("DEBUG --------------- handleFailRebounce with last turn = $LastTurn ")
-//	    	val RecoverStepTime = Fails * StepFailTime - 50
-			itunibo.planner.plannerUtil.showMap() 
-			//readLine()
-	    #]
-    }
-    Goto waitRequest
-//	Transition t0 
-//	whenReply stepdone -> execPlannedMoves
-//	whenReply stepfail -> replyKo
-
-	State replyKo{ // in case a plan fails
-		[# val NewX = itunibo.planner.plannerUtil.get_curPos().first
-	       val NewY = itunibo.planner.plannerUtil.get_curPos().second #]
-	    replyTo moveTo with moveKo : moveKo($NewX, $NewY)
-	}Goto waitRequest
-
+	State moveKo{
+		replyTo moveTo with moveKo : moveKo($GoalX, $GoalY)
+		updateResource [# "plan to $GoalX $GoalY was stopped" #]
+	}
+	Goto waitRequest
+	
+	State moveOk{
+		replyTo moveTo with moveOk : moveOk($GoalX, $GoalY)
+		updateResource [# "move success to $GoalX $GoalY" #]
+	}
+	Goto waitRequest
 }
-
-
-//implements actuator
-ExternalQActor basicrobot context ctxbasicrobot
 
 //ExternalQActor barman context ctxbarman
 QActor barman context ctxbarman{
@@ -343,6 +157,8 @@ QActor smartbell context ctxsmartbell{
 }
 
 
+
+
 QActor waiter context ctxwaiter {
 	
 	[#
@@ -354,13 +170,13 @@ QActor waiter context ctxwaiter {
 		var TeatableToClean	= true
 		var IsWaiterAtHome  = true
 		
-		var Debug = true
+		var Debug = false
 	#]
 	
 	State s0 initial{
 		discardMsg Off
-		solve( consult("tearoomKB-project-sprint2.pl") )
-		solve( debug($Name,true) ) ifSolved{ [# Debug = true #] }
+		solve( consult("tearoomKB-PA-sprint2.pl") )
+		solve(debug(true)) ifSolved{ [# Debug = true #] }
 		println("waiter starting, debug is $Debug")
 		solve( roomstate(S) ) 
 		ifSolved { //Documentation says: #S => ${getCurSol("S").toString()}

@@ -26,12 +26,16 @@ class Robot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 				var X = ""
 				var Y = ""
 				var Debug = false
-				var StepTime = 600L
+				var StepTime = 400L
 				var StepFailWaitTime = 10000L
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
-						solve("consult('tearoomKB_Proj.pl')","") //set resVar	
+						forward("cmd", "cmd(l)" ,"basicrobot" ) 
+						delay(1000) 
+						forward("cmd", "cmd(r)" ,"basicrobot" ) 
+						delay(1000) 
+						solve("consult('tearoomKB-project-sprint1.pl')","") //set resVar	
 						solve("stepTime(X)","") //set resVar	
 						if( currentSolution.isSuccess() ) { StepTime = getCurSol("X").toString().toLong()  
 						}
@@ -48,6 +52,8 @@ class Robot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 						else
 						{}
 						println("robot init")
+						println("step time is $StepTime")
+						println("stepFailWaitTime is $StepFailWaitTime")
 						itunibo.planner.plannerUtil.initAI(  )
 						itunibo.planner.plannerUtil.loadRoomMap( mapname  )
 						if(Debug) 

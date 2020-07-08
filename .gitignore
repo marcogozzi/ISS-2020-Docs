@@ -29,3 +29,5 @@ project/project-sprint*/waiter-*/
 project/robot-web-sprint*/bin/
 project/robot-web-sprint*/build/
 project/robot-web-sprint*/web-*/
+
+*.bak

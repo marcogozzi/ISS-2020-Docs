@@ -23,7 +23,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 				state("s0") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="t011",targetState="checkTemp",cond=whenRequest("notify"))
+					 transition(edgeName="t012",targetState="checkTemp",cond=whenRequest("notify"))
 				}	 
 				state("checkTemp") { //this:State
 					action { //it:State
@@ -37,9 +37,9 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 								 }
 						}
 					}
-					 transition(edgeName="t112",targetState="checkTemp",cond=whenRequest("notify"))
-					transition(edgeName="t113",targetState="replyClient",cond=whenReply("available"))
-					transition(edgeName="t114",targetState="replyClient",cond=whenReply("full"))
+					 transition(edgeName="t113",targetState="checkTemp",cond=whenRequest("notify"))
+					transition(edgeName="t114",targetState="replyClient",cond=whenReply("available"))
+					transition(edgeName="t115",targetState="replyClient",cond=whenReply("full"))
 				}	 
 				state("replyClient") { //this:State
 					action { //it:State
@@ -54,7 +54,7 @@ class Smartbell ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 						}
 						 Cid++  
 					}
-					 transition(edgeName="t215",targetState="checkTemp",cond=whenRequest("notify"))
+					 transition(edgeName="t216",targetState="checkTemp",cond=whenRequest("notify"))
 				}	 
 			}
 		}

@@ -12,7 +12,6 @@ Request table : table(CID)
 Reply available : available(CID)
 Reply full : full(CID, WTIME)
 Dispatch clientatentrance : clientatentrance(Cid) // self message
-Dispatch clientonhold : clientonhold(Cid) // self message
 Event attable : attable(Cid)	// for client simulation purpose
 
 //Client - Waiter - Barman, Requesting+serving tea
@@ -32,7 +31,7 @@ Event exitOk : exitOk(Cid)			// for client simulation purpose
 //---------------------------------------------------------
 
 Dispatch cleantable : cleantable(Num) //self message, when teatable Num is dirty and free
-Dispatch cleantableok : cleantableok(Num) //self message, when teatable Num has been cleaned
+//Dispatch cleantableok : cleantableok(Num) //self message, when teatable Num has been cleaned
 
 //Waiter - robot, movement
 Request moveTo : moveTo(OldX, OldY, X, Y)	//start pos + destination pos
@@ -44,6 +43,7 @@ Context ctxwaiter ip [host="localhost" port=8050]  			+mqtt
 Context ctxsmartbell ip [host="localhost" port=8051]		+mqtt
 //Context ctxhall ip [host="localhost" port=8052]			+mqtt
 Context ctxbarman ip [host="localhost" port=8056]			+mqtt
+
 
 
 // blackbox of physical robot (planner + actuator)
@@ -80,8 +80,14 @@ QActor robot context ctxwaiter{
 	}
 	Transition t0
 		whenTime 1000 -> moveOk	// simulate real movement
-		whenMsg stopPlan -> waitRequest
+		whenMsg stopPlan -> moveKo
 		
+	State moveKo{
+		replyTo moveTo with moveKo : moveKo($GoalX, $GoalY)
+		updateResource [# "plan to $GoalX $GoalY was stopped" #]
+	}
+	Goto waitRequest
+	
 	State moveOk{
 		replyTo moveTo with moveOk : moveOk($GoalX, $GoalY)
 		updateResource [# "move success to $GoalX $GoalY" #]
@@ -161,7 +167,6 @@ QActor waiter context ctxwaiter {
 		
 		var TeatableFree	= true
 		var IsWaiterAtHome  = true
-		var Moving = false
 		
 		var Debug = true
 	#]
@@ -180,10 +185,6 @@ QActor waiter context ctxwaiter {
 	State waitState{
 		solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }
 		[#if(Debug)#]println(@S)//println("in waitState")
-		// there is a free and clean teatable so the client can enter the tearoom
-//		solve (teatable( N, free, clean ))
-//			ifSolved{ 	[# TeatableFree = true  #] }
-//			else{ 		[# TeatableFree = false #] }
 		solve(waiter(_,0,0)) ifSolved { [# IsWaiterAtHome = true #] } else{ [# IsWaiterAtHome = false #] }
 		
 	}
@@ -214,7 +215,6 @@ QActor waiter context ctxwaiter {
 				forward waiter -m clientatentrance : clientatentrance($CurrentCid) //so that the waiter will eventually do the "reach" task
 			}
 			else{//inform				
-				forward waiter -m clientonhold : clientonhold($CurrentCid) //so that the waiter will eventually do the "reach" task
 				replyTo table with full : full($CurrentCid, $MaxStayTime)
 				solve( assert( client($CurrentCid, onhold) ) )
 			}

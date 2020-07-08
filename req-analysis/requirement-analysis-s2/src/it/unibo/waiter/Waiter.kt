@@ -104,8 +104,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								forward("clientatentrance", "clientatentrance($Cid)" ,"waiter" ) 
 								}
 								else
-								{forward("clientonhold", "clientonhold($Cid)" ,"waiter" ) 
-								answer("table", "full", "full($Cid,$MaxStayTime)"   )  
+								{answer("table", "full", "full($Cid,$MaxStayTime)"   )  
 								solve("assert(client($Cid,onhold))","") //set resVar	
 								}
 						}
@@ -302,8 +301,13 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						 if(Debug){ println("endof cleanTable"); readLine(); }  
 					}
-					 transition(edgeName="t020",targetState="cleanTable",cond=whenDispatch("cleantable"))
-					transition(edgeName="t021",targetState="checkClientOnHold",cond=whenDispatch("cleantableok"))
+					 transition(edgeName="t020",targetState="checkClientOnHold",cond=whenDispatch("cleantableok"))
+					transition(edgeName="t021",targetState="checkTableAvail",cond=whenRequest("table"))
+					transition(edgeName="t022",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t023",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t024",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t025",targetState="getPayment",cond=whenDispatch("payment"))
+					transition(edgeName="t026",targetState="cleanTable",cond=whenDispatch("cleantable"))
 				}	 
 				state("checkClientOnHold") { //this:State
 					action { //it:State

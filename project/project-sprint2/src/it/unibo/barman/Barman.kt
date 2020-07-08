@@ -20,7 +20,7 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				state("s0") { //this:State
 					action { //it:State
 					}
-					 transition(edgeName="t09",targetState="prepareTea",cond=whenRequest("relayorder"))
+					 transition(edgeName="t010",targetState="prepareTea",cond=whenRequest("relayorder"))
 				}	 
 				state("prepareTea") { //this:State
 					action { //it:State
@@ -33,7 +33,7 @@ class Barman ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								)
 						}
 					}
-					 transition(edgeName="t010",targetState="prepareTea",cond=whenRequest("relayorder"))
+					 transition(edgeName="t011",targetState="prepareTea",cond=whenRequest("relayorder"))
 				}	 
 			}
 		}

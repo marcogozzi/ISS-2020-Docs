@@ -1,0 +1,450 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <style type="text/css">
+
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin: 10;
+    margin-right: 15px;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+    border-bottom: 1px solid #242424;
+}
+
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+}
+
+h2 {
+    background-color: #d9fbff;
+    font-size: 110%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 80%;
+}
+h4 {
+    background-color: #99ffcc;
+    font-size: 100%;
+	width: 750px;
+}
+#i {
+    color: #ff1010;
+}
+opt{
+      background-color:#e6ccff;
+  	font-family: "Arial";
+    font-size: 80%;
+		font-weight: bold;
+    color: #0033cc;
+}
+tt{
+	font-family: "Arial";
+    font-size: 80%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #ccffff;
+    color: #0033cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 80%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+k{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #990000;
+	 
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
+pre{
+	font-family: "Helvetica";
+	font-size: 60%;
+	background-color: #fcf8c7;
+	border: 1px solid blue;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+    min-width: 800px;
+		max-width: 1200px;
+    font-size: 18px;
+}    
+div.smallbody{
+	min-width: 800px;
+		max-width: 1200px;
+    font-size: 15px;
+}    
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}       
+div.remark{
+	background-color: #FFFC33;     
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}  
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}         
+    
+</style> <title>Esame ISS 2020</title>
+  </head>
+  <body>
+    <!--
+    <tt>tag tt</tt> <em>tag em</em> <bc>tag bc</bc> <k>tag k</k> <ks>tag      ks</ks> <kc>tag kc</kc>    <pre>tag pre</pre>    <m>tag m</m>    <div class="req"> div req </div>    <div class="remark"> div remark </div>    <hr>    -->
+    <div id="top">
+      <h1>Progetto finale ISS 2020 - Sprint 0 Overview </h1>
+      <k>There is no code without a project, no project without problem analysis
+        and no problem without requirements</k>. </div>
+    <div class="body">
+      <h2>Introduction <a href="http://htmlpreview.github.io/?https://raw.githubusercontent.com/anatali/iss2020LabBo/master/it.unibo.issLabStart/userDocs/TemaFinaleBo20.html"
+          target="web" style="font-size:50%">original file here</a></h2>
+      <div> The <em>manager</em> of a <em>tearoom</em> intends to regulate the
+        access to the service by means of a ddr robot (<em>waiter</em>). <br>
+        <br>
+        The <em>tearoom</em> is a rectangular room that includes:
+        <ul>
+          <li>an <em>entrancedoor</em> to enter in the room and an <em>exitdoor</em>
+            to exit form it;</li>
+          <li>a number <tt>N (N=2)</tt> of <em>teatable</em>;</li>
+          <li>a <em>serviceare</em> including a <em>servicedesk</em> at which
+            works a <em>barman</em>;</li>
+          <li>a <em>hall</em> equipped with a <em>presencedetector</em>, i.e.
+            a device (e.g. a sonar) that can detect the presence of a person (or
+            some other entity) in it.</li>
+        </ul>
+        The <em>waiter</em> can freely move along the borders of the tearoom,
+        since there are no obstacles there. </div>
+      <h2>Requirements</h2>
+      <div> The <em>waiter</em> should perform the following tasks:
+        <ul>
+          <li><em>accept</em> the request of a client to enter in the tearoom if
+            there is at least one teatable in the state <em>tableclean</em>,
+            i.e. the table is free and has been properly cleaned; </li>
+          <li><em>inform</em> the client about the maximum waiting time if there
+            is no <em>tableclean</em>;</li>
+          <li><em>reach</em> the <em>entrance door</em> and <em>convoy</em>
+            the accepted client to the selected teatable;</li>
+          <li><em>take</em> the order of the client and transmit it (using a
+            wifi-device) to the <em>barman</em>; </li>
+          <li><em>serve</em> the client when the <em>barman</em> says that the
+            requested drink is ready;</li>
+          <li><em>collect</em> the payment from the client when he/she has
+            finished to consume or when the <em>maxstaytime</em> is expired;</li>
+          <li><em>convoy</em> the client to the <em>exitdoor</em>;</li>
+          <li><em>clean</em> the tea-table just freed by the client;</li>
+          <li><em>rest</em> at my <em>home</em> when there is nothing to do.</li>
+          <li><span style="font-size:80%;"> <opt>Optional</opt>: The <em>waiter</em>
+              must open the <em>exitdoor</em> only when the hall is free, i.e.
+              it must not open that door if the hall is already engaged by a
+              client waiting to enter at the <em>entrancedoor</em>. </span></li>
+        </ul>
+        Since the room could contain <tt>N</tt> clients at the time, the <em>waiter</em>
+        should reduce as much as possible the waiting time of the requests
+        coming from each client. </div>
+      <div><br>
+        <h3>User stories</h3>
+        As a <em>client</em>,:
+        <ul>
+          <li>I intend to <em>notify</em> my interest in <em>entering</em> in
+            a <em>safe tearoom</em>, <em>sitting</em> at a free teatable, <em>ordering</em>
+            some tea, <em>consuming</em> it (within a limited amount of time <em>maxstaytime</em>)
+            <em>paying</em> the service with my credit card and finally <em>leaving</em>
+            the room.</li>
+          <li>For <em>safe tearoom</em>, I intend a tearoom with clean
+            tea-tables posed at a proper distance; the room is populated by
+            human clients whose body temperature is less than <tt>37.5</tt>
+            degrees. </li>
+          <li>I can submit my notification of interest by hitting the <em>smartbell</em>
+            located near the <em>entrancedoor</em> that will automatically
+            measure my body temperature and send a request message to the <em>waiter</em>,
+            by giving to me an unique <em>clientidentifier</em>. </li>
+          <li>I my body temperature is ok, but my request cannot be immediately
+            satisfied (since the room is full), I will be <em>informed</em> by
+            the <em>waiter</em> about the maximum waiting time.</li>
+        </ul>
+        As a <em>manager</em>:
+        <ul>
+          <li>I intend to be able to see the <em>current state</em> of the <em>tearoom</em>
+            by using a browser connected to a web-server associated to the
+            application. </li>
+        </ul>
+      </div>
+      <h2>Requirement analysis - Overview</h2>
+      <table style="width: 100%;" cellspacing="5" cellpadding="5" border="0">
+        <thead>
+          <tr>
+            <th>Requisito / task</th>
+            <th>Descrizione / considerazioni</th>
+            <th>Interrompibile</th>
+            <th>Movimento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>notify</td>
+            <td style="height: 76px;">La Smartbell deve essere capace di <k>interagire
+                con il mondo esterno (H2M device)</k>; possibile interazione tra
+              Smartbell e Waiter per verificare stato stanza, deve essere
+              seguito da task accept oppure inform</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N<br>
+            </td>
+          </tr>
+          <tr>
+            <td>accept</td>
+            <td>Waiter verifica stato della stanza e conferma l'accesso<br>
+            </td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N<br>
+            </td>
+          </tr>
+          <tr>
+            <td>inform</td>
+            <td>Waiter verifica stato della stanza e rimanda l'accesso
+              informando sul tempo d'attesa</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N<br>
+            </td>
+          </tr>
+          <tr>
+            <td>reach/convoy</td>
+            <td>Comporta un cambiamento di stato della stanza (un tavolo in
+              stato tableclean sarà in stato occupato); il Waiter deve recarsi
+              alla entrancedoor, poi al tavolo assegnato al Client</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>take</td>
+            <td> Il Waiter deve recarsi al tavolo assegnato al Client e
+              trasmettere l'ordine al Barman; <k>deve essere presente un
+                dispositivo H2M</k> per permettere la comunicazione tra Client e
+              Waiter (e.g. app, sito web, comandi vocali, ...); la comunicazione
+              avviene tramite Wi-Fi al Barman che è quindi dotato di un
+              dispositivo collegato alla rete</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>serve</td>
+            <td>Il Waiter deve recarsi dal Barman e poi al tavolo assegnato al
+              Client che ha fatto richiesta</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>collect</td>
+            <td>Il Waiter deve recarsi al tavolo assegnato al Client </td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>convoy/exit</td>
+            <td>Il Waiter deve recarsi al tavolo assegnato al Client e poi alla
+              exitdoor </td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>clean</td>
+            <td>Il Waiter deve recarsi ad un tavolo libero ma non pulito;
+              l'operazione richiede un tempo non nullo e ha priorità inferiore
+              rispetto ad altri task, cioè se si presenta un nuovo task durante
+              lo svolgimento allora questo task deve essere fermato; se ne può
+              mantenere il progresso in caso di interruzione</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y<br>
+              </b></td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>rest</td>
+            <td>Non è specificato cosa significhi "nothing to do"; deve essere
+              interrotto appena vi è un task da svolgere<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y<br>
+              </b></td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td><opt>hall</opt></td>
+            <td>Requisito opzionale<br>
+            </td>
+            <td>?</td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>showstate</td>
+            <td>Deve riguardare tutte le entità che hanno stato; deve essere
+              possibile accedere allo stato attraverso un browser quindi il
+              sistema deve esporre un punto di accesso web<br>
+            </td>
+            <td>?</td>
+            <td><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>Problematiche</h3>
+      <div class="smallbody">
+        <ol>
+          <li>Numero di tavoli / clienti presenti contemporaneamente: da
+            requisito sono presenti N=2 tavoli quindi è possibile che la tearoom
+            sia frequentata contemporaneamente da più di 1 Client; questo
+            richiede che il Waiter sia capace di gestire in parallelo due
+            sequenze separate di richieste; </li>
+          <li>Anche se si limitasse ad un Client alla volta l'accesso alla
+            tearoom, è possibile che la sequenza di richieste non avvenga in
+            ordine, ad esempio in caso di eventi anomali (il Client non completa
+            la sequenza correttamente) o nel caso in cui i requisiti dovessero
+            essere modificati in una futura versione che ne preveda di
+            aggiuntivi; è opportuno che il Waiter sia capace di gestire tale
+            situazione eventualmente riportandosi in uno stato noto/sicuro;</li>
+          <li>Gestione del tempo: da requisito <em>maxstaytime</em> risulta
+            necessario mantenere traccia dei momenti in cui sono avviati e
+            terminati alcuni task.</li>
+          <li>Alcuni task (clean e rest) risultano interrompibili da specifiche:
+            durante qualunque momento della loro esecuzione deve essere
+            possibile la loro interruzione per gestire il nuovo task
+            maggiormente prioritario.</li>
+        </ol>
+        <table cellspacing="5" cellpadding="5" border="1" width="100%">
+          <thead>
+            <tr>
+              <th style="width:25%">Sprint<br>
+              </th>
+              <th>Assunzioni<br>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#1<br>
+              </td>
+              <td>
+                <ul>
+                  <li>sono presenti due tavoli ma solamente un Client alla volta
+                    può accedere alla tearoom;</li>
+                  <li>ogni Client che accede al sistema esegue l'intera sequenza
+                    di azioni nel corretto ordine;</li>
+                  <li>non vi è limite di tempo per eseguire le azioni;</li>
+                  <li>nessun task è interrompibile.</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>#2<br>
+              </td>
+              <td>
+                <ul>
+                  <li>non vi è limite di tempo per eseguire le azioni;</li>
+                  <li>il task clean è interrompibile solamente prima che Waiter
+                    inizi la pulizia (cioè è possibile interromperlo fino al
+                    momento stesso in cui Waiter arriva al tavolo da pulire);</li>
+                  <li>ogni Client che accede al sistema esegue l'intera sequenza
+                    di azioni nel corretto ordine.</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>#3<br>
+              </td>
+              <td>Ogni Client che accede al sistema esegue l'intera sequenza di
+                azioni nel corretto ordine: al momento, dalla user story Client,
+                non sembra essere richiesto diversamente.</td>
+            </tr>
+            <tr>
+              <td>#4<br>
+              </td>
+              <td>Eventuali modifiche che dovessero sorgere durante l'esecuzione
+                degli Sprint precedenti.<br>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p><br>
+        </p>
+        <ol>
+        </ol>
+      </div>
+      <br>
+    </div>
+    <div style="background-color: rgba(86, 56, 253, 0.7); width: 40%; text-align: left; color: white;">By
+      Marco Gozzi<br>
+      email: marco.gozzi3@studio.unibo.it <br>
+      <img src="https://raw.githubusercontent.com/marcogozzi/ISS-2020-Docs/master/io.png"
+        alt="github.com/marcogozzi/" align=""> </div>
+  </body>
+</html>

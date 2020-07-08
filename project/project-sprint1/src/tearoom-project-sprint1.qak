@@ -33,7 +33,6 @@ Event exitOk : exitOk(Cid)			// for client simulation purpose
 Request moveTo : moveTo(OldX, OldY, X, Y)	//start pos + destination pos
 Reply moveOk : moveOk(X,Y)		//reached destination pos
 Reply moveKo : moveKo(X,Y)	 	//current pos != moveTo
-Dispatch failRecover : failRecover(a)
 
 //Robot - basicrobot
 Dispatch doMove : doMove(M)

@@ -13,7 +13,6 @@ Request table : table(CID)
 Reply available : available(CID)
 Reply full : full(CID, WTIME)
 Dispatch clientatentrance : clientatentrance(Cid) // self message
-Dispatch clientonhold : clientonhold(Cid) // self message
 Event attable : attable(Cid)	// for client simulation purpose
 
 //Client - Waiter - Barman, Requesting+serving tea
@@ -172,7 +171,6 @@ QActor waiter context ctxwaiter {
 				forward waiter -m clientatentrance : clientatentrance($Cid) //so that the waiter will eventually do the "reach" task
 			}
 			else{//inform
-				forward waiter -m clientonhold : clientonhold($Cid) //so that the waiter will eventually do the "reach" task
 				replyTo table with full : full($Cid, $MaxStayTime)
 				solve( assert( client($Cid, onhold) ) )
 			}
@@ -314,8 +312,13 @@ QActor waiter context ctxwaiter {
 	}
 //	Goto checkClientOnHold
 	Transition t0 
-		whenMsg cleantable -> cleanTable
 		whenMsg cleantableok -> checkClientOnHold
+		whenRequest table 				-> checkTableAvail
+		whenMsg 	clientatentrance 	-> reach
+		whenMsg 	placeorder 			-> takeOrder
+		whenReply 	orderready 			-> serveOrder
+		whenMsg 	payment 			-> getPayment
+		whenMsg cleantable -> cleanTable
 	
 	State checkClientOnHold{
 		[#if(Debug)#]println("table cleaned letting somebody in")

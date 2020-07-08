@@ -65,13 +65,13 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						stateTimer = TimerActor("timer_waitState", 
 							scope, context!!, "local_tout_waiter_waitState", 100.toLong() )
 					}
-					 transition(edgeName="t016",targetState="maybeRest",cond=whenTimeout("local_tout_waiter_waitState"))   
-					transition(edgeName="t017",targetState="checkTableAvail",cond=whenRequest("table"))
-					transition(edgeName="t018",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t019",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t020",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t021",targetState="getPayment",cond=whenDispatch("payment"))
-					transition(edgeName="t022",targetState="thinkCleanTable",cond=whenDispatchGuarded("cleantable",{ TeatableToClean  
+					 transition(edgeName="t017",targetState="maybeRest",cond=whenTimeout("local_tout_waiter_waitState"))   
+					transition(edgeName="t018",targetState="checkTableAvail",cond=whenRequest("table"))
+					transition(edgeName="t019",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t020",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t021",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t022",targetState="getPayment",cond=whenDispatch("payment"))
+					transition(edgeName="t023",targetState="thinkCleanTable",cond=whenDispatchGuarded("cleantable",{ TeatableToClean  
 					}))
 				}	 
 				state("checkTableAvail") { //this:State
@@ -88,8 +88,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								forward("clientatentrance", "clientatentrance($CurrentCid)" ,"waiter" ) 
 								}
 								else
-								{forward("clientonhold", "clientonhold($CurrentCid)" ,"waiter" ) 
-								answer("table", "full", "full($CurrentCid,$MaxStayTime)"   )  
+								{answer("table", "full", "full($CurrentCid,$MaxStayTime)"   )  
 								solve("assert(client($CurrentCid,onhold))","") //set resVar	
 								}
 						}
@@ -137,8 +136,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						if(Debug) 
 						println(getCurSol("S").toString())
 					}
-					 transition(edgeName="t023",targetState="reachp2",cond=whenReply("moveOk"))
-					transition(edgeName="t024",targetState="reach",cond=whenReply("moveKo"))
+					 transition(edgeName="t024",targetState="reachp2",cond=whenReply("moveOk"))
+					transition(edgeName="t025",targetState="reach",cond=whenReply("moveKo"))
 				}	 
 				state("reachp2") { //this:State
 					action { //it:State
@@ -177,8 +176,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 					}
-					 transition(edgeName="t025",targetState="reachp3",cond=whenReply("moveOk"))
-					transition(edgeName="t026",targetState="reachp2",cond=whenReply("moveKo"))
+					 transition(edgeName="t026",targetState="reachp3",cond=whenReply("moveOk"))
+					transition(edgeName="t027",targetState="reachp2",cond=whenReply("moveKo"))
 				}	 
 				state("reachp3") { //this:State
 					action { //it:State
@@ -238,8 +237,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 					}
-					 transition(edgeName="t027",targetState="takeOrderp2",cond=whenReply("moveOk"))
-					transition(edgeName="t028",targetState="takeOrder",cond=whenReply("moveKo"))
+					 transition(edgeName="t028",targetState="takeOrderp2",cond=whenReply("moveOk"))
+					transition(edgeName="t029",targetState="takeOrder",cond=whenReply("moveKo"))
 				}	 
 				state("takeOrderp2") { //this:State
 					action { //it:State
@@ -293,8 +292,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 					}
-					 transition(edgeName="t029",targetState="serveOrderp2",cond=whenReply("moveOk"))
-					transition(edgeName="t030",targetState="serveOrder",cond=whenReply("moveKo"))
+					 transition(edgeName="t030",targetState="serveOrderp2",cond=whenReply("moveOk"))
+					transition(edgeName="t031",targetState="serveOrder",cond=whenReply("moveKo"))
 				}	 
 				state("serveOrderp2") { //this:State
 					action { //it:State
@@ -329,8 +328,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 					}
-					 transition(edgeName="t031",targetState="serveOrderp3",cond=whenReply("moveOk"))
-					transition(edgeName="t032",targetState="serveOrderp2",cond=whenReply("moveKo"))
+					 transition(edgeName="t032",targetState="serveOrderp3",cond=whenReply("moveOk"))
+					transition(edgeName="t033",targetState="serveOrderp2",cond=whenReply("moveKo"))
 				}	 
 				state("serveOrderp3") { //this:State
 					action { //it:State
@@ -389,8 +388,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 					}
-					 transition(edgeName="t033",targetState="getPaymentp2",cond=whenReply("moveOk"))
-					transition(edgeName="t034",targetState="getPayment",cond=whenReply("moveKo"))
+					 transition(edgeName="t034",targetState="getPaymentp2",cond=whenReply("moveOk"))
+					transition(edgeName="t035",targetState="getPayment",cond=whenReply("moveKo"))
 				}	 
 				state("getPaymentp2") { //this:State
 					action { //it:State
@@ -431,8 +430,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 					}
-					 transition(edgeName="t035",targetState="escortToExit",cond=whenReply("moveOk"))
-					transition(edgeName="t036",targetState="getPaymentp2",cond=whenReply("moveKo"))
+					 transition(edgeName="t036",targetState="escortToExit",cond=whenReply("moveOk"))
+					transition(edgeName="t037",targetState="getPaymentp2",cond=whenReply("moveKo"))
 				}	 
 				state("escortToExit") { //this:State
 					action { //it:State
@@ -485,13 +484,13 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 					}
-					 transition(edgeName="t037",targetState="cleanTable",cond=whenReply("moveOk"))
-					transition(edgeName="t038",targetState="thinkCleanTable",cond=whenReply("moveKo"))
-					transition(edgeName="t039",targetState="cancelCurrentPlan",cond=whenRequest("table"))
-					transition(edgeName="t040",targetState="cancelCurrentPlan",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t041",targetState="cancelCurrentPlan",cond=whenDispatch("placeorder"))
-					transition(edgeName="t042",targetState="cancelCurrentPlan",cond=whenReply("orderready"))
-					transition(edgeName="t043",targetState="cancelCurrentPlan",cond=whenDispatch("payment"))
+					 transition(edgeName="t038",targetState="cleanTable",cond=whenReply("moveOk"))
+					transition(edgeName="t039",targetState="thinkCleanTable",cond=whenReply("moveKo"))
+					transition(edgeName="t040",targetState="cancelCurrentPlan",cond=whenRequest("table"))
+					transition(edgeName="t041",targetState="cancelCurrentPlan",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t042",targetState="cancelCurrentPlan",cond=whenDispatch("placeorder"))
+					transition(edgeName="t043",targetState="cancelCurrentPlan",cond=whenReply("orderready"))
+					transition(edgeName="t044",targetState="cancelCurrentPlan",cond=whenDispatch("payment"))
 				}	 
 				state("cancelCurrentPlan") { //this:State
 					action { //it:State
@@ -503,8 +502,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						 readLine()  
 						}
 					}
-					 transition(edgeName="t044",targetState="handlePlanCancel",cond=whenReply("moveOk"))
-					transition(edgeName="t045",targetState="handlePlanCancel",cond=whenReply("moveKo"))
+					 transition(edgeName="t045",targetState="handlePlanCancel",cond=whenReply("moveOk"))
+					transition(edgeName="t046",targetState="handlePlanCancel",cond=whenReply("moveKo"))
 				}	 
 				state("handlePlanCancel") { //this:State
 					action { //it:State
@@ -555,12 +554,12 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						stateTimer = TimerActor("timer_cleanTable", 
 							scope, context!!, "local_tout_waiter_cleanTable", 100.toLong() )
 					}
-					 transition(edgeName="t046",targetState="doClean",cond=whenTimeout("local_tout_waiter_cleanTable"))   
-					transition(edgeName="t047",targetState="checkTableAvail",cond=whenRequest("table"))
-					transition(edgeName="t048",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t049",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t050",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t051",targetState="getPayment",cond=whenDispatch("payment"))
+					 transition(edgeName="t047",targetState="doClean",cond=whenTimeout("local_tout_waiter_cleanTable"))   
+					transition(edgeName="t048",targetState="checkTableAvail",cond=whenRequest("table"))
+					transition(edgeName="t049",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t050",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t051",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t052",targetState="getPayment",cond=whenDispatch("payment"))
 				}	 
 				state("doClean") { //this:State
 					action { //it:State
@@ -648,12 +647,12 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						stateTimer = TimerActor("timer_checkDirtyTable", 
 							scope, context!!, "local_tout_waiter_checkDirtyTable", RestWaitTime )
 					}
-					 transition(edgeName="t052",targetState="rest",cond=whenTimeout("local_tout_waiter_checkDirtyTable"))   
-					transition(edgeName="t053",targetState="thinkCleanTable",cond=whenDispatch("cleantable"))
-					transition(edgeName="t054",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t055",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t056",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t057",targetState="getPayment",cond=whenDispatch("payment"))
+					 transition(edgeName="t053",targetState="rest",cond=whenTimeout("local_tout_waiter_checkDirtyTable"))   
+					transition(edgeName="t054",targetState="thinkCleanTable",cond=whenDispatch("cleantable"))
+					transition(edgeName="t055",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t056",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t057",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t058",targetState="getPayment",cond=whenDispatch("payment"))
 				}	 
 				state("rest") { //this:State
 					action { //it:State
@@ -681,14 +680,14 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 					}
-					 transition(edgeName="t058",targetState="atHome",cond=whenReply("moveOk"))
-					transition(edgeName="t059",targetState="rest",cond=whenReply("moveKo"))
-					transition(edgeName="t060",targetState="cancelCurrentPlan",cond=whenRequest("table"))
-					transition(edgeName="t061",targetState="cancelCurrentPlan",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t062",targetState="cancelCurrentPlan",cond=whenDispatch("placeorder"))
-					transition(edgeName="t063",targetState="cancelCurrentPlan",cond=whenReply("orderready"))
-					transition(edgeName="t064",targetState="cancelCurrentPlan",cond=whenDispatch("payment"))
-					transition(edgeName="t065",targetState="thinkCleanTable",cond=whenDispatch("cleantable"))
+					 transition(edgeName="t059",targetState="atHome",cond=whenReply("moveOk"))
+					transition(edgeName="t060",targetState="rest",cond=whenReply("moveKo"))
+					transition(edgeName="t061",targetState="cancelCurrentPlan",cond=whenRequest("table"))
+					transition(edgeName="t062",targetState="cancelCurrentPlan",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t063",targetState="cancelCurrentPlan",cond=whenDispatch("placeorder"))
+					transition(edgeName="t064",targetState="cancelCurrentPlan",cond=whenReply("orderready"))
+					transition(edgeName="t065",targetState="cancelCurrentPlan",cond=whenDispatch("payment"))
+					transition(edgeName="t066",targetState="thinkCleanTable",cond=whenDispatch("cleantable"))
 				}	 
 				state("atHome") { //this:State
 					action { //it:State
