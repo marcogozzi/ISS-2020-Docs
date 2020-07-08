@@ -1,6 +1,8 @@
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta http-equiv="content-type">
+    <meta charset="utf-8">
+    <meta content="text/html">
     <style type="text/css">
 pre{
     white-space: pre-wrap;
@@ -165,8 +167,7 @@ th#equalthree {
     
 </style> <title>Esame ISS 2020</title>
   </head>
-  <body>
-    <!--
+  <body> <!--
     <tt>tag tt</tt> <em>tag em</em> <bc>tag bc</bc> <k>tag      k</k> <ks>tag ks</ks> <kc>tag kc</kc>    <pre>tag pre</pre>    <m>tag m</m>    <div class="req"> div req </div>    <div class="remark"> div remark </div>    <hr>    -->
     <div id="top">
       <h1>Progetto finale ISS 2020 - Sprint 2 </h1>
@@ -251,16 +252,16 @@ th#equalthree {
       <h3> Scenario </h3>
       <div>
         <ul>
-          <li><s>Sono presenti due tavoli ma solamente un Client alla volta può
-              accedere alla tearoom;<br>
-            </s> Fino a due clienti possono trovarsi contemporaneamente
-            all'interno della stanza e un terzo in attesa alla entrancedoor;</li>
+          <li><s>Sono presenti due tavoli ma solamente un Client alla volta puÃ²
+              accedere alla tearoom; </s> Fino a due clienti possono trovarsi
+            contemporaneamente all'interno della stanza e un terzo in attesa
+            alla entrancedoor;</li>
           <li>ogni Client che accede al sistema esegue l'intera sequenza di
             azioni nel corretto ordine;</li>
-          <li>non vi è limite di tempo per eseguire le azioni;</li>
-          <li><s>nessun task è interrompibile.</s> <br>
-            il task rest è interrompibile; il task clean è interrompibile fino
-            al momento in cui il Waiter arriva al tavolo; servirà la richiesta
+          <li>non vi Ã¨ limite di tempo per eseguire le azioni;</li>
+          <li><s>nessun task Ã¨ interrompibile.</s> <br>
+            il task rest Ã¨ interrompibile; il task clean Ã¨ interrompibile fino
+            al momento in cui il Waiter arriva al tavolo; servirÃ  la richiesta
             successiva solamente dopo la pulizia</li>
         </ul>
       </div>
@@ -303,7 +304,7 @@ th#equalthree {
           <tr>
             <td>reach/convoy</td>
             <td>Comporta un cambiamento di stato della stanza (un tavolo in
-              stato tableclean sarà in stato occupato); il Waiter deve recarsi
+              stato tableclean sarÃ  in stato occupato); il Waiter deve recarsi
               alla entrancedoor, poi al tavolo assegnato al Client</td>
             <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
             <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
@@ -315,7 +316,7 @@ th#equalthree {
               trasmettere l'ordine al Barman; <k>deve essere presente un
                 dispositivo H2M</k> per permettere la comunicazione tra Client e
               Waiter (e.g. app, sito web, comandi vocali, ...); la comunicazione
-              avviene tramite Wi-Fi al Barman che è quindi dotato di un
+              avviene tramite Wi-Fi al Barman che Ã¨ quindi dotato di un
               dispositivo collegato alla rete</td>
             <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
             <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
@@ -347,22 +348,20 @@ th#equalthree {
           <tr>
             <td>clean</td>
             <td>Il Waiter deve recarsi ad un tavolo libero ma non pulito;
-              l'operazione richiede un tempo non nullo e ha priorità inferiore
-              rispetto ad altri task, cioè se si presenta un nuovo task durante
-              lo svolgimento allora questo task deve essere fermato; se ne può
+              l'operazione richiede un tempo non nullo e ha prioritÃ  inferiore
+              rispetto ad altri task, cioÃ¨ se si presenta un nuovo task durante
+              lo svolgimento allora questo task deve essere fermato; se ne puÃ²
               mantenere il progresso in caso di interruzione</td>
-            <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y<br>
-              </b></td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y </b></td>
             <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
             </td>
           </tr>
           <tr>
             <td>rest</td>
-            <td>Non è specificato cosa significhi "nothing to do"; deve essere
-              interrotto appena vi è un task da svolgere<br>
+            <td>Non Ã¨ specificato cosa significhi "nothing to do"; deve essere
+              interrotto appena vi Ã¨ un task da svolgere<br>
             </td>
-            <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y<br>
-              </b></td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y </b></td>
             <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
             </td>
           </tr>
@@ -376,7 +375,7 @@ th#equalthree {
           </tr>
           <tr>
             <td>showstate</td>
-            <td>Deve riguardare tutte le entità che hanno stato; deve essere
+            <td>Deve riguardare tutte le entitÃ  che hanno stato; deve essere
               possibile accedere allo stato attraverso un browser quindi il
               sistema deve esporre un punto di accesso web<br>
             </td>
@@ -392,17 +391,17 @@ th#equalthree {
           per definire un test plan.</kc> </p>
       <h4>Cosa</h4>
       <p>L'unica informazione significativa riguardante il cliente presente al
-        momento è "unique <em>clientidentifier</em>"; <k><span style="color: #020302;">al
-            momento</span> non è presente alcun requisito che richieda o renda
+        momento Ã¨ "unique <em>clientidentifier</em>"; <k><span style="color: #020302;">al
+            momento</span> non Ã¨ presente alcun requisito che richieda o renda
           necessario </k>mantenere le ordinazioni effettuate; rispetto a Sprint
         1 ora si mantiene anche lo stato di ciascun cliente.</p>
-      <p> I clienti e il barman sono esterni al sistema e non è specificato come
+      <p> I clienti e il barman sono esterni al sistema e non Ã¨ specificato come
         facciano ad interagire con i componenti del sistema: deve essere
         presente un <k>sistema human-to-machine con cui interfacciarsi</k> su
         waiter e smartbell.</p>
       <p>I componenti del sistema devono comunicare a scambio di messaggi in
         quanto distribuiti; possibilmente un messaggio viene elaborato subito,
-        altrimenti va accodato ed elaborato a seconda della situazione, cioè a
+        altrimenti va accodato ed elaborato a seconda della situazione, cioÃ¨ a
         seconda dello <em>stato della stanza</em>. </p>
       <table width="100%">
         <thead>
@@ -460,69 +459,69 @@ th#equalthree {
         </tbody>
       </table>
       <h4> Dove </h4>
-      <p> All'interno del sistema solamente l'<kc>entità Waiter è attiva</kc> e
-        può modificare lo stato della stanza; lo stato di Teatable e Hall è
-        necessario per soddisfare i requisiti ed è utilizzato solamente del
+      <p> All'interno del sistema solamente l'<kc>entitÃ  Waiter Ã¨ attiva</kc> e
+        puÃ² modificare lo stato della stanza; lo stato di Teatable e Hall Ã¨
+        necessario per soddisfare i requisiti ed Ã¨ utilizzato solamente del
         Waiter per prendere decisioni riguardanti il prossimo task da compiere.
       </p>
       <kc>Al momento</kc>, delegare al Waiter il mantenimento dell'intero stato
-      permette una valutazione più rapida e non rende necessario introdurre
+      permette una valutazione piÃ¹ rapida e non rende necessario introdurre
       altri elementi nel sistema.<br>
       <k>In futuro</k>, nel caso in cui si vogliano introdurre altri Waiter,
-      questa soluzione non sarà più adeguata per garantire un corretto
-      assegnamento dei task e sarà necessario introdurre un <k>elemento
+      questa soluzione non sarÃ  piÃ¹ adeguata per garantire un corretto
+      assegnamento dei task e sarÃ  necessario introdurre un <k>elemento
         delegato</k> alla gestione della base di conoscenza e/o&nbsp;
       implementare un <k> algoritmo di coordinamento</k> distribuito tra le
-      entità attive.</div>
+      entitÃ  attive.</div>
     <h3> Modello </h3>
     <div>
       <ul>
-        <li>Le entità del sistema sono distribuite su nodi distinti quindi
+        <li>Le entitÃ  del sistema sono distribuite su nodi distinti quindi
           comunicano a scambio di messaggi tra loro e con i dispositivi H2M di
           clienti e barman;</li>
         <li>Il comportamento del Waiter dipende dallo stato della stanza e dai
-          messaggi ricevuti quindi si può rappresentare attraverso un FSM;</li>
+          messaggi ricevuti quindi si puÃ² rappresentare attraverso un FSM;</li>
         <li>Deve essere presente un server web per mostrare lo stato, quindi lo
           stato del modello deve essere esposto con una rappresentazione formale
           in un protocollo adatto a interazione M2M.</li>
       </ul>
       <p>Il <kc>metamodello qa</kc> permette di esprimere questi concetti:</p>
       <ul>
-        <li>I nodi su cui eseguono le entità sono espressi da <em>context</em>;</li>
-        <li>Le entità sono epresse da attori (<em>QActor</em> permette di
-          rappresentare una entità il cui comportamento è descrivibile tramite
-          FSM) perchè comunicano a scambio di messaggi e possono ricevere
-          messaggi da entità esterne al sistema (alieni);</li>
-        <li>Il server web può ottenere lo stato del sistema interrogando gli
+        <li>I nodi su cui eseguono le entitÃ  sono espressi da <em>context</em>;</li>
+        <li>Le entitÃ  sono epresse da attori (<em>QActor</em> permette di
+          rappresentare una entitÃ  il cui comportamento Ã¨ descrivibile tramite
+          FSM) perchÃ¨ comunicano a scambio di messaggi e possono ricevere
+          messaggi da entitÃ  esterne al sistema (alieni);</li>
+        <li>Il server web puÃ² ottenere lo stato del sistema interrogando gli
           attori con uno dei protocolli supportati (TCP, CoAP, MQTT).</li>
       </ul>
     </div>
     <h4> Modello qak e KB Prolog</h4>
     <p> La comunicazione avviene mediante Dispatch, Request/Reply e Event con
       semantica definita dalla libreria <em>it.unibo.kactor</em>. Gli elementi
-      esterni al sistema (cioè i dispositivi H2M che interagiscono con Client e
+      esterni al sistema (cioÃ¨ i dispositivi H2M che interagiscono con Client e
       Barman) devono essere interfacciati con il sistema traducendo dal
       linguaggio/notazione del dispositivo a messaggi <em>ApplMsg</em>. </p>
     <p>L'uso di Prolog per la base di conoscenza permette una gestione molto ad
       alto livello e dichiaritiva.</p>
-    <p>Per comodità di rappresentazione, i dispositivi H2M vengono sintetizzati
+    <p>Per comoditÃ  di rappresentazione, i dispositivi H2M vengono sintetizzati
       da <em>QActor</em>; nel sistema reale, si avrebbero due nodi fisici
       aggiuntivi da far interagire con il (software del) Waiter, uno per la
       Smartbell e uno per il Barman.</p>
     <p><strong>Rispetto a Sprint 1:</strong></p>
     <ul>
-      <li>siccome è possibile che vi siano fino a tre Client che interagiscono
-        con il Waiter, è necessario che esso sia capace di gestire
-        l'interleaving dei vari messaggi; è sufficiente prevedere uno stato
+      <li>siccome Ã¨ possibile che vi siano fino a tre Client che interagiscono
+        con il Waiter, Ã¨ necessario che esso sia capace di gestire
+        l'interleaving dei vari messaggi; Ã¨ sufficiente prevedere uno stato
         unico a cui ritornare dopo la gestione di ciascuna richiesta in cui si
         aspetta qualunque messaggio;</li>
-      <li>la pulizia di un tavolo sporco ha priorità inferiore alle richieste
-        dei Client, cioè se arriva un messaggio durante lo spostamento, questo è
-        da annullare; lo spostamento è stato modellato in quattro passi, durante
-        ciascuno dei quali non è possibile l'interruzione mentre lo è tra due di
+      <li>la pulizia di un tavolo sporco ha prioritÃ  inferiore alle richieste
+        dei Client, cioÃ¨ se arriva un messaggio durante lo spostamento, questo Ã¨
+        da annullare; lo spostamento Ã¨ stato modellato in quattro passi, durante
+        ciascuno dei quali non Ã¨ possibile l'interruzione mentre lo Ã¨ tra due di
         essi;</li>
-      <li>dopo la pulizia di un tavolo, è necessario verificare se un Client
-        aveva fatto richiesta ed era stato messo in attesa: in tal caso è
+      <li>dopo la pulizia di un tavolo, Ã¨ necessario verificare se un Client
+        aveva fatto richiesta ed era stato messo in attesa: in tal caso Ã¨
         possibile farlo entrare;</li>
       <li>nella KB sono state aggiunte procedure per mantenere lo stato dei
         Client.</li>
@@ -1217,23 +1216,23 @@ ExternalQActor smartbell context ctxsmartbell</pre>
         <tr>
           <td>cleantable</td>
           <td style="background-color: rgba(0, 255, 0, 0.4);">Self message per
-            ricordare al Waiter che c'è un tavolo da pulire </td>
+            ricordare al Waiter che c'Ã¨ un tavolo da pulire </td>
           <td><br>
           </td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è in
-            uno stato non idoneo il messaggio è perso</td>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter Ã¨ in
+            uno stato non idoneo il messaggio Ã¨ perso</td>
         </tr>
         <tr>
           <td>cleantableok<br>
           </td>
           <td style="background-color: rgba(0, 255, 0, 0.4);">Self message per
-            ricordare al Waiter che un tavolo è stato pulito e potenzialmente un
-            Client in attesa può essere accettato<br>
+            ricordare al Waiter che un tavolo Ã¨ stato pulito e potenzialmente un
+            Client in attesa puÃ² essere accettato<br>
           </td>
           <td><br>
           </td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è in
-            uno stato non idoneo il messaggio è perso </td>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter Ã¨ in
+            uno stato non idoneo il messaggio Ã¨ perso </td>
         </tr>
         <tr>
           <td>notify<br>
@@ -1250,9 +1249,9 @@ ExternalQActor smartbell context ctxsmartbell</pre>
           <td>deny<br>
           </td>
           <td style="background-color: rgba(255, 0, 0, 0.5);">A tempo di
-            sviluppo è necessario sapere il destinatario </td>
+            sviluppo Ã¨ necessario sapere il destinatario </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a notify
-            se temperatura &gt;37.5; non è necessario conoscere chi ha fatto la
+            se temperatura &gt;37.5; non Ã¨ necessario conoscere chi ha fatto la
             richiesta<br>
           </td>
           <td><br>
@@ -1262,9 +1261,9 @@ ExternalQActor smartbell context ctxsmartbell</pre>
           <td>accept<br>
           </td>
           <td style="background-color: rgba(255, 0, 0, 0.5);">A tempo di
-            sviluppo è necessario sapere il destinatario</td>
+            sviluppo Ã¨ necessario sapere il destinatario</td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a notify
-            se c'è un teatable disponibile; non è necessario conoscere chi ha
+            se c'Ã¨ un teatable disponibile; non Ã¨ necessario conoscere chi ha
             fatto la richiesta </td>
           <td><br>
           </td>
@@ -1273,9 +1272,9 @@ ExternalQActor smartbell context ctxsmartbell</pre>
           <td>full<br>
           </td>
           <td style="background-color: rgba(255, 0, 0, 0.5);">A tempo di
-            sviluppo è necessario sapere il destinatario</td>
+            sviluppo Ã¨ necessario sapere il destinatario</td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a notify
-            se non c'è un teatable disponibile; non è necessario conoscere chi
+            se non c'Ã¨ un teatable disponibile; non Ã¨ necessario conoscere chi
             ha fatto la richiesta</td>
           <td><br>
           </td>
@@ -1286,7 +1285,7 @@ ExternalQActor smartbell context ctxsmartbell</pre>
           <td style="background-color: #fdfdfd;"><br>
           </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">La smartbell
-            chiede al waiter se c'è un teatable disponibile; la smartbell deve
+            chiede al waiter se c'Ã¨ un teatable disponibile; la smartbell deve
             ricevere una risposta<br>
           </td>
           <td><br>
@@ -1298,7 +1297,7 @@ ExternalQActor smartbell context ctxsmartbell</pre>
           <td style="background-color: #fdfdfd;"><br>
           </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a table
-            se c'è un teatable disponibile </td>
+            se c'Ã¨ un teatable disponibile </td>
           <td><br>
           </td>
         </tr>
@@ -1308,7 +1307,7 @@ ExternalQActor smartbell context ctxsmartbell</pre>
           <td style="background-color: #fdfdfd;"><br>
           </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a table
-            se non c'è un teatable disponibile </td>
+            se non c'Ã¨ un teatable disponibile </td>
           <td><br>
           </td>
         </tr>
@@ -1316,36 +1315,36 @@ ExternalQActor smartbell context ctxsmartbell</pre>
           <td>clientatentrance<br>
           </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">La smartbell
-            informa il&nbsp; waiter che c'è un client in attesa alla
+            informa il&nbsp; waiter che c'Ã¨ un client in attesa alla
             entrancedoor<br>
           </td>
           <td><br>
           </td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è in
-            uno stato non idoneo il messaggio è perso<br>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter Ã¨ in
+            uno stato non idoneo il messaggio Ã¨ perso<br>
           </td>
         </tr>
         <tr>
           <td>attable</td>
           <td style="background-color: rgba(255, 0, 0, 0.4);">Per il waiter il
-            client è un alieno</td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
-            risposta, il messaggio è per avvertire di un avvenimento </td>
+            client Ã¨ un alieno</td>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Non Ã¨ prevista
+            risposta, il messaggio Ã¨ per avvertire di un avvenimento </td>
           <td style="background-color: rgba(0, 255, 0, 0.4);">Solo per
-            effettuare la simulazione, il client deve sapere quando è stato
+            effettuare la simulazione, il client deve sapere quando Ã¨ stato
             accompagnato al tavolo </td>
         </tr>
         <tr>
           <td>placeorder<br>
           </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">Il client informa
-            il waiter che è pronto ad effettuare l'ordine<br>
+            il waiter che Ã¨ pronto ad effettuare l'ordine<br>
           </td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
-            risposta, il messaggio è per richiedere una azione<br>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Non Ã¨ prevista
+            risposta, il messaggio Ã¨ per richiedere una azione<br>
           </td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è in
-            uno stato non idoneo il messaggio è perso</td>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter Ã¨ in
+            uno stato non idoneo il messaggio Ã¨ perso</td>
         </tr>
         <tr>
           <td>relayorder<br>
@@ -1373,20 +1372,20 @@ ExternalQActor smartbell context ctxsmartbell</pre>
           <td>payment<br>
           </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);"> Il client informa
-            il waiter che è pronto per pagare </td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
-            risposta, il messaggio è per richiedere una azione</td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è in
-            uno stato non idoneo il messaggio è perso</td>
+            il waiter che Ã¨ pronto per pagare </td>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Non Ã¨ prevista
+            risposta, il messaggio Ã¨ per richiedere una azione</td>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter Ã¨ in
+            uno stato non idoneo il messaggio Ã¨ perso</td>
         </tr>
         <tr>
           <td>delivered<br>
           </td>
           <td style="background-color: rgba(255, 0, 0, 0.4);">Per il waiter il
-            client è un alieno<br>
+            client Ã¨ un alieno<br>
           </td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
-            risposta, il messaggio è per avvertire di un avvenimento </td>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Non Ã¨ prevista
+            risposta, il messaggio Ã¨ per avvertire di un avvenimento </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">Solo per
             effettuare la simulazione, il client deve sapere quando l'ordine gli
             viene consegnato per iniziare a consumarlo<br>
@@ -1396,22 +1395,22 @@ ExternalQActor smartbell context ctxsmartbell</pre>
           <td>paymentOk<br>
           </td>
           <td style="background-color: rgba(255, 0, 0, 0.4);">Per il waiter il
-            client è un alieno</td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
-            risposta, il messaggio è per avvertire di un avvenimento </td>
+            client Ã¨ un alieno</td>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Non Ã¨ prevista
+            risposta, il messaggio Ã¨ per avvertire di un avvenimento </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">Solo per
             effettuare la simulazione, il client deve sapere quando il pagamento
-            è andato a buon fine</td>
+            Ã¨ andato a buon fine</td>
         </tr>
         <tr>
           <td>exitOk<br>
           </td>
           <td style="background-color: rgba(255, 0, 0, 0.4);">Per il waiter il
-            client è un alieno</td>
-          <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
-            risposta, il messaggio è per avvertire di un avvenimento </td>
+            client Ã¨ un alieno</td>
+          <td style="background-color: rgba(255, 0, 0, 0.4);">Non Ã¨ prevista
+            risposta, il messaggio Ã¨ per avvertire di un avvenimento </td>
           <td style="background-color: rgba(0, 254, 0, 0.4);">Solo per
-            effettuare la simulazione, il client deve sapere quando è stato
+            effettuare la simulazione, il client deve sapere quando Ã¨ stato
             accompagnato alla exitdoor</td>
         </tr>
       </tbody>
@@ -2002,34 +2001,33 @@ class testTearoom2Clients {
       necessari ulteriori componenti che si occupino di
       <ul>
         <li>comandare il robot che realizza il ruolo di Waiter: nel modello, il
-          processo di spostamento all'interno della stanza è assente e si giunge
-          direttamente al punto finale dal punto iniziale; è necessario un
+          processo di spostamento all'interno della stanza Ã¨ assente e si giunge
+          direttamente al punto finale dal punto iniziale; Ã¨ necessario un
           componente che sappia comandare fisicamente il Waiter all'interno
           della stanza, portandolo dal punto di partenza in cui si trova a
-          quello di arrivo, dettato dallo stato e dalle interazioni: è opportuno
+          quello di arrivo, dettato dallo stato e dalle interazioni: Ã¨ opportuno
           delegare questo compito ad un componente separato dal waiter per <kc>mantenere
             separato il meccanismo di spostamento</kc> dalla politica di
           gestione dei task;</li>
         <li>mostrare attraverso una interfaccia web lo stato della stanza: al
           momento, l'<kc>infrastruttura qak</kc> espone, tramite protocollo
           CoAP, per ogni attore la <kc>rappresentazione di una risorsa</kc> in
-          esso contenuta in formato di stringa; è possibile utilizzare questa
-          funzionalità dell'infrastruttura per tenere traccia dello stato di
+          esso contenuta in formato di stringa; Ã¨ possibile utilizzare questa
+          funzionalitÃ  dell'infrastruttura per tenere traccia dello stato di
           tutti gli attori.</li>
       </ul>
       <p><strong>Dalla sprint review precedente si deduce che:</strong></p>
       <ul>
-        <li>è necessario un algoritmo che riesca a risolvere il più delle volte
+        <li>Ã¨ necessario un algoritmo che riesca a risolvere il piÃ¹ delle volte
           le imprecisioni del robot;</li>
-        <li>è opportuno inserire all'interno dell'interfaccia web una sezione
+        <li>Ã¨ opportuno inserire all'interno dell'interfaccia web una sezione
           per il comando diretto del robot in modo da riposizionarlo
           manualmente.</li>
       </ul>
       <ul>
       </ul>
       <h4> Modello qak e KB Prolog aggiornati</h4>
-      <p><strong>Sprint 1:</strong><br>
-      </p>
+      <p><strong>Sprint 1:</strong> </p>
       <p>Alla KB sono state aggiunte informazioni sulla posizione e alcune
         clausole per una gestione semplificata. </p>
       <p> Sono stati aggiunti alcuni messaggi per modellare la comunicazione tra
@@ -2071,7 +2069,7 @@ class testTearoom2Clients {
             <td style="background-color: rgba(255, 0, 0, 0.5);"><br>
             </td>
             <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a
-              moveTo se lo spostamento è andato a buon fine, cioè se il waiter
+              moveTo se lo spostamento Ã¨ andato a buon fine, cioÃ¨ se il waiter
               ora si trova nel posto richiesto<br>
             </td>
             <td><br>
@@ -2083,7 +2081,7 @@ class testTearoom2Clients {
             <td style="background-color: rgba(255, 0, 0, 0.5);"><br>
             </td>
             <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a
-              moveTo se lo spostamento NON è andato a buon fine, cioè se il
+              moveTo se lo spostamento NON Ã¨ andato a buon fine, cioÃ¨ se il
               waiter ora si trova in un posto diverso da quello richiesto</td>
             <td><br>
             </td>
@@ -2092,18 +2090,18 @@ class testTearoom2Clients {
       </table>
       <br>
       <div><strong>Sprint 2:</strong> <br>
-        Rilassando l'assunzione che nessun task è interrompibile, ora deve
+        Rilassando l'assunzione che nessun task Ã¨ interrompibile, ora deve
         essere possibile interrompere il movimento dei task rest e clean.<br>
-        Siccome l'attore Robot è responsabile del movimento, è necessario che,
+        Siccome l'attore Robot Ã¨ responsabile del movimento, Ã¨ necessario che,
         alla ricezione di un nuovo task durante tali movimenti, l'attore Waiter
         lo notifichi di arrestarsi. </div>
-      <div>Può accadere che tale notifica arrivi contemporaneamente al
+      <div>PuÃ² accadere che tale notifica arrivi contemporaneamente al
         completamento dello spostamento; per questo motivo:</div>
       <div>
         <ul>
           <li> il Waiter dopo l'invio si porta in un nuovo stato in cui attende
             una Reply; siccome il messaggio arrivato (che rappresenta un nuovo
-            task) viene consumato, è necessario che venga reinserito in coda per
+            task) viene consumato, Ã¨ necessario che venga reinserito in coda per
             essere effettivamente elaborato successivamente;</li>
           <li>se il Robot sta ancora completando il movimento, lo interrompe e
             risponde moveKo;</li>
@@ -2111,11 +2109,11 @@ class testTearoom2Clients {
             ricezione della notifica, allora risponde moveOk e consuma la
             notifica.</li>
         </ul>
-        <p>Siccome il Waiter ora può cancellare l'operazione di Clean dopo aver
-          consumato il messaggio che glielo ricordava, è necessario riprodurre
+        <p>Siccome il Waiter ora puÃ² cancellare l'operazione di Clean dopo aver
+          consumato il messaggio che glielo ricordava, Ã¨ necessario riprodurre
           tale messaggio: dopo aver completato un task, se non vi sono altri
           task da eseguire, controlla lo stato della stanza (stato maybeRest) ed
-          eventualmente si auto-invia tale messaggio; se ciò non avviene e non
+          eventualmente si auto-invia tale messaggio; se ciÃ² non avviene e non
           arriva alcun nuovo task, allora dopo un po' di attesa attiva il task
           rest.</p>
         <table border="1" width="100%">
@@ -2137,13 +2135,12 @@ class testTearoom2Clients {
                 corrente</td>
               <td><br>
               </td>
-              <td style="background-color: rgba(255, 0, 0, 0.4);">Destinatario è
+              <td style="background-color: rgba(255, 0, 0, 0.4);">Destinatario Ã¨
                 unico<br>
               </td>
             </tr>
           </tbody>
         </table>
-        <p></p>
       </div>
       <br>
       <table padding="0px" border="0px">
@@ -2992,21 +2989,21 @@ roomstate(  state( waiter(S,X,Y), tables(V), clients(C) )  ):-
     </div>
     <h2>Project</h2>
     <h3> Waiter </h3>
-    <p> Dall'analisi del problema risulta opportuno decomporre in più parti il
+    <p> Dall'analisi del problema risulta opportuno decomporre in piÃ¹ parti il
       sottosistema Waiter, esattamente tre seguendo il principio di Singola
-      Responsabilità: </p>
+      ResponsabilitÃ : </p>
     <ul>
-      <li> Waiter: è quell'attore che si occupa della politica (cioè elaborare i
+      <li> Waiter: Ã¨ quell'attore che si occupa della politica (cioÃ¨ elaborare i
         task dal punto di vista logico) e che gestisce lo stato della stanza;</li>
-      <li> Robot: è quell'attore a cui il Waiter demanda lo spostamento fisico;
-        come evidenziato in analisi del problema, il meccanismo è implementabile
+      <li> Robot: Ã¨ quell'attore a cui il Waiter demanda lo spostamento fisico;
+        come evidenziato in analisi del problema, il meccanismo Ã¨ implementabile
         mediante un <kc>algoritmo di planning-scheduling</kc>, in cui, date
         posizioni iniziale e finale, si ottiene una serie di azioni per
         raggiungere il goal; in questo modo, risulta semplice, a livello di
         modello, trovare la sequenza di mosse da percorrere per arrivare alla
         destinazione goal; <a href="http://htmlpreview.github.io/?https://github.com/anatali/iss2020LabBo/blob/master/it.unibo.planner20/userDocs/LabPlanner.html">come
-          visto a lezione</a> è disponibile una libreria software che implementa
-        tale algoritmo: la definizione formale è data dal file <a href="https://github.com/anatali/iss2020LabBo/blob/master/unibolibs/it.unibo.planner20-1.0.jar"
+          visto a lezione</a> Ã¨ disponibile una libreria software che implementa
+        tale algoritmo: la definizione formale Ã¨ data dal file <a href="https://github.com/anatali/iss2020LabBo/blob/master/unibolibs/it.unibo.planner20-1.0.jar"
           target="code"><span style="color: black;"></span>it.unibo.planner20-1.0.jar</a>.<br>
         L'attore Robot NON si occupa direttamente dello spostamento fisico del
         ddr waiter ma sfrutta un altro attore (basicrobot);</li>
@@ -3277,10 +3274,10 @@ QActor robot context ctxwaiter{
    	
   	State execTheMove{ // do one of the moves at a time, either step or 90degree turn
 		[#if(Debug)#]println("robot execTheMove")
-		if [# CurrentPlannedMove == "w" #] { 	// o la mossa è w
+		if [# CurrentPlannedMove == "w" #] { 	// o la mossa Ã¨ w
 			request basicrobot -m step : step($StepTime)
 		}
-		else{ // o è l/r	
+		else{ // o Ã¨ l/r	
 			forward basicrobot -m cmd : cmd($CurrentPlannedMove)
 			[#if(Debug)#]run itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,"robot: turning $CurrentPlannedMove")
 			[#else#]run itunibo.planner.plannerUtil.updateMap(CurrentPlannedMove,"")
@@ -3372,38 +3369,35 @@ ExternalQActor basicrobot context ctxbasicrobot
                 rispettivamente<br>
                 la mappa della stanza aggiornata come conosciuta dal planner e
                 lo stato <br>
-                del Robot, cioè se controllato automaticamente (dal planner) o
+                del Robot, cioÃ¨ se controllato automaticamente (dal planner) o
                 manualmente<br>
                 tramite sezione dedicata sulla pagina web; si passa da una
-                modalità all'altra<br>
-                inviando al Robot un <em>dispatch manual : manual(_)</em>;<br>
-              </li>
+                modalitÃ  all'altra<br>
+                inviando al Robot un <em>dispatch manual : manual(_)</em>; </li>
             </ul>
             Per interruzione task:
             <ul>
-              <li>il messaggio doMove è stato sostituito da un timer che stacca
+              <li>il messaggio doMove Ã¨ stato sostituito da un timer che stacca
                 se non arriva<br>
                 un dispatch stopPlan per cancellare il piano di movimento
                 attuale;<br>
-                <br>
               </li>
             </ul>
             Per gestione imprecisione:
             <ul>
-              <li>è stato introdotto un algoritmo basilare per gestire
+              <li>Ã¨ stato introdotto un algoritmo basilare per gestire
                 l'imprecisione dei movimenti:<br>
-                se il planner afferma che è possibile effettuare uno step ma il
+                se il planner afferma che Ã¨ possibile effettuare uno step ma il
                 robot fallisce, si tenta<br>
                 di rieseguire tale step un certo numero di volte; prima di
                 ciascuna di esse si arretra<br>
                 per un lasso di tempo incrementale; se dopo essere arretrato per
                 un tempo inferiore<br>
-                a quello di uno step, lo step non è stato completato allora è
+                a quello di uno step, lo step non Ã¨ stato completato allora Ã¨
                 possibile che prima <br>
                 dell'ultima rotazione il robot si sia portato troppo avanti,
                 quindi si arretra lungo<br>
-                la precedente direzione (stato handleFailRebounce).<br>
-              </li>
+                la precedente direzione (stato handleFailRebounce). </li>
             </ul>
             <br>
           </td>
@@ -4011,21 +4005,20 @@ QActor smartbell context ctxsmartbell{
       </tbody>
     </table>
     <h3> Stato </h3>
-    <div> Lo&nbsp; stato è mantenuto unicamente dall'attore Waiter; la posizione
-      fisica del ddr waiter è aggiornata solamente al termine dell'esecuzione
+    <div> Lo&nbsp; stato Ã¨ mantenuto unicamente dall'attore Waiter; la posizione
+      fisica del ddr waiter Ã¨ aggiornata solamente al termine dell'esecuzione
       dei piani (sia in caso di successo che di fallimento); ogni cambiamento di
       stato viene reso disponibile tramite protocollo CoAP e MQTT (versione 2.5
       libreria kactor). <br>
-      Per questo motivo l'interfaccia web è sufficiente che osservi tramite
+      Per questo motivo l'interfaccia web Ã¨ sufficiente che osservi tramite
       protocollo CoAP l'attore Waiter per visualizzare lo stato corrente della
       tearoom.</div>
-    <div><strong><br>
-      </strong></div>
+    <div><strong> </strong></div>
     <div><strong>Sprint 2:</strong></div>
-    <div>Con una modifica alla classe ActorBasic.kt nella libreria kactor è ora
+    <div>Con una modifica alla classe ActorBasic.kt nella libreria kactor Ã¨ ora
       possibile ricevere gli aggiornamenti dello stato di un attore
       MQTT-connesso di nome X sottoscrivendosi alla topic "unibo/qak/X/state";
-      per ricevere gli aggiornamenti di stato di tutti gli attori, è possibile
+      per ricevere gli aggiornamenti di stato di tutti gli attori, Ã¨ possibile
       sottoscriversi alla medesima topic con wildcard "+" al posto del nome
       dell'attore (i.e. sottoscrivendosi a "unibo/qak/+/state").</div>
     <div>Per ottenere questo comportamento aggiungere a ActorBasic.kt il
@@ -4051,7 +4044,7 @@ QActor smartbell context ctxsmartbell{
           che pull (aggiornamento automatico della pagina sul client web);</li>
         <li>libreria <em>it.unibo.kactor</em> per la gestione della logica
           applicativa (e.g. creazione corretta di messaggi);</li>
-        <li>protocollo MQTT per inviare messaggi al sistema come entità aliena e
+        <li>protocollo MQTT per inviare messaggi al sistema come entitÃ  aliena e
           per ricevere aggiornamenti di stato anche da attori non noti a tempo
           di sviluppo.</li>
       </ul>
@@ -4070,13 +4063,13 @@ QActor smartbell context ctxsmartbell{
     <div>
       <ul>
         <li>Utilizzando il robot virtuale introdotto a lezione, la precisione
-          dei movimenti è scarsa e richede numerosi interventi manuali; nel
-          prossimo sprint è opportuno cercare di mitigare questo difetto;</li>
-        <li>può essere opportuno fornire tramite l'interfaccia web alcuni
+          dei movimenti Ã¨ scarsa e richede numerosi interventi manuali; nel
+          prossimo sprint Ã¨ opportuno cercare di mitigare questo difetto;</li>
+        <li>puÃ² essere opportuno fornire tramite l'interfaccia web alcuni
           comandi per comandare fisicamente il robot in modo che, in caso di
           disallineamento dovuto a imprecisione dei movimenti, il manager possa
           risolvere remotamente la situazione;</li>
-        <li>la presenza di un unico sensore (di collisione) può non essere
+        <li>la presenza di un unico sensore (di collisione) puÃ² non essere
           sufficiente nel robot fisico per garantire la precisione richiesta.</li>
       </ul>
     </div>
@@ -4084,9 +4077,9 @@ QActor smartbell context ctxsmartbell{
     <div>
       <ul>
         <li>Con il nuovo algoritmo di gestione del Robot, esso richiede quasi
-          nessuna attenzione da parte di un essere umano MA non è ancora
+          nessuna attenzione da parte di un essere umano MA non Ã¨ ancora
           perfetto in quanto <strong>la presenza di un unico sensore (di
-            collisione) non è sufficiente per garantire la precisione richiesta
+            collisione) non Ã¨ sufficiente per garantire la precisione richiesta
             per un controllo completamente automatico.</strong></li>
         <li>Fornire uno script per la compilazione automatica del codice
           sorgente per piattaforme Linux e Windows (?).</li>

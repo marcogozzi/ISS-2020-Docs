@@ -1,6 +1,8 @@
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+       <meta http-equiv="content-type">
+    <meta charset="utf-8">
+    <meta content="text/html">
     <style type="text/css">
 
 body
@@ -153,8 +155,7 @@ table, th, td {
     
 </style> <title>Esame ISS 2020</title>
   </head>
-  <body>
-    <!--
+  <body> <!--
     <tt>tag tt</tt> <em>tag em</em> <bc>tag bc</bc> <k>tag k</k> <ks>tag      ks</ks> <kc>tag kc</kc>    <pre>tag pre</pre>    <m>tag m</m>    <div class="req"> div req </div>    <div class="remark"> div remark </div>    <hr>    -->
     <div id="top">
       <h1>Progetto finale ISS 2020 - Sprint 0 Overview </h1>
@@ -274,7 +275,7 @@ table, th, td {
           <tr>
             <td>reach/convoy</td>
             <td>Comporta un cambiamento di stato della stanza (un tavolo in
-              stato tableclean sarà in stato occupato); il Waiter deve recarsi
+              stato tableclean sarï¿½ in stato occupato); il Waiter deve recarsi
               alla entrancedoor, poi al tavolo assegnato al Client</td>
             <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
             <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
@@ -286,7 +287,7 @@ table, th, td {
               trasmettere l'ordine al Barman; <k>deve essere presente un
                 dispositivo H2M</k> per permettere la comunicazione tra Client e
               Waiter (e.g. app, sito web, comandi vocali, ...); la comunicazione
-              avviene tramite Wi-Fi al Barman che è quindi dotato di un
+              avviene tramite Wi-Fi al Barman che ï¿½ quindi dotato di un
               dispositivo collegato alla rete</td>
             <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
             <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
@@ -318,9 +319,9 @@ table, th, td {
           <tr>
             <td>clean</td>
             <td>Il Waiter deve recarsi ad un tavolo libero ma non pulito;
-              l'operazione richiede un tempo non nullo e ha priorità inferiore
-              rispetto ad altri task, cioè se si presenta un nuovo task durante
-              lo svolgimento allora questo task deve essere fermato; se ne può
+              l'operazione richiede un tempo non nullo e ha prioritï¿½ inferiore
+              rispetto ad altri task, cioï¿½ se si presenta un nuovo task durante
+              lo svolgimento allora questo task deve essere fermato; se ne puï¿½
               mantenere il progresso in caso di interruzione</td>
             <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y<br>
               </b></td>
@@ -329,8 +330,8 @@ table, th, td {
           </tr>
           <tr>
             <td>rest</td>
-            <td>Non è specificato cosa significhi "nothing to do"; deve essere
-              interrotto appena vi è un task da svolgere<br>
+            <td>Non ï¿½ specificato cosa significhi "nothing to do"; deve essere
+              interrotto appena vi ï¿½ un task da svolgere<br>
             </td>
             <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y<br>
               </b></td>
@@ -347,7 +348,7 @@ table, th, td {
           </tr>
           <tr>
             <td>showstate</td>
-            <td>Deve riguardare tutte le entità che hanno stato; deve essere
+            <td>Deve riguardare tutte le entitï¿½ che hanno stato; deve essere
               possibile accedere allo stato attraverso un browser quindi il
               sistema deve esporre un punto di accesso web<br>
             </td>
@@ -361,16 +362,16 @@ table, th, td {
       <div class="smallbody">
         <ol>
           <li>Numero di tavoli / clienti presenti contemporaneamente: da
-            requisito sono presenti N=2 tavoli quindi è possibile che la tearoom
-            sia frequentata contemporaneamente da più di 1 Client; questo
+            requisito sono presenti N=2 tavoli quindi ï¿½ possibile che la tearoom
+            sia frequentata contemporaneamente da piï¿½ di 1 Client; questo
             richiede che il Waiter sia capace di gestire in parallelo due
             sequenze separate di richieste; </li>
           <li>Anche se si limitasse ad un Client alla volta l'accesso alla
-            tearoom, è possibile che la sequenza di richieste non avvenga in
+            tearoom, ï¿½ possibile che la sequenza di richieste non avvenga in
             ordine, ad esempio in caso di eventi anomali (il Client non completa
             la sequenza correttamente) o nel caso in cui i requisiti dovessero
             essere modificati in una futura versione che ne preveda di
-            aggiuntivi; è opportuno che il Waiter sia capace di gestire tale
+            aggiuntivi; ï¿½ opportuno che il Waiter sia capace di gestire tale
             situazione eventualmente riportandosi in uno stato noto/sicuro;</li>
           <li>Gestione del tempo: da requisito <em>maxstaytime</em> risulta
             necessario mantenere traccia dei momenti in cui sono avviati e
@@ -396,11 +397,11 @@ table, th, td {
               <td>
                 <ul>
                   <li>sono presenti due tavoli ma solamente un Client alla volta
-                    può accedere alla tearoom;</li>
+                    puï¿½ accedere alla tearoom;</li>
                   <li>ogni Client che accede al sistema esegue l'intera sequenza
                     di azioni nel corretto ordine;</li>
-                  <li>non vi è limite di tempo per eseguire le azioni;</li>
-                  <li>nessun task è interrompibile.</li>
+                  <li>non vi ï¿½ limite di tempo per eseguire le azioni;</li>
+                  <li>nessun task ï¿½ interrompibile.</li>
                 </ul>
               </td>
             </tr>
@@ -409,9 +410,9 @@ table, th, td {
               </td>
               <td>
                 <ul>
-                  <li>non vi è limite di tempo per eseguire le azioni;</li>
-                  <li>il task clean è interrompibile solamente prima che Waiter
-                    inizi la pulizia (cioè è possibile interromperlo fino al
+                  <li>non vi ï¿½ limite di tempo per eseguire le azioni;</li>
+                  <li>il task clean ï¿½ interrompibile solamente prima che Waiter
+                    inizi la pulizia (cioï¿½ ï¿½ possibile interromperlo fino al
                     momento stesso in cui Waiter arriva al tavolo da pulire);</li>
                   <li>ogni Client che accede al sistema esegue l'intera sequenza
                     di azioni nel corretto ordine.</li>
