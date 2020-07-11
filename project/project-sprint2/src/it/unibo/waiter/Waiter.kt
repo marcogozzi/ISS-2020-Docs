@@ -25,7 +25,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				var TeatableToClean	= true
 				var IsWaiterAtHome  = true
 				
-				var Debug = true
+				var Debug = false
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -48,14 +48,15 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("waitState") { //this:State
 					action { //it:State
-						solve("roomstate(S)","") //set resVar	
+						if( Debug 
+						 ){solve("roomstate(S)","") //set resVar	
 						if( currentSolution.isSuccess() ) {updateResourceRep( getCurSol("S").toString()  
 						)
 						}
 						else
 						{}
-						if(Debug) 
 						println(getCurSol("S").toString())
+						}
 						solve("waiter(_,0,0)","") //set resVar	
 						if( currentSolution.isSuccess() ) { IsWaiterAtHome = true  
 						}

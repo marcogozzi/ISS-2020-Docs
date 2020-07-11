@@ -30,5 +30,7 @@ project/robot-web-sprint*/bin/
 project/robot-web-sprint*/build/
 project/robot-web-sprint*/web-*/
 
+project/run/*
+
 *.bak
 *.bck

@@ -1,0 +1,394 @@
+System tearoom
+mqttBroker "localhost" : 1883 eventTopic "unibo/gozzi/events"
+
+
+//Client - Smartbell, Entering
+Request notify : notify(TEMP)
+Reply deny : deny(X)
+Reply accept : accept(CID)
+Reply full : full(CID, WTIME)
+
+//Smartbell - Waiter, Free Table
+Request table : table(CID)
+Reply available : available(CID)
+Reply full : full(CID, WTIME)
+Dispatch clientatentrance : clientatentrance(Cid) // self message
+Event attable : attable(Cid)	// for client simulation purpose
+
+//Client - Waiter - Barman, Requesting+serving tea
+Dispatch placeorder : placeorder(CID)
+Request relayorder : relayorder(Cid)
+Reply orderready : orderready(Cid)
+//---------------------------------------------------------
+Event delivered : delivered($Cid) 	// for client simulation purpose
+//---------------------------------------------------------
+
+//Client - Waiter, Requesting payment
+Dispatch payment : payment(Cid)
+//---------------------------------------------------------
+Event paymentOk : paymentOk(Cid)	// for client simulation purpose
+Event exitOk : exitOk(Cid)			// for client simulation purpose
+//---------------------------------------------------------
+
+//Self messages to determine table cleaning status
+Dispatch cleantable : cleantable(Num) 			//teatable Num is free and needs cleaning
+
+Dispatch tabledirty : tabledirty(Num)			//teatable not yet cleaned, phase 1 to do
+Dispatch tablecleaneda : tablecleaneda(Num)		//teatable partially cleaned, phase 1 done, phase 2 to do
+Dispatch tablecleanedb : tablecleanedb(Num)		//teatable partially cleaned, phase 2 done, phase 3 to do
+
+Dispatch cleantableok : cleantableok(Num) 		//teatable Num has been cleaned
+
+
+
+Context ctxwaiter ip [host="localhost" port=8050]  			+mqtt
+Context ctxsmartbell ip [host="localhost" port=8051]		+mqtt
+//Context ctxhall ip [host="localhost" port=8052]			+mqtt
+Context ctxbarman ip [host="localhost" port=8056]			+mqtt
+
+
+//ExternalQActor barman context ctxbarman
+QActor barman context ctxbarman{
+	
+	State s0 initial{
+	}
+	Transition t0
+		whenRequest relayorder -> prepareTea
+	
+	State prepareTea{
+		onMsg( relayorder : relayorder(Cid) ){
+			[# val Cid = payloadArg(0) #]
+			delay 1000 // time to prepare tea
+			replyTo relayorder with orderready : orderready($Cid)
+			updateResource [# "tea prepared for $Cid" #]
+		}
+	}
+	Transition t0
+		whenRequest relayorder -> prepareTea
+}
+
+QActor smartbell context ctxsmartbell{
+	
+	[# 
+		val MaxTemp = 37.5 
+		var Cid = 1
+	#]
+	
+	State s0 initial{
+		solve( consult("hallKB.pl") )
+	}
+	Transition t0
+		whenRequest notify -> checkTemp
+		
+	State checkTemp{
+		onMsg(notify : notify(Temp)){
+			if [# payloadArg(0).toDouble() < MaxTemp #] {
+				request waiter -m table : table($Cid) // case (a)
+			}
+			else{
+				replyTo notify with deny : deny(0) //case (b)
+			}
+		}
+	}
+	Transition t1
+		whenRequest 	notify 		-> checkTemp 	//in case (b)
+		whenReply 		available 	-> replyClient 	//in case (a)
+		whenReply 		full 		-> replyClient 	//in case (a)
+		
+	State replyClient{
+		onMsg(available : available(CID)){
+			replyTo notify with accept : accept($Cid)
+		}
+		onMsg(full : full(CID,WTIME)){
+			[# 
+				val ThisCid = payloadArg(0)
+				val WaitTime = payloadArg(1) 
+			#]
+			replyTo notify with full : full($ThisCid, $WaitTime)
+		}
+		[# Cid++ #] //new CID for next Client
+	}
+	Transition t2
+		whenRequest notify -> checkTemp
+}
+
+
+QActor waiter context ctxwaiter {
+	
+	[#
+		val MaxStayTime 	= 100000L	
+		val DelayTime 		= 1000L
+		val RestWaitTime 	= 10000L
+		
+//		var TeatableFree	= true
+		var IsWaiterAtHome  = true
+		
+		var StepsToTable = 4
+		var Debug = false
+	#]
+	
+	
+	State s0 initial{
+		println("waiter RA-s3 initial")
+		discardMsg Off
+		solve( consult("tearoomKB-RA-sprint3.pl") )
+		solve(debug(true)) ifSolved{ [# Debug = true #] }
+		solve( roomstate(S) ) 
+		ifSolved { //Documentation says: #S => ${getCurSol("S").toString()}
+			updateResource[# getCurSol("S").toString() #]
+		}
+	}Goto waitState
+	
+	State waitState{
+		solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }
+		[#if(Debug)#]println(@S)
+		// there is a free and clean teatable so the client can enter the tearoom
+		 
+//		solve (teatable( N, free, clean ))
+//			ifSolved{ 	[# TeatableFree = true  #] }
+//			else{ 		[# TeatableFree = false #] }
+		
+		solve(waiter(athome)) ifSolved { [# IsWaiterAtHome = true #] } else{ [# IsWaiterAtHome = false #] }
+		
+	}
+	Transition t0
+		whenTimeVar RestWaitTime		-> maybeRest				//chosen if no other msg arrives within RestWaitTime
+		whenRequest table 				-> checkTableAvail
+		whenMsg 	clientatentrance 	-> reach
+		whenMsg 	placeorder 			-> takeOrder
+		whenReply 	orderready 			-> serveOrder
+		whenMsg 	payment 			-> getPayment
+		whenMsg		cleantable			-> thinkCleanTable
+		
+	
+	
+	//this state implements requirements "accept" and "inform"
+	State checkTableAvail{
+		[#if(Debug)#]printCurrentMessage
+		solve( roomstate(S) ) ifSolved { 		[#if(Debug)#][#println("DEBUG ---------- ${getCurSol("S").toString()} ------------")#] }
+		onMsg(table : table(Cid)){
+			[# val Cid = payloadArg(0) #]
+			solve( occupyHall($Cid) )
+			solve( reserveTable(Num, $Cid) )//accept: change state to a teatable and add to the KB the new client with LastMsg/notify
+			ifSolved {// client waiting in the hall can enter
+				[#if(Debug)#][#println("DEBUG ---------- ${getCurSol("Num").toString()} ------------")#] 
+				solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] 		[#if(Debug)#][#println("DEBUG ---------- ${getCurSol("S").toString()} ------------")#] }
+				replyTo table with available : available($Cid)
+				[#if(Debug)#][#println("DEBUG ---------- sending clientatantrence($Cid)  ------------")#] 
+				forward waiter -m clientatentrance : clientatentrance($Cid) //so that the waiter will eventually do the "reach" task
+			}
+			else{//inform
+				replyTo table with full : full($Cid, $MaxStayTime)
+				solve( assert( client($Cid, onhold) ) )
+			}
+		}
+				[# if(Debug){ println("endof checkTableAvail"); readLine(); } #]
+	}
+	Goto waitState
+	
+	
+	//this state implements requirement "reach"
+	State reach{//goto entrance + goto table
+		[#if(Debug)#]printCurrentMessage
+		onMsg(clientatentrance : clientatentrance(Cid)){
+			[# val Cid = payloadArg(0) #]
+			//goto entrancedoor
+			delayVar DelayTime
+			//at entrancedoor
+			solve( freeHall($Cid) )
+			solve( updateWaiter(X,entrancedoor) ) solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }
+			solve( updateClient($Cid, entering) )
+			solve( teatable(Num, reserved($Cid), clean) ) // find reserved table
+			[# val TableNum = getCurSol("Num").toString() #]
+			//goto reserved table
+			delayVar DelayTime 
+			//at reserved table
+			solve( updateWaiter(X, teatable($TableNum)) )
+			solve( engageTable($TableNum, $Cid) ) // occupy table
+			emit attable : attable($Cid)
+			solve( updateClient($Cid, choosing) )
+			solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }
+		}
+				[# if(Debug){ println("endof reach"); readLine(); } #]	}
+	Goto waitState	
+		
+		
+	//this state implements requirement "take"
+	State takeOrder{//goto table + request relayorder
+		[#if(Debug)#]printCurrentMessage
+		onMsg(placeorder : placeorder(Cid)){
+			[# val Cid = payloadArg(0) #]
+			solve( updateClient($Cid, placeorder) )
+			solve( teatable(Num, busy($Cid), dirty) ) // find correct table
+			[# val TableNum = getCurSol("Num").toString() #]
+			//goto correct table
+			delayVar DelayTime 
+			//at correct table
+			solve( updateWaiter(X, teatable($TableNum)) ) solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+			solve( updateClient($Cid, orderplaced) )
+			request barman -m relayorder : relayorder($Cid) //real task BL
+		}
+				[# if(Debug){ println("endof takeOrder"); readLine(); } #]	}
+	Goto waitState	
+	
+	//this state implements requirement "serve"
+	State serveOrder{//goto bar + goto table
+		[#if(Debug)#]printCurrentMessage
+		onMsg(orderready : orderready(Cid)){
+			[# val Cid = payloadArg(0) #]
+			solve( teatable(Num, busy($Cid), dirty) ) // find correct table
+			[# val TableNum = getCurSol("Num").toString() #]
+			//goto barman
+			delayVar DelayTime //goto barman
+			//at barman
+			solve( updateWaiter(X, bar) ) solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+			delayVar DelayTime //goto correct table
+			solve( updateClient($Cid, consuming) )
+			solve( updateWaiter(X, teatable($TableNum)) ) solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+			
+			//-------------------------------------------
+			emit delivered : delivered($Cid) //just for simulation, in real life the client would see that the waiter has brought the tea
+			//-------------------------------------------
+		}
+				[# if(Debug){ println("endof serveOrder"); readLine(); } #]	}
+	Goto waitState
+	
+	//this state implements requirements "collect" and "exit"
+	State getPayment{//goto table + goto exitdoor
+		[#if(Debug)#]printCurrentMessage
+		onMsg(payment : payment(Cid)){
+			[# val Cid = payloadArg(0) #]
+			solve( teatable(Num, busy($Cid), dirty) ) // find correct table
+			[# val TableNum = getCurSol("Num").toString() #]
+			//goto correct table	
+			delayVar DelayTime 
+			//at correct table	
+			solve( updateWaiter(X, teatable($TableNum)) ) solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+			solve( updateClient($Cid, paying) )
+			delay 2000
+			solve( freeTable($TableNum, $Cid) )	
+			emit paymentOk : paymentOk($Cid)
+			
+			solve( updateClient($Cid, leaving) )
+			delayVar DelayTime //goto exitdoor
+			emit exitOk : exitOk($Cid)
+			solve( updateWaiter(X, exitdoor) ) 
+			forward waiter -m cleantable : cleantable($TableNum) // remember to clean the table
+			solve( updateClient($Cid, left) )
+			solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+			}
+				[# if(Debug){ println("endof getPayment"); readLine(); } #]	}
+	Goto waitState
+	
+	State thinkCleanTable{
+		[# StepsToTable = 4 #]
+		onMsg(cleantable : cleantable(Num)){
+			[# val TableNum = payloadArg(0) #]
+			forward waiter -m cleantable : cleantable($TableNum) // remember to clean the table
+		}
+	}//task can be interrupted so always check if there are other messages
+	Transition t0
+		whenRequest table 				-> checkTableAvail
+		whenMsg 	clientatentrance 	-> reach
+		whenMsg 	placeorder 			-> takeOrder
+		whenReply 	orderready 			-> serveOrder
+		whenMsg 	payment 			-> getPayment
+		whenMsg		cleantable			-> goCleanTable
+	
+	State goCleanTable{
+		[#if(Debug)#]printCurrentMessage
+		onMsg(cleantable : cleantable(Num)){
+			[# val TableNum = payloadArg(0) #]
+			if [# StepsToTable > 0 #] { // simulate steps to table
+				[# StepsToTable-- #]
+				delay 100
+				[#if(Debug)#]println("$StepsToTable steps remaining...")
+			} 
+			else{
+				solve( updateWaiter(X, teatable($TableNum)) ) solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+//				delayVar DelayTime // clean table, waiter cannot process incoming messages
+//				solve( cleanTable($TableNum) )	solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+//				forward waiter -m cleantableok : cleantableok($TableNum) //checkClientOnHold will eventually be processed
+			}
+			forward waiter -m cleantable : cleantable($TableNum)
+		}
+		[# if(Debug){ println("endof cleanTable"); readLine(); } #]
+	}
+//	Goto checkClientOnHold
+	Transition t0 
+//		whenMsg cleantableok -> checkClientOnHold
+		whenRequest table 				-> checkTableAvail
+		whenMsg 	clientatentrance 	-> reach
+		whenMsg 	placeorder 			-> takeOrder
+		whenReply 	orderready 			-> serveOrder
+		whenMsg 	payment 			-> getPayment
+		whenMsg 	cleantable and [# StepsToTable > 0 #] -> goCleanTable
+		whenMsg 	cleantable and [# StepsToTable == 0 #] -> doCleanTable
+
+	State doCleanTable{
+		onMsg(cleantable : cleantable(Num)){
+			[# val TableNum = payloadArg(0) #]
+//			solve( teatable($TableNum, free, Status) )
+
+			delay 5000 //simulate some cleaning activity
+			
+			solve( cleanTable($TableNum, NewStatus) ) // "automatically" handles every status
+			if [# getCurSol("NewStatus").toString() == "clean" #]{
+				forward waiter -m cleantableok : cleantableok($TableNum) } //checkClientOnHold will eventually be processed
+			else{
+				forward waiter -m cleantable : cleantable($TableNum) } //checkClientOnHold will eventually be processed
+			solve( roomstate(S) ) updateResource[# getCurSol("S").toString() #]	println(@S)
+		}
+	}	
+	Transition t0 
+		whenMsg cleantableok -> checkClientOnHold
+		whenRequest table 				-> checkTableAvail
+		whenMsg 	clientatentrance 	-> reach
+		whenMsg 	placeorder 			-> takeOrder
+		whenReply 	orderready 			-> serveOrder
+		whenMsg 	payment 			-> getPayment
+		whenMsg 	cleantable 		 	-> doCleanTable
+	
+	State checkClientOnHold{
+		[#if(Debug)#]println("table cleaned letting somebody in")
+		// added to accept a client that was given the full room reply after a table has been cleaned
+//		solve( teatable(N, free, clean) )// free teatable ? in this model only one waiter, so always yes
+//		ifSolved{
+//		[#if(Debug)#]println("ok, table is really cleaned")
+		[# if(Debug) #]solve(clients(L))
+		[# if(Debug) println("clients are: ${getCurSol("L").toString()}") #]
+		solve( client(Cid, onhold) ) // there is a client on hold
+		ifSolved{
+			[# val OnHoldCid = getCurSol("Cid").toString() #]
+			[# if(Debug)println("ok, client waiting is num: $OnHoldCid") #]
+			if [# Debug #] {solve( roomstate(S) ) ifSolved { [# println("------------------------------------pre solves ${getCurSol("S").toString()}") #] }}
+			solve( retract( client($OnHoldCid, onhold)) )
+			solve( reserveTable(N,$OnHoldCid) )
+			if [# Debug #] {solve( roomstate(S) ) ifSolved { [# println("------------------------------------post solves ${getCurSol("S").toString()}") #] }}
+			ifSolved {// client waiting in the hall can enter
+				solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }
+				[#if(Debug) println("DEBUG ---------- sending clientatantrence($OnHoldCid)  ------------") #] 
+				forward waiter -m clientatentrance : clientatentrance($OnHoldCid) //so that the waiter will eventually do the "reach" task
+			}	
+		}
+//		}
+	}
+	Goto waitState
+		
+	//maybeRest because a NonEmptyTransition can only begin with a Timeout
+	//and Timeout cannot be guarded (i.e. "whenTime 1000 and [# Guard #]" is not correct syntax)
+	State maybeRest{} Goto waitState if [# IsWaiterAtHome #] else rest
+	State rest{
+		solve ( waiter(athome) ) 
+		ifSolved{
+			[#if(Debug)#]println("already at home")
+		}
+		else{
+			[#if(Debug)#]println("waiter rest")
+			delayVar DelayTime
+			solve( updateWaiter(X, athome )) solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+		}				
+		[# if(Debug){  println("endof rest"); readLine();} #]
+	}Goto waitState
+	
+}

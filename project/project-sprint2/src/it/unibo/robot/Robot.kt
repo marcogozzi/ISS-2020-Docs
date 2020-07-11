@@ -152,6 +152,7 @@ class Robot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 				}	 
 				state("maybeExecTheMove") { //this:State
 					action { //it:State
+						if(Debug) 
 						println("maybeExecTheMove")
 						if(  CurrentPlannedMove.length == 0  
 						 ){answer("moveTo", "moveOk", "moveOk($X,$Y)"   )  

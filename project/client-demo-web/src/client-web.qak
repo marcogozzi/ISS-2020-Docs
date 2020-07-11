@@ -1,0 +1,207 @@
+System tearoomclientsimulationweb
+mqttBroker "localhost" : 1883 eventTopic "unibo/gozzi/events"
+
+
+//Client - Smartbell, Entering
+Request notify : notify(TEMP)
+Reply deny : deny(X)
+Reply accept : accept(CID)
+Reply full : full(CID, WTIME)
+
+//Client - Waiter - Barman, Requesting+serving tea
+Dispatch placeorder : placeorder(CID)
+Request relayorder : relayorder(Cid)
+Reply orderready : orderready(Cid)
+//---------------------------------------------------------
+Event delivered : delivered($Cid) // for simulation purpose
+Event attable: attable(Cid)			// for client simulation purpose
+//---------------------------------------------------------
+
+
+//Client - Waiter, Requesting payment
+Dispatch payment : payment(Cid)
+Event paymentOk : paymentOk(Cid)
+Event exitOk : exitOk(Cid)
+
+//From web
+Event goOn : goOn(Actorname)
+
+Context ctxwaiter ip [host="localhost" port=8050]		+mqtt
+Context ctxsmartbell ip [host="localhost" port=8051]	+mqtt
+Context ctxclient ip [host="127.0.0.1" port=8055]		+mqtt
+//Context ctxclient ip [host="localhost" port=8055]		+mqtt
+
+
+QActor clientweb context ctxclient{
+	
+	[#
+		val Maxstaytime = 100000L
+		val StartDelay = kotlin.random.Random.nextLong(0, Maxstaytime/2*3)
+		var Cid = ""
+		var WasItMe = false
+		var Debug = false
+		val WaitTime = 3000L
+		val Name = name
+	#]
+	
+	State s0 initial{
+//		delayVar StartDelay
+		updateResource[# "initial web... click to notify smartbell" #] // notify web that this Instance exists
+		println("initial web")		
+	}
+	Transition t0
+		whenEvent goOn -> notify
+	
+	State notify {
+		onMsg(goOn : goOn($Name)){
+			[# WasItMe = true #]
+			updateResource[# "notifying to smartbell" #]
+			println("notifying to smartbell")
+			request smartbell -m notify : notify(36)
+		}
+		else{
+			[# WasItMe = false #]
+		}
+	}
+	Transition t0
+//		whenTimeVar Maxstaytime -> leave 
+		// me ne vado ancora prima di entrare? posso decidere con una assunzione che non accada -> i.e. ogni cliente che entra non se ne va e aspetta
+		whenReply accept 		-> entering
+		whenReply full 			-> evalStay
+		whenReply deny 			-> leave
+		whenEvent goOn and [# ! WasItMe #]	-> notify
+		
+	State leave{
+		onMsg(exitOk : exitOk($Cid)){
+			updateResource[# "client $Cid has left the tearoom... click to restart" #]
+			println("client $Cid has left the tearoom...")
+			delay 5000
+			[# WasItMe = true #]
+		} else{ [# WasItMe = false #] }
+	}
+//	Goto s0 if [# WasItMe #] else 
+	Transition t0
+		whenEvent goOn and [# WasItMe #] -> s0
+		whenEvent exitOk and [# ! WasItMe #] -> leave	
+		
+	State entering{
+		onMsg(accept : accept(CID)){
+			[# Cid = payloadArg(0) #]
+		}
+		updateResource[# "client $Cid about to enter" #]
+		println("client $Cid about to enter")
+	}
+	Transition t0
+//	whenEvent goOn -> sitting
+	whenEvent attable -> sitting
+	
+	State sitting{
+		onMsg(attable : attable($Cid)){
+			updateResource[# "client $Cid sitting... click to proceed" #]
+			println("client $Cid sitting")
+			[# WasItMe = true #]
+			delayVar WaitTime
+			
+		}
+		else{ [# WasItMe = false #] }
+		
+	}
+	/*
+	Transition t0 whenEvent attable and [# ! WasItMe #] -> sitting
+	else Goto ordering
+	*/
+	/* 
+	Goto ordering if [# WasItMe #] else waitSitting
+	State waitSitting{} Transition t0 whenEvent attable -> sitting
+	*/
+	Transition t0
+		whenEvent goOn and [# WasItMe #] -> ordering
+		whenEvent attable and [# ! WasItMe #] -> sitting
+		
+	State ordering{
+		onMsg(goOn : goOn($Name)){
+			[# WasItMe = true #]
+			updateResource[# "client $Cid placing order" #]
+			println("client $Cid placing order")
+			[# if(Debug) println("press button to place order") #]
+			[# if(Debug) readLine() #]
+			forward waiter -m placeorder : placeorder($Cid)
+		}else{ [# WasItMe = false #] }
+	}
+	Transition t1
+		whenEvent goOn and [# ! WasItMe #] -> ordering
+		whenEvent delivered and [# WasItMe #] -> consuming
+//Goto consuming
+		
+
+	State consuming{
+		onMsg(delivered : delivered($Cid)){
+			updateResource[# "client $Cid consuming order... press button to request payment" #]
+			println("client $Cid consuming order")
+			if [# Debug #]{
+				[# if(Debug) println("press button to pay") #]
+				[# if(Debug) readLine() #]
+			}
+			[# WasItMe = true #]
+		}
+		else{
+			[# WasItMe = false #]
+		}
+	}
+//	Transition t0
+//	whenEvent goOn -> reqPayment
+//	Goto reqPayment if [# WasItMe #] else waitConsuming
+//	State waitConsuming{} Transition t1 whenEvent delivered -> consuming	
+	Transition t0
+		whenEvent goOn and [# WasItMe #] -> reqPayment
+		whenEvent delivered and [# ! WasItMe #] -> consuming
+	
+	State reqPayment{	
+		onMsg(goOn : goOn($Name)){
+			[# WasItMe = true #]
+			updateResource[# "client $Cid requested payment" #]
+			println("client $Cid requested payment")
+			forward waiter -m payment : payment($Cid)
+		}else{ [# WasItMe = false #] }
+		
+	}
+	Transition t1
+		whenEvent goOn and [# ! WasItMe #] -> reqPayment
+		whenEvent paymentOk and [# WasItMe #]-> leaving
+//Goto leaving
+	
+	State leaving{
+		onMsg(paymentOk : paymentOk($Cid)){
+			updateResource[# "client $Cid is about to leave" #]
+			println("client $Cid leaving")
+			[# WasItMe = true #]
+			delayVar WaitTime
+		}
+		else{
+			[# WasItMe = false #]
+		}
+	}
+//	Transition t1
+//		whenEvent exitOk -> leave
+//Goto leave
+	Transition t1 
+		whenEvent paymentOk and [# ! WasItMe #] -> leaving	
+		whenEvent exitOk and [# WasItMe #] -> leave
+	
+	State evalStay{ 
+		onMsg(full : full(Cid, WTIME)){
+			[# Cid = payloadArg(0) #]
+//			[# WaitTime = payloadArg(1) #]
+			updateResource[# "client $Cid is waiting for a table" #]
+			println("client $Cid is waiting for a table")
+		}
+		
+	}
+//Goto sitting
+	Transition t0
+		whenEvent attable -> sitting
+	
+}
+
+ExternalQActor waiter context ctxwaiter
+ExternalQActor smartbell context ctxsmartbell

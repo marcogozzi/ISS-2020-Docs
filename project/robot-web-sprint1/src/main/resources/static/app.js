@@ -2,26 +2,6 @@ var stompClient = null;
 var hostAddr = "http://localhost:8080/move";
 
 
-//SIMULA UNA FORM che invia comandi POST
-function sendRequestData( params, method) {
-    method = method || "post"; // il metodo POST � usato di default
-    //console.log(" sendRequestData  params=" + params + " method=" + method);
-    var form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", hostAddr);
-    var hiddenField = document.createElement("input");
-        hiddenField.setAttribute("type", "hidden");
-        hiddenField.setAttribute("name", "move");
-        hiddenField.setAttribute("value", params);
-     	//console.log(" sendRequestData " + hiddenField.getAttribute("name") + " " + hiddenField.getAttribute("value"));
-        form.appendChild(hiddenField);
-    document.body.appendChild(form);
-    console.log("body children num= "+document.body.children.length );
-    form.submit();
-    document.body.removeChild(form);
-    console.log("body children num= "+document.body.children.length );
-}
-
 
 function postJQuery(themove){
 var form = new FormData();
@@ -130,32 +110,14 @@ $(function () {
 
 //USED BY SOCKET.IO-BASED GUI  
 
-    $( "#h" ).click(function() {  sendTheMove("h") });
-    $( "#w" ).click(function() {  sendTheMove("w") });
-    $( "#s" ).click(function() {  sendTheMove("s") });
-    $( "#r" ).click(function() {  sendTheMove("r") });
-    $( "#l" ).click(function() {  sendTheMove("l") });
-    $( "#x" ).click(function() {  sendTheMove("x") });
-    $( "#z" ).click(function() {  sendTheMove("z") });
-    $( "#p" ).click(function() {  sendTheMove("p") });
-
-    //$( "#rr" ).click(function() { console.log("submit rr"); redirectPost("r") });
-    //$( "#rrjo" ).click(function() { console.log("submit rr"); jqueryPost("r") });
-
-//USED BY POST-BASED GUI   
-    
-    $( "#ww" ).click(function() { sendRequestData( "w") });
-    $( "#ss" ).click(function() { sendRequestData( "s") });
-    $( "#rr" ).click(function() { sendRequestData( "r") });
-    $( "#ll" ).click(function() { sendRequestData( "l") });
-    $( "#zz" ).click(function() { sendRequestData( "z") });
-    $( "#xx" ).click(function() { sendRequestData( "x") });
-    $( "#pp" ).click(function() { sendRequestData( "p") });
-    $( "#hh" ).click(function() { sendRequestData( "h") });
-
-//USED BY POST-BASED BOUNDARY  
-    $( "#start" ).click(function() { sendRequestData( "w") });
-    $( "#stop" ).click(function()  { sendRequestData( "h") });
+	$( "#h" ).click(function() {  sendTheMove("h") });
+	$( "#w" ).click(function() {  sendTheMove("w") });
+	$( "#s" ).click(function() {  sendTheMove("s") });
+	$( "#r" ).click(function() {  sendTheMove("r") });
+	$( "#l" ).click(function() {  sendTheMove("l") });
+	$( "#x" ).click(function() {  sendTheMove("x") });
+	$( "#z" ).click(function() {  sendTheMove("z") });
+	$( "#p" ).click(function() {  sendTheMove("p") });
 
 	$( "#update" ).click(function() { sendUpdateRequestRoom(  ) });
 	$( "#client" ).click(function() { sendUpdateRequestClient(  ) });
