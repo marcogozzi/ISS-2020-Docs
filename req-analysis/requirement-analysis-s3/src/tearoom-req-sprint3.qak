@@ -32,20 +32,16 @@ Event exitOk : exitOk(Cid)			// for client simulation purpose
 
 //Self messages to determine table cleaning status
 Dispatch cleantable : cleantable(Num) 			//teatable Num is free and needs cleaning
-
-Dispatch tabledirty : tabledirty(Num)			//teatable not yet cleaned, phase 1 to do
-Dispatch tablecleaneda : tablecleaneda(Num)		//teatable partially cleaned, phase 1 done, phase 2 to do
-Dispatch tablecleanedb : tablecleanedb(Num)		//teatable partially cleaned, phase 2 done, phase 3 to do
-
 Dispatch cleantableok : cleantableok(Num) 		//teatable Num has been cleaned
 
-
+//For requirement maxstaytime
+//From maxstaytime to waiter
+Dispatch timeexpired : timeexpired(Cid)
 
 Context ctxwaiter ip [host="localhost" port=8050]  			+mqtt
 Context ctxsmartbell ip [host="localhost" port=8051]		+mqtt
 //Context ctxhall ip [host="localhost" port=8052]			+mqtt
 Context ctxbarman ip [host="localhost" port=8056]			+mqtt
-
 
 //ExternalQActor barman context ctxbarman
 QActor barman context ctxbarman{
@@ -116,7 +112,7 @@ QActor smartbell context ctxsmartbell{
 QActor waiter context ctxwaiter {
 	
 	[#
-		val MaxStayTime 	= 100000L	
+		var MaxStayTime 	= 100000L	
 		val DelayTime 		= 1000L
 		val RestWaitTime 	= 10000L
 		
@@ -127,12 +123,12 @@ QActor waiter context ctxwaiter {
 		var Debug = false
 	#]
 	
-	
 	State s0 initial{
 		println("waiter RA-s3 initial")
 		discardMsg Off
 		solve( consult("tearoomKB-RA-sprint3.pl") )
-		solve(debug(true)) ifSolved{ [# Debug = true #] }
+		solve( debug(true) ) ifSolved{ [# Debug = true #] }
+		solve( maxStayTime(X) ) ifSolved{ [# MaxStayTime = getCurSol("X").toString().toLong() #] }
 		solve( roomstate(S) ) 
 		ifSolved { //Documentation says: #S => ${getCurSol("S").toString()}
 			updateResource[# getCurSol("S").toString() #]
@@ -142,22 +138,17 @@ QActor waiter context ctxwaiter {
 	State waitState{
 		solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }
 		[#if(Debug)#]println(@S)
-		// there is a free and clean teatable so the client can enter the tearoom
-		 
-//		solve (teatable( N, free, clean ))
-//			ifSolved{ 	[# TeatableFree = true  #] }
-//			else{ 		[# TeatableFree = false #] }
-		
 		solve(waiter(athome)) ifSolved { [# IsWaiterAtHome = true #] } else{ [# IsWaiterAtHome = false #] }
 		
 	}
 	Transition t0
 		whenTimeVar RestWaitTime		-> maybeRest				//chosen if no other msg arrives within RestWaitTime
+		whenMsg 	payment 			-> getPayment
+		whenMsg 	timeexpired			-> checkClientTime
 		whenRequest table 				-> checkTableAvail
 		whenMsg 	clientatentrance 	-> reach
 		whenMsg 	placeorder 			-> takeOrder
 		whenReply 	orderready 			-> serveOrder
-		whenMsg 	payment 			-> getPayment
 		whenMsg		cleantable			-> thinkCleanTable
 		
 	
@@ -248,9 +239,19 @@ QActor waiter context ctxwaiter {
 			
 			//-------------------------------------------
 			emit delivered : delivered($Cid) //just for simulation, in real life the client would see that the waiter has brought the tea
-			//-------------------------------------------
+			[# forwardWithDelay("timeexpired", "timeexpired($Cid)", "waiter", MaxStayTime) #]
+			//-------------------------------------------		
 		}
 				[# if(Debug){ println("endof serveOrder"); readLine(); } #]	}
+	Goto waitState
+	
+	State checkClientTime{
+		onMsg(timeexpired : timeexpired(Cid)){
+			[# val CurrentCid = payloadArg(0) #]
+			solve( client($CurrentCid,consuming) ) // if the client 
+			ifSolved{ forward waiter -m payment : payment($CurrentCid) }
+		}	
+	}
 	Goto waitState
 	
 	//this state implements requirements "collect" and "exit"
@@ -301,7 +302,8 @@ QActor waiter context ctxwaiter {
 			[# val TableNum = payloadArg(0) #]
 			if [# StepsToTable > 0 #] { // simulate steps to table
 				[# StepsToTable-- #]
-				delay 100
+				solve( updateWaiter(X, gocleanteatable($TableNum)) ) solve( roomstate(S) )	ifSolved { 	updateResource[# getCurSol("S").toString() #]	}
+				delay 500
 				[#if(Debug)#]println("$StepsToTable steps remaining...")
 			} 
 			else{

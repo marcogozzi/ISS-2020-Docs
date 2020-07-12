@@ -57,7 +57,7 @@ dependencies {
     //compile name: 'org.eclipse.paho.client.mqttv3-1.2.4'
     compile name: 'uniboInterfaces'
     compile name: '2p301'
-    compile name: 'it.unibo.qakactor-2.5'
+    compile name: 'it.unibo.qakactor-2.5.1'
  
     //For p2p two-way connections (TCP, UDP, BTH, Serial ...)
     compile name: 'unibonoawtsupports'

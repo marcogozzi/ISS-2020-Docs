@@ -30,8 +30,9 @@ Event paymentOk : paymentOk(Cid)	// for client simulation purpose
 Event exitOk : exitOk(Cid)			// for client simulation purpose
 //---------------------------------------------------------
 
-Dispatch cleantable : cleantable(Num) //self message, when teatable Num is dirty and free
-Dispatch cleantableok : cleantableok(Num) //self message, when teatable Num has been cleaned
+//Self messages to determine table cleaning status
+Dispatch cleantable : cleantable(Num) 			//self message, when teatable Num is dirty and free
+Dispatch cleantableok : cleantableok(Num) 		//self message, when teatable Num has been cleaned
 
 Context ctxwaiter ip [host="localhost" port=8050]  			+mqtt
 Context ctxsmartbell ip [host="localhost" port=8051]		+mqtt
@@ -119,7 +120,6 @@ QActor waiter context ctxwaiter {
 		var StepsToTable = 4
 		var Debug = false
 	#]
-	
 	
 	State s0 initial{
 		println("waiter RA-s2 initial")
