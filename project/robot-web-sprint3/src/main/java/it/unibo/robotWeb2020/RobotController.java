@@ -6,9 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
@@ -47,8 +45,8 @@ import mqttUtils.MqttUtils;
 public class RobotController { 
     String appName     ="robotGui";
     String viewModelRep="startup";
-    String robotHost = ""; //ConnConfig.hostAddr;		
-    String robotPort = ""; //ConnConfig.port;
+    String robotHost = ""; 
+    String robotPort = "";
     Prolog engine = new Prolog();
     String htmlPage  = "robotGuiSocket";
     int updateNum = 0;
@@ -114,7 +112,7 @@ public class RobotController {
   @GetMapping("/") 		 
   public String entry(Model viewmodel) {
  	 viewmodel.addAttribute("arg", "Entry page loaded. Please use the buttons ");
- 	 peparePageUpdating();
+ 	 preparePageUpdating();
  	 return htmlPage;
   } 
    
@@ -129,20 +127,13 @@ public class RobotController {
 	@PostMapping( path = "/move" ) 
 	public String doMove( 
 		@RequestParam(name="move", required=false, defaultValue="h") 
-		//binds the value of the query string parameter name into the moveName parameter of the  method
 		String moveName, Model viewmodel) {
-		//System.out.println("------------------- RobotController doMove move=" + moveName  );
-		//if( robotMoves.contains(moveName) ) {
 			doBusinessJob(moveName, viewmodel);
- 		//}else {
-			viewmodel.addAttribute("arg", "Sorry: move unknown - Current Robot State:"+viewModelRep );
-		//}		
-		return htmlPage;
-		//return "robotGuiSocket";  //ESPERIMENTO
+			return htmlPage;
 	}	
 	
 	
-	private void peparePageUpdating() {
+	private void preparePageUpdating() {
 
 		try {
 	        
@@ -173,7 +164,7 @@ public class RobotController {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					if(topic.matches(".*\\/.*\\/.*\\/state")) {
-						String clientAct = topic.split("/")[2];
+						String clientAct = topic.split("/")[2];// get actor name
 						if(clientAct.contains("client") ||
 								clientAct.contains("bar")) {
 							
@@ -213,17 +204,19 @@ public class RobotController {
 				try {
 					engine.clearTheory();
 					
-					//OLD
+					//s1
 					//state(waiter(rest,0,0),tables([teatable(1,free,clean),teatable(2,free,clean)])) 
-					//NEW
+					//s2
 					//state(waiter(rest,0,0),tables([teatable(1,free,clean),teatable(2,free,clean)]),clients([]))
+					//s3
+					//state(waiter(rest(0)),tables([teatable(1,free,clean),teatable(2,free,clean)]),clients([]))
 					SolveInfo sol;
 					String clientString = "";
 					
 					
 					if(response.getResponseText().contains("clients(")) {
 						engine.solve("assert("+response.getResponseText()+").");
-						sol = engine.solve("state(waiter(W,WX,WY),tables([teatable(1,TOF,TOC),teatable(2,TTF,TTC)]),clients(C)).");
+						sol = engine.solve("state(waiter(W),tables([teatable(1,TOF,TOC),teatable(2,TTF,TTC)]),clients(C)).");
 						waiter.append("waiter in state ")
 							.append(sol.getVarValue("W"));
 					
@@ -380,9 +373,7 @@ public class RobotController {
 	
     @MessageMapping("/move")
  	public void backtoclient(RequestMessageOnSock message) throws Exception {
-		//System.out.println("backtoclient " + message.toString());
 		doBusinessJob(message.getName(), null);
-		//return getWebPageRep(connClient);
  	}
     
     @MessageMapping("/update")

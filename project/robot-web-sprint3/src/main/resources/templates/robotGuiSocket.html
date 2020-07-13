@@ -29,7 +29,13 @@ type="text/javascript"></script>
     td.robot 		{background-color: #10ff10; width:23px; height:23px; border: 1px solid black; }
     td.robotfree 	{background-color: #f1f1c1; width:23px; height:23px; border: 1px solid black; }
     td.obstacle 	{background-color: #ff6060; width:50px; height:50px; border: 3px solid black; } 
+    td.wall 		{background-color: #ff6060; width:50px; height:50px; border: 3px solid black; } 
     td.dirty 		{background-color: #555555; width:50px; height:50px; border: 3px solid black; }
+    td.tabledirty 	{background-color: #ff0000; width:50px; height:50px; border: 3px solid black; }
+    td.tableclean 	{background-color: #00ff00; width:50px; height:50px; border: 3px solid black; }
+    td.tablea 		{background-color: #ff8800; width:50px; height:50px; border: 3px solid black; }
+    td.tableb 		{background-color: #ffff00; width:50px; height:50px; border: 3px solid black; }
+    td.tablereserved 		{background-color: #0070ff; width:50px; height:50px; border: 3px solid black; }
     </style>
     <script>
   
@@ -75,7 +81,8 @@ type="text/javascript"></script>
                 <form class="form-inline"> <button id="update" class="btn btn-default"
                     type="submit"> Show state </button> </form>
               </td>
-              <td id="map"><br>
+              <td id="map">
+<table><tbody><tr><td><table style="table-layout: fixed"><tbody><tr><td class="robotfree"></td><td class="robotfree"></td></tr><tr><td class="robot"></td><td class="robot"></td></tr></tbody></table></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="wall"></td></tr><tr><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="wall"></td></tr><tr><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="wall"></td></tr><tr><td class="free"></td><td class="free"></td><td class="tableclean"></td><td class="free"></td><td class="tableclean"></td><td class="free"></td><td class="wall"></td></tr><tr><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="free"></td><td class="wall"></td></tr><tr><td class="wall"></td><td class="wall"></td><td class="wall"></td><td class="wall"></td><td class="wall"></td><td class="wall"></td><td class="wall"></td></tr></tbody></table>
               </td>
             </tr>
           </tbody>

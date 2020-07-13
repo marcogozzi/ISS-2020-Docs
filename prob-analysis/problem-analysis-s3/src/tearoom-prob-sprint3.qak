@@ -174,7 +174,6 @@ QActor waiter context ctxwaiter {
 	State s0 initial{
 		discardMsg Off
 		solve( consult("tearoomKB-PA-sprint3.pl") )
-		[# println(pengine) #]
 		solve( debug(true) ) ifSolved{ [# Debug = true #] }
 		solve( maxStayTime(X) ) ifSolved{ [# MaxStayTime = getCurSol("X").toString().toLong() #] }
 		println("waiter PA-s3 starting, debug is $Debug")

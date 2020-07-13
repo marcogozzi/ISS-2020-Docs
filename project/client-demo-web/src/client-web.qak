@@ -1,7 +1,6 @@
 System tearoomclientsimulationweb
 mqttBroker "localhost" : 1883 eventTopic "unibo/gozzi/events"
 
-
 //Client - Smartbell, Entering
 Request notify : notify(TEMP)
 Reply deny : deny(X)
@@ -131,6 +130,8 @@ QActor clientweb context ctxclient{
 	Transition t1
 		whenEvent goOn and [# ! WasItMe #] -> ordering
 		whenEvent delivered and [# WasItMe #] -> consuming
+		
+	
 //Goto consuming
 		
 
@@ -155,6 +156,22 @@ QActor clientweb context ctxclient{
 	Transition t0
 		whenEvent goOn and [# WasItMe #] -> reqPayment
 		whenEvent delivered and [# ! WasItMe #] -> consuming
+		whenEvent paymentOk and [# WasItMe #] -> maybeLeave
+		
+	State maybeLeave{
+		onMsg(paymentOk : paymentOk($Cid)){
+			updateResource[# "client $Cid is about to leave by force" #]
+			println("client $Cid leaving forcefully")
+			[# WasItMe = true #]
+			delayVar WaitTime
+		}
+		else{
+			[# WasItMe = false #]
+		}
+	}
+	Transition t1
+		whenEvent goOn and [# ! WasItMe #] -> ordering
+		whenEvent exitOk and [# WasItMe #] -> leave
 	
 	State reqPayment{	
 		onMsg(goOn : goOn($Name)){
@@ -169,6 +186,7 @@ QActor clientweb context ctxclient{
 		whenEvent goOn and [# ! WasItMe #] -> reqPayment
 		whenEvent paymentOk and [# WasItMe #]-> leaving
 //Goto leaving
+
 	
 	State leaving{
 		onMsg(paymentOk : paymentOk($Cid)){

@@ -94,7 +94,7 @@ sourceSets {
     test.java.srcDirs += 'test'		//test is specific
 }
 
-mainClassName = 'it.unibo.ctxclient.MainCtxclientKt'
+mainClassName = 'it.unibo.ctxclient.MainCtxclientMultiKt'
 
 jar {
     println("executing jar")

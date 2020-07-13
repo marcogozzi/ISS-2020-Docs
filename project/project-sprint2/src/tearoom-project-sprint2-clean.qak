@@ -61,7 +61,6 @@ Context ctxbarman ip [host="localhost" port=8056]			+mqtt
 Context ctxbasicrobot ip [host="192.168.31.141" port=8020] 		+mqtt
 
 
-
 //implements planner
 QActor robot context ctxwaiter{
 	
@@ -297,7 +296,7 @@ QActor waiter context ctxwaiter {
 		val RestWaitTime 	= 10000L
 		var CurrentCid		= ""
 		val Name = name
-		
+		var IsWaiterAtHome  = true
 		var Debug = false
 	#]
 	
@@ -724,7 +723,7 @@ QActor waiter context ctxwaiter {
 //----------------------------------------------------------------------------------------------------		
 	//maybeRest because a NonEmptyTransition can only begin with a Timeout
 	//and Timeout cannot be guarded (i.e. "whenTime 1000 and [# Guard #]" is not correct syntax)
-	State maybeRest{ }
+	State maybeRest{ solve(waiter(_,0,0)) ifSolved { [# IsWaiterAtHome = true #] } else{ [# IsWaiterAtHome = false #] } }
 	Goto waitState if [# IsWaiterAtHome #] else checkDirtyTable
 	
 	State checkDirtyTable{ 

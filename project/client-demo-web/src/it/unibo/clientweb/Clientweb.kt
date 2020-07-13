@@ -140,6 +140,26 @@ class Clientweb ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 					}))
 					transition(edgeName="t013",targetState="consuming",cond=whenEventGuarded("delivered",{ ! WasItMe  
 					}))
+					transition(edgeName="t014",targetState="maybeLeave",cond=whenEventGuarded("paymentOk",{ WasItMe  
+					}))
+				}	 
+				state("maybeLeave") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("paymentOk(Cid)"), Term.createTerm("paymentOk($Cid)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								updateResourceRep( "client $Cid is about to leave by force"  
+								)
+								println("client $Cid leaving forcefully")
+								 WasItMe = true  
+								delay(WaitTime)
+						}else{
+							 WasItMe = false  
+						}
+					}
+					 transition(edgeName="t115",targetState="ordering",cond=whenEventGuarded("goOn",{ ! WasItMe  
+					}))
+					transition(edgeName="t116",targetState="leave",cond=whenEventGuarded("exitOk",{ WasItMe  
+					}))
 				}	 
 				state("reqPayment") { //this:State
 					action { //it:State
@@ -154,9 +174,9 @@ class Clientweb ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 							 WasItMe = false  
 						}
 					}
-					 transition(edgeName="t114",targetState="reqPayment",cond=whenEventGuarded("goOn",{ ! WasItMe  
+					 transition(edgeName="t117",targetState="reqPayment",cond=whenEventGuarded("goOn",{ ! WasItMe  
 					}))
-					transition(edgeName="t115",targetState="leaving",cond=whenEventGuarded("paymentOk",{ WasItMe  
+					transition(edgeName="t118",targetState="leaving",cond=whenEventGuarded("paymentOk",{ WasItMe  
 					}))
 				}	 
 				state("leaving") { //this:State
@@ -172,9 +192,9 @@ class Clientweb ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 							 WasItMe = false  
 						}
 					}
-					 transition(edgeName="t116",targetState="leaving",cond=whenEventGuarded("paymentOk",{ ! WasItMe  
+					 transition(edgeName="t119",targetState="leaving",cond=whenEventGuarded("paymentOk",{ ! WasItMe  
 					}))
-					transition(edgeName="t117",targetState="leave",cond=whenEventGuarded("exitOk",{ WasItMe  
+					transition(edgeName="t120",targetState="leave",cond=whenEventGuarded("exitOk",{ WasItMe  
 					}))
 				}	 
 				state("evalStay") { //this:State
@@ -187,7 +207,7 @@ class Clientweb ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, 
 								println("client $Cid is waiting for a table")
 						}
 					}
-					 transition(edgeName="t018",targetState="sitting",cond=whenEvent("attable"))
+					 transition(edgeName="t021",targetState="sitting",cond=whenEvent("attable"))
 				}	 
 			}
 		}
