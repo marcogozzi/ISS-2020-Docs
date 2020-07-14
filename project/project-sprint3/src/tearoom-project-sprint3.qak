@@ -62,7 +62,7 @@ Context ctxwaiter ip [host="localhost" port=8050]  			+mqtt
 Context ctxsmartbell ip [host="localhost" port=8051]		+mqtt
 //Context ctxhall ip [host="localhost" port=8052]			+mqtt
 Context ctxbarman ip [host="localhost" port=8056]			+mqtt
-Context ctxbasicrobot ip [host="192.168.31.232" port=8020] 		+mqtt
+Context ctxbasicrobot ip [host="localhost" port=8020] 		+mqtt
 
 QActor waiterkb context ctxwaiter{
 	
