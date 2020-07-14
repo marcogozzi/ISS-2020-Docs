@@ -21,12 +21,11 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				val DelayTime 		= 1000L
 				val RestWaitTime 	= 10000L
 				var CurrentCid		= ""
-				
-				var TeatableFree	= true
+				val Name = name
+				var TeatableToClean	= true
 				var IsWaiterAtHome  = true
-				var Moving = false
 				
-				var Debug = true
+				var Debug = false
 		return { //this:ActionBasciFsm
 				state("s0") { //this:State
 					action { //it:State
@@ -64,7 +63,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						{ IsWaiterAtHome = false  
 						}
 						stateTimer = TimerActor("timer_waitState", 
-							scope, context!!, "local_tout_waiter_waitState", RestWaitTime )
+							scope, context!!, "local_tout_waiter_waitState", 100.toLong() )
 					}
 					 transition(edgeName="t011",targetState="maybeRest",cond=whenTimeout("local_tout_waiter_waitState"))   
 					transition(edgeName="t012",targetState="checkTableAvail",cond=whenRequest("table"))
@@ -72,16 +71,13 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					transition(edgeName="t014",targetState="takeOrder",cond=whenDispatch("placeorder"))
 					transition(edgeName="t015",targetState="serveOrder",cond=whenReply("orderready"))
 					transition(edgeName="t016",targetState="getPayment",cond=whenDispatch("payment"))
-					transition(edgeName="t017",targetState="thinkCleanTable",cond=whenDispatch("cleantable"))
+					transition(edgeName="t017",targetState="thinkCleanTable",cond=whenDispatchGuarded("cleantable",{ TeatableToClean  
+					}))
 				}	 
 				state("checkTableAvail") { //this:State
 					action { //it:State
 						if(Debug) 
 						println("waiter checkTableAvail")
-						if(  Moving  
-						 ){ Moving = false  
-						forward("stopPlan", "stopPlan(0)" ,"robot" ) 
-						}
 						if( checkMsgContent( Term.createTerm("table(CID)"), Term.createTerm("table(Cid)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 CurrentCid = payloadArg(0)  
@@ -92,8 +88,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								forward("clientatentrance", "clientatentrance($CurrentCid)" ,"waiter" ) 
 								}
 								else
-								{forward("clientonhold", "clientonhold($CurrentCid)" ,"waiter" ) 
-								answer("table", "full", "full($CurrentCid,$MaxStayTime)"   )  
+								{answer("table", "full", "full($CurrentCid,$MaxStayTime)"   )  
 								solve("assert(client($CurrentCid,onhold))","") //set resVar	
 								}
 						}
@@ -112,10 +107,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						if(Debug) 
 						println("waiter reach")
-						if(  Moving  
-						 ){ Moving = false  
-						forward("stopPlan", "stopPlan(0)" ,"robot" ) 
-						}
 						if( checkMsgContent( Term.createTerm("clientatentrance(Cid)"), Term.createTerm("clientatentrance(CurrentCid)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 CurrentCid = payloadArg(0)  
@@ -214,10 +205,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						if(Debug) 
 						println("waiter takeOrder")
-						if(  Moving  
-						 ){ Moving = false  
-						forward("stopPlan", "stopPlan(0)" ,"robot" ) 
-						}
 						if( checkMsgContent( Term.createTerm("moveKo(X,Y)"), Term.createTerm("moveKo(X,Y)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								  val X = payloadArg(0)
@@ -276,10 +263,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						if(Debug) 
 						println("waiter serveOrder")
-						if(  Moving  
-						 ){ Moving = false  
-						forward("stopPlan", "stopPlan(0)" ,"robot" ) 
-						}
 						if( checkMsgContent( Term.createTerm("orderready(Cid)"), Term.createTerm("orderready(CurrentCid)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 CurrentCid = payloadArg(0)  
@@ -376,10 +359,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						if(Debug) 
 						println("waiter getPayment")
-						if(  Moving  
-						 ){ Moving = false  
-						forward("stopPlan", "stopPlan(0)" ,"robot" ) 
-						}
 						if( checkMsgContent( Term.createTerm("payment(Cid)"), Term.createTerm("payment(CurrentCid)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 CurrentCid = payloadArg(0)  
@@ -476,29 +455,83 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 				}	 
 				state("thinkCleanTable") { //this:State
 					action { //it:State
-						 Moving = true  
 						if( checkMsgContent( Term.createTerm("cleantable(Num)"), Term.createTerm("cleantable(Num)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 val TableNum = payloadArg(0)  
 								solve("updateWaiterState(X,gocleanteatable($TableNum))","") //set resVar	
-								solve("coordinatesTo(teatable($TableNum),OldX,OldY,X,Y)","") //set resVar	
-								if( currentSolution.isSuccess() ) {  val OldX = getCurSol("OldX").toString()
-												val OldY = getCurSol("OldY").toString()
-												val X = getCurSol("X").toString()
-												val Y = getCurSol("Y").toString()		 
-								request("moveTo", "moveTo($OldX,$OldY,$X,$Y)" ,"robot" )  
-								}
-								else
-								{}
 						}
+						if( checkMsgContent( Term.createTerm("moveKo(X,Y)"), Term.createTerm("moveKo(X,Y)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								  val X = payloadArg(0)
+												val Y = payloadArg(1)    
+								solve("updateWaiterLoc(gocleanteatable(Num),$X,$Y)","") //set resVar	
+						}
+						solve("waiter(gocleanteatable(Num),_,_)","") //set resVar	
+						 val TableNum = getCurSol("Num").toString()  
+						solve("coordinatesTo(teatable($TableNum),OldX,OldY,X,Y)","") //set resVar	
+						if( currentSolution.isSuccess() ) {  val OldX = getCurSol("OldX").toString()
+									val OldY = getCurSol("OldY").toString()
+									val X = getCurSol("X").toString()
+									val Y = getCurSol("Y").toString()		 
+						request("moveTo", "moveTo($OldX,$OldY,$X,$Y)" ,"robot" )  
+						}
+						else
+						{}
+						solve("roomstate(S)","") //set resVar	
+						if( currentSolution.isSuccess() ) {updateResourceRep( getCurSol("S").toString()  
+						)
+						}
+						else
+						{}
 					}
 					 transition(edgeName="t032",targetState="cleanTable",cond=whenReply("moveOk"))
 					transition(edgeName="t033",targetState="thinkCleanTable",cond=whenReply("moveKo"))
-					transition(edgeName="t034",targetState="checkTableAvail",cond=whenRequest("table"))
-					transition(edgeName="t035",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t036",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t037",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t038",targetState="getPayment",cond=whenDispatch("payment"))
+					transition(edgeName="t034",targetState="cancelCurrentPlan",cond=whenRequest("table"))
+					transition(edgeName="t035",targetState="cancelCurrentPlan",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t036",targetState="cancelCurrentPlan",cond=whenDispatch("placeorder"))
+					transition(edgeName="t037",targetState="cancelCurrentPlan",cond=whenReply("orderready"))
+					transition(edgeName="t038",targetState="cancelCurrentPlan",cond=whenDispatch("payment"))
+				}	 
+				state("cancelCurrentPlan") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						 autoMsg(currentMsg)  
+						forward("stopPlan", "stopPlan(0)" ,"robot" ) 
+						if( Debug 
+						 ){println("end of cancelCurrentPlan")
+						 readLine()  
+						}
+					}
+					 transition(edgeName="t039",targetState="handlePlanCancel",cond=whenReply("moveOk"))
+					transition(edgeName="t040",targetState="handlePlanCancel",cond=whenReply("moveKo"))
+				}	 
+				state("handlePlanCancel") { //this:State
+					action { //it:State
+						if( checkMsgContent( Term.createTerm("moveOk(X,Y)"), Term.createTerm("moveOk(X,Y)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								  val X = payloadArg(0)
+												val Y = payloadArg(1)    
+								solve("updateWaiterLoc(_,$X,$Y)","") //set resVar	
+						}
+						if( checkMsgContent( Term.createTerm("moveKo(X,Y)"), Term.createTerm("moveKo(X,Y)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								  val X = payloadArg(0)
+												val Y = payloadArg(1)    
+								solve("updateWaiterLoc(_,$X,$Y)","") //set resVar	
+						}
+						solve("updateWaiterState(X,cancelplan)","") //set resVar	
+						solve("roomstate(S)","") //set resVar	
+						if( currentSolution.isSuccess() ) {updateResourceRep( getCurSol("S").toString()  
+						)
+						}
+						else
+						{}
+						if( Debug 
+						 ){println("end of handlePlanCancel")
+						 readLine()  
+						}
+					}
+					 transition( edgeName="goto",targetState="waitState", cond=doswitch() )
 				}	 
 				state("cleanTable") { //this:State
 					action { //it:State
@@ -521,22 +554,17 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						stateTimer = TimerActor("timer_cleanTable", 
 							scope, context!!, "local_tout_waiter_cleanTable", 100.toLong() )
 					}
-					 transition(edgeName="t039",targetState="doClean",cond=whenTimeout("local_tout_waiter_cleanTable"))   
-					transition(edgeName="t040",targetState="checkTableAvail",cond=whenRequest("table"))
-					transition(edgeName="t041",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t042",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t043",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t044",targetState="getPayment",cond=whenDispatch("payment"))
+					 transition(edgeName="t041",targetState="doClean",cond=whenTimeout("local_tout_waiter_cleanTable"))   
+					transition(edgeName="t042",targetState="checkTableAvail",cond=whenRequest("table"))
+					transition(edgeName="t043",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t044",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t045",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t046",targetState="getPayment",cond=whenDispatch("payment"))
 				}	 
 				state("doClean") { //this:State
 					action { //it:State
 						if(Debug) 
 						println("waiter doClean")
-						solve("roomstate(S)","") //set resVar	
-						if( currentSolution.isSuccess() ) {println(getCurSol("S").toString())
-						}
-						else
-						{}
 						solve("updateWaiterState(atteatable(TableNum),cleaning(TableNum))","") //set resVar	
 						 val TableNum = getCurSol("TableNum").toString()  
 						delay(DelayTime)
@@ -588,6 +616,12 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 						}
+						solve("teatable(Num,free,dirty)","") //set resVar	
+						if( currentSolution.isSuccess() ) { val TableNum = getCurSol("Num").toString()  
+						forward("cleantable", "cleantable($TableNum)" ,"waiter" ) 
+						}
+						else
+						{}
 						}
 						else
 						{}
@@ -599,14 +633,31 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					}
 					 transition( edgeName="goto",targetState="waitState", cond=doswitchGuarded({ IsWaiterAtHome  
 					}) )
-					transition( edgeName="goto",targetState="rest", cond=doswitchGuarded({! ( IsWaiterAtHome  
+					transition( edgeName="goto",targetState="checkDirtyTable", cond=doswitchGuarded({! ( IsWaiterAtHome  
 					) }) )
+				}	 
+				state("checkDirtyTable") { //this:State
+					action { //it:State
+						solve("teatable(Num,free,dirty)","") //set resVar	
+						if( currentSolution.isSuccess() ) { val TableNum = getCurSol("Num").toString()  
+						forward("cleantable", "cleantable($TableNum)" ,"waiter" ) 
+						}
+						else
+						{}
+						stateTimer = TimerActor("timer_checkDirtyTable", 
+							scope, context!!, "local_tout_waiter_checkDirtyTable", RestWaitTime )
+					}
+					 transition(edgeName="t047",targetState="rest",cond=whenTimeout("local_tout_waiter_checkDirtyTable"))   
+					transition(edgeName="t048",targetState="thinkCleanTable",cond=whenDispatch("cleantable"))
+					transition(edgeName="t049",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t050",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t051",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t052",targetState="getPayment",cond=whenDispatch("payment"))
 				}	 
 				state("rest") { //this:State
 					action { //it:State
 						if(Debug) 
 						println("waiter rest")
-						 Moving = true  
 						if( checkMsgContent( Term.createTerm("moveKo(X,Y)"), Term.createTerm("moveKo(X,Y)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								  val X = payloadArg(0)
@@ -629,13 +680,14 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						else
 						{}
 					}
-					 transition(edgeName="t045",targetState="atHome",cond=whenReply("moveOk"))
-					transition(edgeName="t046",targetState="rest",cond=whenReply("moveKo"))
-					transition(edgeName="t047",targetState="checkTableAvail",cond=whenRequest("table"))
-					transition(edgeName="t048",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t049",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t050",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t051",targetState="getPayment",cond=whenDispatch("payment"))
+					 transition(edgeName="t053",targetState="atHome",cond=whenReply("moveOk"))
+					transition(edgeName="t054",targetState="rest",cond=whenReply("moveKo"))
+					transition(edgeName="t055",targetState="cancelCurrentPlan",cond=whenRequest("table"))
+					transition(edgeName="t056",targetState="cancelCurrentPlan",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t057",targetState="cancelCurrentPlan",cond=whenDispatch("placeorder"))
+					transition(edgeName="t058",targetState="cancelCurrentPlan",cond=whenReply("orderready"))
+					transition(edgeName="t059",targetState="cancelCurrentPlan",cond=whenDispatch("payment"))
+					transition(edgeName="t060",targetState="thinkCleanTable",cond=whenDispatch("cleantable"))
 				}	 
 				state("atHome") { //this:State
 					action { //it:State

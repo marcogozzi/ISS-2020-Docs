@@ -609,20 +609,44 @@ QActor waiter context ctxwaiter {
 		
 	State doClean{//cleaning is still one single activity i.e. not stoppable
 		[#if(Debug)#]println("waiter doClean")
-		onMsg(cleantable : cleantable(Num)){
-			[# val TableNum = payloadArg(0) #]
-			solve(updateWaiterState(atteatable($TableNum), cleaning($TableNum)))
 		
+		//Retrieve the table the robot is
+		[# var CurrentTeaTable = "" #]
+		solve( waiter(atteatable(Num)) )
+		ifSolved{
+			[# CurrentTeaTable = getCurSol("Num").toString() #]
+		}
+		solve( waiter(cleaning(Num)) )
+		ifSolved{
+			[# CurrentTeaTable = getCurSol("Num").toString() #]
+		}
+		solve( waiter(cleaned(Num)) )
+		ifSolved{
+			[# CurrentTeaTable = getCurSol("Num").toString() #]
+		}
+		
+		//If the message is for the current table
+		onMsg(cleantable : cleantable($CurrentTeaTable)){
+			solve( updateWaiterState(X, cleaning($CurrentTeaTable)) )
 			delayVar CleanDelayTime // clean table, waiter cannot process incoming messages
-			solve( cleanTable($TableNum, NewStatus) ) // "automatically" handles every status
-			[# val NewStatus = getCurSol("NewStatus").toString() #]
-			if [# NewStatus == "clean" #]{
-				forward waiter -m cleantableok : cleantableok($TableNum)
-				solve( updateWaiterState(X, cleaned($TableNum)) )
-			} //checkClientOnHold will eventually be processed
-			else{
-				forward waiter -m cleantable : cleantable($TableNum)  
-				solve( updateWaiterState(X, cleaning($TableNum,$NewStatus)) )
+			solve( cleanTable($CurrentTeaTable, NewStatus) ) // "automatically" handles every status
+			ifSolved{
+				[# val NewStatus = getCurSol("NewStatus").toString() #]
+				if [# NewStatus == "clean" #]{
+					forward waiter -m cleantableok : cleantableok($CurrentTeaTable)
+					solve( updateWaiterState(X, cleaned($CurrentTeaTable)) )
+				} //checkClientOnHold will eventually be processed
+				else{
+					forward waiter -m cleantable : cleantable($CurrentTeaTable)  
+					solve( updateWaiterState(X, cleaning($CurrentTeaTable)) )
+				}
+			}
+		}
+		//If the message is for A DIFFERENT table
+		else{
+			onMsg(cleantable : cleantable(OtherTeaTable)){
+				// Autosend same message with some delay
+				[# forwardWithDelay("cleantable","cleantable(${payloadArg(0)})","waiter",100L) #]
 			}
 		}
 		solve( roomstate(S) ) ifSolved { updateResource[# getCurSol("S").toString() #] }

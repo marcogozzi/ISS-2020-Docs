@@ -50,7 +50,15 @@ class Robot ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scop
 							scope, context!!, "local_tout_robot_move", 1000.toLong() )
 					}
 					 transition(edgeName="t02",targetState="moveOk",cond=whenTimeout("local_tout_robot_move"))   
-					transition(edgeName="t03",targetState="waitRequest",cond=whenDispatch("stopPlan"))
+					transition(edgeName="t03",targetState="moveKo",cond=whenDispatch("stopPlan"))
+				}	 
+				state("moveKo") { //this:State
+					action { //it:State
+						answer("moveTo", "moveKo", "moveKo($GoalX,$GoalY)"   )  
+						updateResourceRep( "plan to $GoalX $GoalY was stopped"  
+						)
+					}
+					 transition( edgeName="goto",targetState="waitRequest", cond=doswitch() )
 				}	 
 				state("moveOk") { //this:State
 					action { //it:State

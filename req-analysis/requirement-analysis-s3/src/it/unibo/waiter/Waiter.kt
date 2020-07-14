@@ -17,7 +17,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 	@kotlinx.coroutines.ExperimentalCoroutinesApi			
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
-				var MaxStayTime 	= 100000L	
+				val MaxStayTime 	= 100000L	
 				val DelayTime 		= 1000L
 				val RestWaitTime 	= 10000L
 				
@@ -34,11 +34,6 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						solve("consult('tearoomKB-RA-sprint3.pl')","") //set resVar	
 						solve("debug(true)","") //set resVar	
 						if( currentSolution.isSuccess() ) { Debug = true  
-						}
-						else
-						{}
-						solve("maxStayTime(X)","") //set resVar	
-						if( currentSolution.isSuccess() ) { MaxStayTime = getCurSol("X").toString().toLong()  
 						}
 						else
 						{}
@@ -71,13 +66,12 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 							scope, context!!, "local_tout_waiter_waitState", RestWaitTime )
 					}
 					 transition(edgeName="t07",targetState="maybeRest",cond=whenTimeout("local_tout_waiter_waitState"))   
-					transition(edgeName="t08",targetState="getPayment",cond=whenDispatch("payment"))
-					transition(edgeName="t09",targetState="checkClientTime",cond=whenDispatch("timeexpired"))
-					transition(edgeName="t010",targetState="checkTableAvail",cond=whenRequest("table"))
-					transition(edgeName="t011",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t012",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t013",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t014",targetState="thinkCleanTable",cond=whenDispatch("cleantable"))
+					transition(edgeName="t08",targetState="checkTableAvail",cond=whenRequest("table"))
+					transition(edgeName="t09",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t010",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t011",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t012",targetState="getPayment",cond=whenDispatch("payment"))
+					transition(edgeName="t013",targetState="thinkCleanTable",cond=whenDispatch("cleantable"))
 				}	 
 				state("checkTableAvail") { //this:State
 					action { //it:State
@@ -205,23 +199,8 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								else
 								{}
 								emit("delivered", "delivered($Cid)" ) 
-								 forwardWithDelay("timeexpired", "timeexpired($Cid)", "waiter", MaxStayTime)  
 						}
 						 if(Debug){ println("endof serveOrder"); readLine(); }  
-					}
-					 transition( edgeName="goto",targetState="waitState", cond=doswitch() )
-				}	 
-				state("checkClientTime") { //this:State
-					action { //it:State
-						if( checkMsgContent( Term.createTerm("timeexpired(Cid)"), Term.createTerm("timeexpired(Cid)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								 val CurrentCid = payloadArg(0)  
-								solve("client($CurrentCid,consuming)","") //set resVar	
-								if( currentSolution.isSuccess() ) {forward("payment", "payment($CurrentCid)" ,"waiter" ) 
-								}
-								else
-								{}
-						}
 					}
 					 transition( edgeName="goto",targetState="waitState", cond=doswitch() )
 				}	 
@@ -272,12 +251,12 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								forward("cleantable", "cleantable($TableNum)" ,"waiter" ) 
 						}
 					}
-					 transition(edgeName="t015",targetState="checkTableAvail",cond=whenRequest("table"))
-					transition(edgeName="t016",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t017",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t018",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t019",targetState="getPayment",cond=whenDispatch("payment"))
-					transition(edgeName="t020",targetState="goCleanTable",cond=whenDispatch("cleantable"))
+					 transition(edgeName="t014",targetState="checkTableAvail",cond=whenRequest("table"))
+					transition(edgeName="t015",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t016",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t017",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t018",targetState="getPayment",cond=whenDispatch("payment"))
+					transition(edgeName="t019",targetState="goCleanTable",cond=whenDispatch("cleantable"))
 				}	 
 				state("goCleanTable") { //this:State
 					action { //it:State
@@ -288,14 +267,7 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								 val TableNum = payloadArg(0)  
 								if(  StepsToTable > 0  
 								 ){ StepsToTable--  
-								solve("updateWaiter(X,gocleanteatable($TableNum))","") //set resVar	
-								solve("roomstate(S)","") //set resVar	
-								if( currentSolution.isSuccess() ) {updateResourceRep( getCurSol("S").toString()  
-								)
-								}
-								else
-								{}
-								delay(500) 
+								delay(100) 
 								if(Debug) 
 								println("$StepsToTable steps remaining...")
 								}
@@ -312,14 +284,14 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 						}
 						 if(Debug){ println("endof cleanTable"); readLine(); }  
 					}
-					 transition(edgeName="t021",targetState="checkTableAvail",cond=whenRequest("table"))
-					transition(edgeName="t022",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t023",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t024",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t025",targetState="getPayment",cond=whenDispatch("payment"))
-					transition(edgeName="t026",targetState="goCleanTable",cond=whenDispatchGuarded("cleantable",{ StepsToTable > 0  
+					 transition(edgeName="t020",targetState="checkTableAvail",cond=whenRequest("table"))
+					transition(edgeName="t021",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t022",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t023",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t024",targetState="getPayment",cond=whenDispatch("payment"))
+					transition(edgeName="t025",targetState="goCleanTable",cond=whenDispatchGuarded("cleantable",{ StepsToTable > 0  
 					}))
-					transition(edgeName="t027",targetState="doCleanTable",cond=whenDispatchGuarded("cleantable",{ StepsToTable == 0  
+					transition(edgeName="t026",targetState="doCleanTable",cond=whenDispatchGuarded("cleantable",{ StepsToTable == 0  
 					}))
 				}	 
 				state("doCleanTable") { //this:State
@@ -341,13 +313,13 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 								println(getCurSol("S").toString())
 						}
 					}
-					 transition(edgeName="t028",targetState="checkClientOnHold",cond=whenDispatch("cleantableok"))
-					transition(edgeName="t029",targetState="checkTableAvail",cond=whenRequest("table"))
-					transition(edgeName="t030",targetState="reach",cond=whenDispatch("clientatentrance"))
-					transition(edgeName="t031",targetState="takeOrder",cond=whenDispatch("placeorder"))
-					transition(edgeName="t032",targetState="serveOrder",cond=whenReply("orderready"))
-					transition(edgeName="t033",targetState="getPayment",cond=whenDispatch("payment"))
-					transition(edgeName="t034",targetState="doCleanTable",cond=whenDispatch("cleantable"))
+					 transition(edgeName="t027",targetState="checkClientOnHold",cond=whenDispatch("cleantableok"))
+					transition(edgeName="t028",targetState="checkTableAvail",cond=whenRequest("table"))
+					transition(edgeName="t029",targetState="reach",cond=whenDispatch("clientatentrance"))
+					transition(edgeName="t030",targetState="takeOrder",cond=whenDispatch("placeorder"))
+					transition(edgeName="t031",targetState="serveOrder",cond=whenReply("orderready"))
+					transition(edgeName="t032",targetState="getPayment",cond=whenDispatch("payment"))
+					transition(edgeName="t033",targetState="doCleanTable",cond=whenDispatch("cleantable"))
 				}	 
 				state("checkClientOnHold") { //this:State
 					action { //it:State

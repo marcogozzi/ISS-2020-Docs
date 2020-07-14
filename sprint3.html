@@ -1,0 +1,1457 @@
+<html>
+  <head>
+    <meta http-equiv="content-type">
+    <meta charset="utf-8">
+    <meta content="text/html">
+    <style type="text/css">
+pre{
+    white-space: pre-wrap;
+}
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3, h4 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin: 10;
+    margin-right: 15px;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+    border-bottom: 1px solid #242424;
+}
+
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+}
+
+h2 {
+    background-color: #d9fbff;
+    font-size: 110%;
+}
+
+h3 {
+  margin-left: 100px;
+	background-color: #e6ccff;
+    font-size: 105%;
+}
+
+h4 {
+  margin-left: 200px;
+    background-color: #f0c732;
+    font-size: 80%;
+	
+}
+#i {
+    color: #ff1010;
+}
+opt{
+      background-color:#e6ccff;
+  	font-family: "Arial";
+    font-size: 80%;
+		font-weight: bold;
+    color: #0033cc;
+}
+tt{
+	font-family: "Arial";
+    font-size: 80%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #ccffff;
+    color: #0033cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 80%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+k{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #990000;
+	 
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	 
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	 
+}
+pre{
+	font-family: "Helvetica";
+	font-size: 60%;
+	background-color: #fcf8c7;
+	border: 1px solid blue;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+    min-width: 800px;
+		max-width: 1200px;
+    font-size: 18px;
+}    
+div.smallbody{
+		width: 800px;
+    font-size: 15px;
+}    
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}       
+div.remark{
+	background-color: #FFFC33;     
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}  
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 5px;
+  table-layout: fixed ;
+}
+th#equalfour {
+  width: 25% ;
+}   
+      
+th#equalthree {
+  width: 33% ;
+}   
+    
+</style> <title>Esame ISS 2020</title>
+  </head>
+  <body>
+    <!--
+    <tt>tag tt</tt> <em>tag em</em> <bc>tag bc</bc> <k>tag      k</k> <ks>tag ks</ks> <kc>tag kc</kc>    <pre>tag pre</pre>    <m>tag m</m>    <div class="req"> div req </div>    <div class="remark"> div remark </div>    <hr>    -->
+    <div id="top">
+      <h1>Progetto finale ISS 2020 - Sprint 3</h1>
+      <k>There is no code without a project, no project without problem analysis
+        and no problem without requirements</k>. </div>
+    <div class="body">
+      <h2>Introduction <a href="http://htmlpreview.github.io/?https://raw.githubusercontent.com/anatali/iss2020LabBo/master/it.unibo.issLabStart/userDocs/TemaFinaleBo20.html"
+          target="web" style="font-size:50%">original file here</a></h2>
+      <div> The <em>manager</em> of a <em>tearoom</em> intends to regulate the
+        access to the service by means of a ddr robot (<em>waiter</em>). <br>
+        <br>
+        The <em>tearoom</em> is a rectangular room that includes:
+        <ul>
+          <li>an <em>entrancedoor</em> to enter in the room and an <em>exitdoor</em>
+            to exit form it;</li>
+          <li>a number <tt>N (N=2)</tt> of <em>teatable</em>;</li>
+          <li>a <em>serviceare</em> including a <em>servicedesk</em> at which
+            works a <em>barman</em>;</li>
+          <li>a <em>hall</em> equipped with a <em>presencedetector</em>, i.e.
+            a device (e.g. a sonar) that can detect the presence of a person (or
+            some other entity) in it.</li>
+        </ul>
+        The <em>waiter</em> can freely move along the borders of the tearoom,
+        since there are no obstacles there. </div>
+      <h2>Requirements</h2>
+      <div> The <em>waiter</em> should perform the following tasks:
+        <ul>
+          <li><em>accept</em> the request of a client to enter in the tearoom if
+            there is at least one teatable in the state <em>tableclean</em>,
+            i.e. the table is free and has been properly cleaned; </li>
+          <li><em>inform</em> the client about the maximum waiting time if there
+            is no <em>tableclean</em>;</li>
+          <li><em>reach</em> the <em>entrance door</em> and <em>convoy</em>
+            the accepted client to the selected teatable;</li>
+          <li><em>take</em> the order of the client and transmit it (using a
+            wifi-device) to the <em>barman</em>; </li>
+          <li><em>serve</em> the client when the <em>barman</em> says that the
+            requested drink is ready;</li>
+          <li><em>collect</em> the payment from the client when he/she has
+            finished to consume or when the <em>maxstaytime</em> is expired;</li>
+          <li><em>convoy</em> the client to the <em>exitdoor</em>;</li>
+          <li><em>clean</em> the tea-table just freed by the client;</li>
+          <li><em>rest</em> at my <em>home</em> when there is nothing to do.</li>
+          <li><span style="font-size:80%;"> <opt>Optional</opt>: The <em>waiter</em>
+              must open the <em>exitdoor</em> only when the hall is free, i.e.
+              it must not open that door if the hall is already engaged by a
+              client waiting to enter at the <em>entrancedoor</em>. </span></li>
+        </ul>
+        Since the room could contain <tt>N</tt> clients at the time, the <em>waiter</em>
+        should reduce as much as possible the waiting time of the requests
+        coming from each client. </div>
+      <div><br>
+        <h3>User stories</h3>
+        As a <em>client</em>,:
+        <ul>
+          <li>I intend to <em>notify</em> my interest in <em>entering</em> in
+            a <em>safe tearoom</em>, <em>sitting</em> at a free teatable, <em>ordering</em>
+            some tea, <em>consuming</em> it (within a limited amount of time <em>maxstaytime</em>)
+            <em>paying</em> the service with my credit card and finally <em>leaving</em>
+            the room.</li>
+          <li>For <em>safe tearoom</em>, I intend a tearoom with clean
+            tea-tables posed at a proper distance; the room is populated by
+            human clients whose body temperature is less than <tt>37.5</tt>
+            degrees. </li>
+          <li>I can submit my notification of interest by hitting the <em>smartbell</em>
+            located near the <em>entrancedoor</em> that will automatically
+            measure my body temperature and send a request message to the <em>waiter</em>,
+            by giving to me an unique <em>clientidentifier</em>. </li>
+          <li>I my body temperature is ok, but my request cannot be immediately
+            satisfied (since the room is full), I will be <em>informed</em> by
+            the <em>waiter</em> aabout the maximum waiting time.</li>
+        </ul>
+        As a <em>manager</em>:
+        <ul>
+          <li>I intend to be able to see the <em>current state</em> of the <em>tearoom</em>
+            by using a browser connected to a web-server associated to the
+            application. </li>
+        </ul>
+      </div>
+      <h2>Requirement analysis</h2>
+      <br>
+      <h3> Scenario </h3>
+      <div>
+        <ul>
+          <li>Smartbell, Barman e Client sono simulati (i.e. realizzati
+            completamente in software);</li>
+        </ul>
+        <ul>
+          <li><s>sono presenti due tavoli ma solamente un Client alla volta può
+              accedere alla tearoom;<br>
+              <br>
+            </s></li>
+          <li>fino a due clienti possono trovarsi contemporaneamente all'interno
+            della stanza e un terzo in attesa alla entrancedoor;<br>
+            <br>
+          </li>
+          <li>ogni Client che accede al sistema esegue l'intera sequenza di
+            azioni nel corretto ordine;<br>
+            <br>
+          </li>
+          <li><s>non vi è limite di tempo per eseguire le azioni;<br>
+              <br>
+            </s></li>
+          <li>dopo <em>maxstaytime</em> dalla ricezione dell'ordine, il cliente
+            è forzato a pagare e a lasciare la tearoom;<br>
+            <br>
+          </li>
+          <li><s>nessun task è interrompibile.<br>
+              <br>
+            </s></li>
+          <li>il task rest è interrompibile; il task clean è suddiviso in
+            singole azioni, ciascuna di breve durata e non interrompibile; nel
+            caso arrivi una richiesta durante la pulizia, l'azione corrente
+            viene completata e la richiesta è elaborata subito dopo.</li>
+        </ul>
+      </div>
+      <table style="width: 100%;" cellspacing="5" cellpadding="5" border="0">
+        <thead>
+          <tr>
+            <th>Requisito / task</th>
+            <th style="width: 50%;">Descrizione / considerazioni</th>
+            <th>Interrompibile</th>
+            <th>Movimento</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>notify</td>
+            <td style="height: 76px;">La Smartbell deve essere capace di <k>interagire
+                con il mondo esterno (H2M device)</k>; possibile interazione tra
+              Smartbell e Waiter per verificare stato stanza, deve essere
+              seguito da task accept, inform o deny</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N<br>
+            </td>
+          </tr>
+          <tr>
+            <td>accept</td>
+            <td>Waiter verifica stato della stanza e conferma l'accesso<br>
+            </td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N<br>
+            </td>
+          </tr>
+          <tr>
+            <td>inform</td>
+            <td>Waiter verifica stato della stanza e rimanda l'accesso
+              informando sul tempo d'attesa</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N<br>
+            </td>
+          </tr>
+          <tr>
+            <td>reach/convoy</td>
+            <td>Comporta un cambiamento di stato della stanza (un tavolo in
+              stato tableclean sarà in stato occupato); il Waiter deve recarsi
+              alla entrancedoor, poi al tavolo assegnato al Client</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>take</td>
+            <td> Il Waiter deve recarsi al tavolo assegnato al Client e
+              trasmettere l'ordine al Barman; <k>deve essere presente un
+                dispositivo H2M</k> per permettere la comunicazione tra Client e
+              Waiter (e.g. app, sito web, comandi vocali, ...); la comunicazione
+              avviene tramite Wi-Fi al Barman che è quindi dotato di un
+              dispositivo collegato alla rete</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>serve</td>
+            <td>Il Waiter deve recarsi dal Barman e poi al tavolo assegnato al
+              Client che ha fatto richiesta</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>collect</td>
+            <td>Il Waiter deve recarsi al tavolo assegnato al Client </td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>convoy/exit</td>
+            <td>Il Waiter deve recarsi al tavolo assegnato al Client e poi alla
+              exitdoor </td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">N</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>clean</td>
+            <td>Il Waiter deve recarsi ad un tavolo libero ma non pulito;
+              l'operazione richiede un tempo non nullo e ha priorità inferiore
+              rispetto ad altri task, cioè se si presenta un nuovo task durante
+              lo svolgimento allora questo task deve essere fermato; se ne può
+              mantenere il progresso in caso di interruzione</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y </b></td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td>rest</td>
+            <td>Non è specificato cosa significhi "nothing to do"; deve essere
+              interrotto appena vi è un task da svolgere<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);"><b>Y </b></td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Y<br>
+            </td>
+          </tr>
+          <tr>
+            <td><opt>hall</opt></td>
+            <td>Requisito opzionale<br>
+            </td>
+            <td>?</td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>showstate</td>
+            <td>Deve riguardare tutte le entità che hanno stato; deve essere
+              possibile accedere allo stato attraverso un browser quindi il
+              sistema deve esporre un punto di accesso web<br>
+            </td>
+            <td>?</td>
+            <td><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3> Stato </h3>
+      <p> Di seguito l'analisi di cosa costituisca lo stato della tearoom,
+        insieme ad alcune possibili rappresentazioni che possono essere <kc>usate
+          per definire un test plan.</kc> </p>
+      <h4>Cosa</h4>
+      <p>L'unica informazione significativa riguardante il cliente presente al
+        momento è "unique <em>clientidentifier</em>"; <k><span style="color: #020302;">al
+            momento</span> non è presente alcun requisito che richieda o renda
+          necessario </k>mantenere le ordinazioni effettuate o il momento in
+        cui avvengono le varie interazioni; rispetto a Sprint 1 ora si mantiene
+        anche lo stato di ciascun cliente; rispetto a Sprint 2 ora un teatable
+        può essere in varie fasi di pulizia {clean, dirty, cleanedA, cleanedB},
+        per un totale di 3 stati di pulizia-in-corso.</p>
+      <p> I clienti e il barman sono esterni al sistema e non è specificato come
+        facciano ad interagire con i componenti del sistema: deve essere
+        presente un <k>sistema human-to-machine con cui interfacciarsi</k> su
+        waiter e smartbell.<br>
+        <k>(Queste entità sono modellate e realizzate tramite puri QActor: un
+          sistema completo e reale deve prevedere ulteriore software per
+          l'interazione smartbell fisica - QActor e Barman - Wi-Fi device -
+          QActor)</k>.</p>
+      <table width="100%">
+        <thead>
+          <tr>
+            <th> Caratteristica </th>
+            <th> Rappresentazione (prolog)</th>
+            <th>Rappresentazione (json)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Cliente: codice<br>
+            </td>
+            <td>client(Cid, State).<br>
+              State in {accepted, onhold, entering, choosing, placeorder,
+              orderplaced, consuming, paying, leaving, left}<br>
+            </td>
+            <td>{"name":"client", "cid":"", "state":"" }<br>
+            </td>
+          </tr>
+          <tr>
+            <td rowspan="3">Teatable: numero, free/busy, clean/dirty, codice
+              cliente se busy<br>
+            </td>
+            <td>teatable(N, free, clean).<br>
+            </td>
+            <td>{"name":"teatable", "number":1, "free":true, "clean":true,
+              "cid":""}<br>
+            </td>
+          </tr>
+          <tr>
+            <td>teatable(N, free, {dirty, cleanedA, cleanedB}). </td>
+            <td>{"name":"teatable", "number":1, "free":true, "clean":false,
+              "cid":""}</td>
+          </tr>
+          <tr>
+            <td>teatable(N, busy(Cid), dirty). </td>
+            <td>{"name":"teatable", "number":1, "free":false, "clean":?,
+              "cid":"1"}</td>
+          </tr>
+          <tr>
+            <td>Hall: occupata/libera<br>
+            </td>
+            <td>hall(free). oppure hall(busy).<br>
+            </td>
+            <td>{"name":"hall", "free":true} oppure {"name":"hall",
+              "free":false} </td>
+          </tr>
+          <tr>
+            <td>Waiter: posizione e stato logico/task in esecuzione<br>
+            </td>
+            <td>waiter(Task, Pos).<br>
+            </td>
+            <td>{"name":"waiter", "position":"", "task":""}<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h4> Dove </h4>
+      <div>
+        <p> All'interno del sistema solamente l'<kc>entità Waiter è attiva</kc>
+          e può modificare lo stato della stanza; lo stato di Teatable e Hall è
+          necessario per soddisfare i requisiti ed è utilizzato solamente del
+          Waiter per prendere decisioni riguardanti il prossimo task da
+          compiere. </p>
+        <kc>Al momento</kc>, delegare al Waiter il mantenimento dell'intero
+        stato permette una valutazione più rapida e non rende necessario
+        introdurre altri elementi nel sistema.<br>
+        <k>In futuro</k>, nel caso in cui si vogliano introdurre altri Waiter,
+        questa soluzione non sarà più adeguata per garantire un corretto
+        assegnamento dei task e sarà necessario introdurre un <k>elemento
+          delegato</k> alla gestione della base di conoscenza e/o&nbsp;
+        implementare un <k> algoritmo di coordinamento</k> distribuito tra le
+        entità attive.</div>
+      <h3> Modello </h3>
+      <div>
+        <ul>
+          <li>Le entità del sistema sono distribuite su nodi distinti quindi
+            comunicano a scambio di messaggi tra loro e con i dispositivi H2M di
+            clienti e barman;</li>
+          <li>Il comportamento del Waiter dipende dallo stato della stanza e dai
+            messaggi ricevuti quindi si può rappresentare attraverso un FSM;</li>
+          <li>Deve essere presente un server web per mostrare lo stato, quindi
+            lo stato del modello deve essere esposto con una rappresentazione
+            formale in un protocollo adatto a interazione M2M.</li>
+        </ul>
+        <p>Il <kc>metamodello qa</kc> permette di esprimere questi concetti:</p>
+        <ul>
+          <li>I nodi su cui eseguono le entità sono espressi da <em>context</em>;</li>
+          <li>Le entità sono epresse da attori (<em>QActor</em> permette di
+            rappresentare una entità il cui comportamento è descrivibile tramite
+            FSM) perchè comunicano a scambio di messaggi e possono ricevere
+            messaggi da entità esterne al sistema (alieni);</li>
+          <li>Il server web può ottenere lo stato del sistema interrogando (a
+            polling, modello pull) gli attori con uno dei protocolli supportati
+            (TCP, CoAP, MQTT) oppure registrandosi (modello push) per i
+            cambiamenti di stato con uno dei protocolli supportati (CoAP, MQTT).</li>
+        </ul>
+      </div>
+      <h4> Modello qak e KB Prolog</h4>
+      <p> La comunicazione avviene mediante Dispatch, Request/Reply e Event con
+        semantica definita dalla libreria <em>it.unibo.kactor</em>. Gli
+        elementi esterni al sistema (cioè i dispositivi H2M che interagiscono
+        con Client e Barman) devono essere interfacciati con il sistema
+        traducendo dal linguaggio/notazione del dispositivo a messaggi <em>ApplMsg</em>.
+      </p>
+      <p>L'uso di Prolog per la base di conoscenza permette una gestione molto
+        ad alto livello e dichiaritiva.</p>
+      <p><k>Per comodità di rappresentazione, i dispositivi H2M vengono
+          sintetizzati da <em>QActor</em>; nel sistema reale, si avrebbero due
+          nodi fisici aggiuntivi da far interagire con il (software del) Waiter,
+          uno per la Smartbell e uno per il Barman.</k></p>
+      <p><strong>Rispetto a Sprint 1:</strong></p>
+      <ul>
+        <li>siccome è possibile che vi siano fino a tre Client che interagiscono
+          con il Waiter, è necessario che esso sia capace di gestire
+          l'interleaving dei vari messaggi; è sufficiente prevedere uno stato
+          unico a cui ritornare dopo la gestione di ciascuna richiesta in cui si
+          aspetta qualunque messaggio;</li>
+        <li>la pulizia di un tavolo sporco ha priorità inferiore alle richieste
+          dei Client, cioè se arriva un messaggio durante lo spostamento, questo
+          è da annullare; lo spostamento è stato modellato in quattro passi,
+          durante ciascuno dei quali non è possibile l'interruzione mentre lo è
+          tra due di essi;</li>
+        <li>dopo la pulizia di un tavolo, è necessario verificare se un Client
+          aveva fatto richiesta ed era stato messo in attesa: in tal caso è
+          possibile farlo entrare;</li>
+        <li>nella KB sono state aggiunte procedure per mantenere lo stato dei
+          Client.</li>
+      </ul>
+      <div>
+        <hr>
+        <p> <a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/req-analysis/requirement-analysis-s3/src/tearoom-req-sprint3.qak"><strong>Modello
+              qak dei requisiti </strong></a></p>
+        <hr>
+        <p> <a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/req-analysis/requirement-analysis-s3/tearoomKB-RA-sprint3.pl"><strong>Base
+              di conoscenza Prolog </strong></a></p>
+        <hr>
+        <p><a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/req-analysis/tearoomClientDemo/src/client.qak">Simulazione
+            di Client</a> espressa con metamodello qa per interagire con il
+          modello.</p>
+        <hr> </div>
+      <br>
+      <br>
+      <h4> Analisi dei messaggi </h4>
+      <br>
+      <table border="1" width="100%">
+        <thead>
+          <tr>
+            <th>Message name<br>
+            </th>
+            <th>Dispatch<br>
+            </th>
+            <th>Request/Reply<br>
+            </th>
+            <th>Event<br>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>timeexpired</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">Self message per
+              ricordare al Waiter che il Client ha superato il tempo massimo</td>
+            <td><br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è
+              in uno stato non idoneo il messaggio è perso</td>
+          </tr>
+          <tr>
+            <td>cleantable</td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">Self message per
+              ricordare al Waiter che c'è un tavolo da pulire </td>
+            <td><br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è
+              in uno stato non idoneo il messaggio è perso</td>
+          </tr>
+          <tr>
+            <td>cleantableok<br>
+            </td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">Self message per
+              ricordare al Waiter che un tavolo è stato pulito e potenzialmente
+              un Client in attesa può essere accettato<br>
+            </td>
+            <td><br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è
+              in uno stato non idoneo il messaggio è perso </td>
+          </tr>
+          <tr>
+            <td>notify<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.5);"><br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">La smartbell
+              riceve una richiesta dal client contenente la temperatura; il
+              client deve ricevere una risposta</td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>deny<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.5);">A tempo di
+              sviluppo è necessario sapere il destinatario </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a
+              notify se temperatura &gt;37.5; non è necessario conoscere chi ha
+              fatto la richiesta<br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>accept<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.5);">A tempo di
+              sviluppo è necessario sapere il destinatario</td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a
+              notify se c'è un teatable disponibile; non è necessario conoscere
+              chi ha fatto la richiesta </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>full<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.5);">A tempo di
+              sviluppo è necessario sapere il destinatario</td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a
+              notify se non c'è un teatable disponibile; non è necessario
+              conoscere chi ha fatto la richiesta</td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>table<br>
+            </td>
+            <td style="background-color: #fdfdfd;"><br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">La smartbell
+              chiede al waiter se c'è un teatable disponibile; la smartbell deve
+              ricevere una risposta<br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>available<br>
+            </td>
+            <td style="background-color: #fdfdfd;"><br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a table
+              se c'è un teatable disponibile </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>full<br>
+            </td>
+            <td style="background-color: #fdfdfd;"><br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a table
+              se non c'è un teatable disponibile </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>clientatentrance<br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">La smartbell
+              informa il&nbsp; waiter che c'è un client in attesa alla
+              entrancedoor<br>
+            </td>
+            <td><br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è
+              in uno stato non idoneo il messaggio è perso<br>
+            </td>
+          </tr>
+          <tr>
+            <td>attable</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Per il waiter il
+              client è un alieno</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
+              risposta, il messaggio è per avvertire di un avvenimento </td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">Solo per
+              effettuare la simulazione, il client deve sapere quando è stato
+              accompagnato al tavolo </td>
+          </tr>
+          <tr>
+            <td>placeorder<br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Il client
+              informa il waiter che è pronto ad effettuare l'ordine (tramite
+              dispositivo H2M)<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
+              risposta, il messaggio è per richiedere una azione<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è
+              in uno stato non idoneo il messaggio è perso</td>
+          </tr>
+          <tr>
+            <td>relayorder<br>
+            </td>
+            <td><br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Il waiter chiede
+              al barman di preparare l'ordine per il client<br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>orderready<br>
+            </td>
+            <td><br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Il waiter
+              aspetta che il barman risponda alla singola richiesta<br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>payment<br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);"> Il client
+              informa il waiter che è pronto per pagare </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
+              risposta, il messaggio è per richiedere una azione</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Se il waiter è
+              in uno stato non idoneo il messaggio è perso</td>
+          </tr>
+          <tr>
+            <td>delivered<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Per il waiter il
+              client è un alieno<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
+              risposta, il messaggio è per avvertire di un avvenimento </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Solo per
+              effettuare la simulazione, il client deve sapere quando l'ordine
+              gli viene consegnato per iniziare a consumarlo<br>
+            </td>
+          </tr>
+          <tr>
+            <td>paymentOk<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Per il waiter il
+              client è un alieno</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
+              risposta, il messaggio è per avvertire di un avvenimento </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Solo per
+              effettuare la simulazione, il client deve sapere quando il
+              pagamento è andato a buon fine</td>
+          </tr>
+          <tr>
+            <td>exitOk<br>
+            </td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Per il waiter il
+              client è un alieno</td>
+            <td style="background-color: rgba(255, 0, 0, 0.4);">Non è prevista
+              risposta, il messaggio è per avvertire di un avvenimento </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Solo per
+              effettuare la simulazione, il client deve sapere quando è stato
+              accompagnato alla exitdoor</td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <br>
+      <h3> Test plan</h3>
+      <table width="100%">
+        <thead>
+          <tr>
+            <th>Requisito</th>
+            <th>Test sullo stato precedente<br>
+              come programma prolog</th>
+            <th>Test sullo stato successivo<br>
+              come programma prolog</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Notify<br>
+            </td>
+            <td>hall(free). </td>
+            <td>hall(busy).<br>
+            </td>
+          </tr>
+          <tr>
+            <td>Accept<br>
+            </td>
+            <td>hall(busy), teatable(N, free, clean). </td>
+            <td>hall(busy), teatable(N, reserved(_), clean). </td>
+          </tr>
+          <tr>
+            <td>Inform (non possibile in questo scenario)<br>
+            </td>
+            <td>hall(busy), findall(N, teatable(N, free, clean), []). </td>
+            <td>hall(free), findall(N, teatable(N, free, clean), []). </td>
+          </tr>
+          <tr>
+            <td>Reach<br>
+            </td>
+            <td>teatable(N, reserved(_), clean),<br>
+              hall(busy). </td>
+            <td>teatable(N, busy(_), _),<br>
+              hall(free). </td>
+          </tr>
+          <tr>
+            <td>Exit<br>
+            </td>
+            <td>findall(N1, teatable(N1, busy(_), dirty), L1), length(L1,Len1),
+              Len1 &gt; 0,<br>
+              findall(N2, teatable(N2, free, dirty), L2), length(L2,Len2).<br>
+            </td>
+            <td>findall(N3, teatable(N3, busy(_), dirty), L3), length(L3,Len3),<br>
+              findall(N4, teatable(N4, free, dirty), L4), length(L4,Len4), Len4
+              &gt; 0.<br>
+              <br>
+              (Inoltre Len3==Len1-1 e Len4==Len2+1)</td>
+          </tr>
+          <tr>
+            <td>Clean</td>
+            <td> findall(N1, teatable(N1, free, dirty), L1), length(L1,Len1),
+              Len1 &gt; 0,<br>
+              findall(N2, teatable(N2, free, clean), L2), length(L2,Len2). </td>
+            <td><br>
+              findall(N3, teatable(N3, free, dirty), L3), length(L3,Len3),<br>
+              findall(N4, teatable(N4, free, clean), L4), length(L4,Len4), Len4
+              &gt; 0.<br>
+              <br>
+              (Inoltre Len3==Len1-1 e Len4==Len2+1)<br>
+            </td>
+          </tr>
+          <tr>
+            <td>Rest</td>
+            <td>findall(N1, teatable(N1, free, dirty), L), length(L,Len1), Len1
+              == 0. </td>
+            <td>waiter(athome).</td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>Test JUnit</h2>
+      <h3><a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/req-analysis/requirement-analysis-s3/test/test/testTearoomReq.kt">
+          Test singolo utente </a></h3>
+      <pre>      fun testNotify(){
+      	assertTrue(waiter.pengine.solve("hall(free).").isSuccess())
+ 			
+      	MsgUtil.sendMsg(
+ 				MsgUtil.buildRequest("test","notify", "notify(36)", "smartbell"),	smartbell)
+ 		
+        //the smartbell has received the request but the waiter has not processed it
+        assertTrue(waiter.pengine.solve("hall(busy).").isSuccess())
+        
+        assertTrue(waiter.pengine
+					.solve("teatable(_, reserved(_), _).")//the waiter has processed the request but the client is not sitting at the table
+					.isSuccess()
+			.xor(waiter.pengine
+  					.solve("teatable(_, busy(_), _).")//the waiter has processed the request and the client is sitting at the table
+					.isSuccess()))
+          
+           //the waiter has processed the request and the client is sitting at the table
+           assertTrue(waiter.pengine.solve("teatable(_, busy(_), _).").isSuccess())
+           }
+           
+           
+	fun testExit(){
+  		val resBeforeExit = waiter.pengine
+  					.solve("findall(N1, teatable(N1, busy(_), dirty), L1), length(L1,Len1), Len1 &gt; 0,
+            						findall(N2, teatable(N2, free, dirty), L2), length(L2,Len2).")
+		MsgUtil.sendMsg(
+ 				MsgUtil.buildDispatch("test","placeorder", "placeorder(1)" ,"waiter"),
+				waiter)
+        	MsgUtil.sendMsg(
+ 				MsgUtil.buildDispatch("test","payment", "payment(1)" ,"waiter"),
+				waiter)<br>&nbsp;		val resAfterExit = waiter.pengine
+  					.solve("findall(N3, teatable(N3, busy(_), dirty), L3), length(L3,Len3),<br>&nbsp;							findall(N4, teatable(N4, free, dirty), L4), length(L4,Len4), Len4 &gt; 0.")
+			
+		assertTrue(resBeforeExit.getVarValue( "Len1" ).toString().toInt() - 1 == resAfterExit.getVarValue( "Len3" ).toString().toInt())
+		assertTrue(resBeforeExit.getVarValue( "Len2" ).toString().toInt() + 1 == resAfterExit.getVarValue( "Len4" ).toString().toInt())		
+	}
+	
+
+	fun testClean(){<br>		val resBeforeClean = waiter.pengine
+  					.solve("findall(N1, teatable(N1, free, dirty), L1), length(L1,Len1), Len1 &gt; 0,<br>						&nbsp;findall(N2, teatable(N2, free, clean), L2), length(L2,Len2).")<br><br>&nbsp;		while( ! waiter.geResourceRep().contains("dirty"))
+			delay(100)
+		while( ! waiter.geResourceRep().contains("cleanedA"))
+			delay(100)
+		while( ! waiter.geResourceRep().contains("cleanedB"))
+			delay(100)
+		while( waiter.geResourceRep().contains("cleanedB"))
+			delay(100)
+        
+		val resAfterClean = waiter.pengine
+  					.solve("findall(N3, teatable(N3, free, dirty), L3), length(L3,Len3), <br>						findall(N4, teatable(N4, free, clean), L4), length(L4,Len4), Len4 &gt; 0.")
+		
+		assertTrue(<br>			resBeforeClean.getVarValue( "Len1" ).toString().toInt() - 1 == <br>			resAfterClean.getVarValue( "Len3" ).toString().toInt())
+		assertTrue(<br>			resBeforeClean.getVarValue( "Len2" ).toString().toInt() + 1 == <br>			resAfterClean.getVarValue( "Len4" ).toString().toInt())
+
+	}
+	
+	fun testRest(){
+			val resBefore = waiter.pengine
+  					.solve("findall(N1, teatable(N1, free, dirty), L), length(L,Len1), Len1 == 0.")
+						
+			assertTrue(resBefore.isSuccess())
+
+			while(! waiter.pengine
+  					.solve("waiter(athome).")
+					.isSuccess())
+			delay(49)
+
+			val resAfter = waiter.pengine
+  					.solve("waiter(athome).")
+			
+			assertTrue(resAfter.isSuccess())
+	}</pre>
+      <h3><a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/req-analysis/requirement-analysis-s3/test/test/testTearoomOnhold.kt">
+          Test Client in attesa a entrancedoor </a></h3>
+      <h3><a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/req-analysis/requirement-analysis-s3/test/test/testTearoom2Clients.kt">
+          Test due Client contemporanei, interleaving </a></h3>
+      <h3><a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/req-analysis/requirement-analysis-s3/test/test/testStopCleaning.kt">
+          Test interruzione Clean </a></h3>
+      <h3><a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/req-analysis/requirement-analysis-s3/test/test/testMaxStayTime.kt">
+          Test MaxStayTime</a></h3>
+      <h2>Problem analysis</h2>
+      <h3> Analisi del modello </h3>
+      <div>Per realizzare il sistema, a partire dal modello dei requisiti, sono
+        necessari ulteriori componenti che si occupino di
+        <ul>
+          <li>comandare il robot che realizza il ruolo di Waiter: nel modello,
+            il processo di spostamento all'interno della stanza è assente e si
+            giunge direttamente al punto finale dal punto iniziale; è necessario
+            un componente che sappia comandare fisicamente il Waiter all'interno
+            della stanza, portandolo dal punto di partenza in cui si trova a
+            quello di arrivo, dettato dallo stato e dalle interazioni: è
+            opportuno delegare questo compito ad un componente separato dal
+            waiter per <kc>mantenere separato il meccanismo di spostamento</kc>
+            dalla politica di gestione dei task;</li>
+          <li>mostrare attraverso una interfaccia web lo stato della stanza: al
+            momento, l'<kc>infrastruttura qak</kc> espone, tramite protocollo
+            CoAP, per ogni attore la <kc>rappresentazione di una risorsa</kc>
+            in esso contenuta in formato di stringa; è possibile utilizzare
+            questa funzionalità dell'infrastruttura per tenere traccia dello
+            stato di tutti gli attori.</li>
+        </ul>
+        <p><strong>Dalla sprint review 1 si deduce che:</strong></p>
+        <ul>
+          <li>è necessario un algoritmo che riesca a risolvere il più delle
+            volte le imprecisioni del robot;</li>
+          <li>è opportuno inserire all'interno dell'interfaccia web una sezione
+            per il comando diretto del robot in modo da riposizionarlo
+            manualmente.</li>
+        </ul>
+        <ul>
+        </ul>
+        <h4> Modello qak e KB Prolog aggiornati</h4>
+        <p><strong>Sprint 1:</strong> </p>
+        <p>Alla KB sono state aggiunte informazioni sulla posizione e alcune
+          clausole per una gestione semplificata. </p>
+        <p> Sono stati aggiunti alcuni messaggi per modellare la comunicazione
+          tra waiter e robot (componente che si occupa di eseguire lo
+          spostamento fisico). </p>
+        <p>Ogni movimento fisico del robot che era stato modellato con una
+          attesa fittizia nel modello dei requisiti richiede ora l'interazione
+          tra waiter e robot, con la richiesta di spostarsi al punto desiderato
+          (che dipende da stato e interazioni del waiter): ogni DelayVar nel
+          precedente modello diventa quindi una Request da Waiter a Robot e una
+          Reply che fornisce l'esito della richiesta.&nbsp; </p>
+        <table border="1" width="100%">
+          <thead>
+            <tr>
+              <th>Message name<br>
+              </th>
+              <th>Dispatch<br>
+              </th>
+              <th>Request/Reply<br>
+              </th>
+              <th>Event<br>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>moveTo</td>
+              <td style="background-color: rgba(255, 0, 0, 0.5);"><br>
+              </td>
+              <td style="background-color: rgba(0, 254, 0, 0.4);">Il waiter
+                delega lo spostamento al componente che si occupa di
+                pianificazione e movimento (robot)</td>
+              <td><br>
+              </td>
+            </tr>
+            <tr>
+              <td>moveOk<br>
+              </td>
+              <td style="background-color: rgba(255, 0, 0, 0.5);"><br>
+              </td>
+              <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a
+                moveTo se lo spostamento è andato a buon fine, cioè se il waiter
+                ora si trova nel posto richiesto<br>
+              </td>
+              <td><br>
+              </td>
+            </tr>
+            <tr>
+              <td>moveKo<br>
+              </td>
+              <td style="background-color: rgba(255, 0, 0, 0.5);"><br>
+              </td>
+              <td style="background-color: rgba(0, 254, 0, 0.4);">Risposta a
+                moveTo se lo spostamento NON è andato a buon fine, cioè se il
+                waiter ora si trova in un posto diverso da quello richiesto</td>
+              <td><br>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <div><strong>Sprint 2:</strong> <br>
+          Rilassando l'assunzione che nessun task è interrompibile, ora deve
+          essere possibile interrompere il movimento dei task rest e clean.<br>
+          Siccome l'attore Robot è responsabile del movimento, è necessario che,
+          alla ricezione di un nuovo task durante tali movimenti, l'attore
+          Waiter lo notifichi di arrestarsi. </div>
+        <div>Può accadere che tale notifica arrivi contemporaneamente al
+          completamento dello spostamento; per questo motivo:</div>
+        <div>
+          <ul>
+            <li> il Waiter dopo l'invio si porta in un nuovo stato in cui
+              attende una Reply; siccome il messaggio arrivato (che rappresenta
+              un nuovo task) viene consumato, è necessario che venga reinserito
+              in coda per essere effettivamente elaborato successivamente;
+              <pre> [# autoMsg(currentMsg) #]	// remember to process the ApplMsg that caused plan abortion
+  forward robot -m stopPlan : stopPlan(0)</pre>
+            </li>
+            <li>se il Robot sta ancora completando il movimento, lo interrompe e
+              risponde moveKo;</li>
+            <li>se il Robot ha completato il movimento appena prima della
+              ricezione della notifica, allora risponde moveOk e consuma il
+              messaggio.</li>
+          </ul>
+          <p>Siccome il Waiter ora può cancellare l'operazione di Clean dopo
+            aver consumato il messaggio che glielo ricordava, è necessario
+            riprodurre tale messaggio: dopo aver completato un task, se non vi
+            sono altri task da eseguire, controlla lo stato della stanza (stato
+            maybeRest) ed eventualmente si auto-invia tale messaggio; se ciò non
+            avviene e non arriva alcun nuovo task, allora dopo un po' di attesa
+            attiva il task rest.</p>
+          <table border="1" width="100%">
+            <tbody>
+              <tr>
+                <th>Message name<br>
+                </th>
+                <th>Dispatch<br>
+                </th>
+                <th>Request/Reply<br>
+                </th>
+                <th>Event<br>
+                </th>
+              </tr>
+              <tr>
+                <td>stopPlan</td>
+                <td style="background-color: rgba(0, 255, 0, 0.4);">Messaggio
+                  con unico destinatario Robot; avverte di interrompere il
+                  movimento corrente</td>
+                <td><br>
+                </td>
+                <td style="background-color: rgba(255, 0, 0, 0.4);">Destinatario
+                  è unico<br>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <br>
+        <div><strong>Sprint 3:</strong> <br>
+          Rilassando l'assunzione che il task Clean non è interrompibile quando
+          iniziato, ora deve essere suddiviso in sottopassi. <br>
+          Conclusa una fase di pulizia, si invia un automessaggio per procedere
+          con la fase successiva.</div>
+        <pre>        onMsg(cleantable : cleantable($CurrentTeaTable)){
+        	delayVar CleanDelayTime // clean table, waiter cannot process incoming messages
+		solve( cleanTable($CurrentTeaTable, NewStatus) ) // "automatically" handles every status
+		ifSolved{
+			[# val NewStatus = getCurSol("NewStatus").toString() #]
+			if [# NewStatus == "clean" #]{
+				forward waiter -m cleantableok : cleantableok($CurrentTeaTable)
+			}
+			else{
+				forward waiter -m cleantable : cleantable($CurrentTeaTable)  
+			}
+		}
+	}
+        </pre>
+        <p> Rilassando l'assunzione che non vi è limite di tempo, ora deve
+          accadere che, se un Client dopo aver ricevuto l'ordine impiega più di
+          MaxStayTime per richiedere il pagamento, allora questo vada forzato.
+          Dopo la consegna, il Waiter si autoinvia un messaggio con ritardo pari
+          a MaxStayTime.<br>
+        </p>
+        <pre>	<br>	[# forwardWithDelay("timeexpired", "timeexpired($CurrentCid)", "waiter", MaxStayTime) #]<br>&nbsp;</pre>
+        <p> Alla ricezione del messaggio, il Waiter verifica se il Client sia
+          ancora in fase di consumazione e, in tal caso, si autoinvia il
+          messaggio di pagamento per tale Client.<br>
+        </p>
+        <pre>State checkClientTime{
+		onMsg(timeexpired : timeexpired(Cid)){
+			[# val CurrentCid = payloadArg(0) #]
+			solve( client($CurrentCid,consuming) ) // if the client 
+			ifSolved{ forward waiter -m payment : payment($CurrentCid) }
+		}	
+	}</pre>
+        <div>
+          <p>Siccome è possibile che contemporaneamente al controllo il Client
+            richieda il pagamento, può avvenire che il dispatch payment venga
+            depositato nella coda dell'attore Waiter due volte; quindi, prima di
+            procedere con il task, è opportuno verificare che il Client in
+            oggetto sia nello stato corretto. </p>
+          <pre>	onMsg(payment : payment(CurrentCid)){
+		[# CurrentCid = payloadArg(0) #]
+	}
+	solve( client($CurrentCid, consuming) )
+	ifSolved{		<br>		// still inside<br>	}
+	else{
+		// already gone
+	}	</pre>
+        </div>
+        <div>
+          <hr>
+          <p> <a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/prob-analysis/problem-analysis-s3/src/tearoom-prob-sprint3-v2.qak"><strong>Modello
+                qak del problema</strong></a></p>
+          <hr>
+          <p> <a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/prob-analysis/problem-analysis-s3/tearoomKB-PA-sprint3.pl"><strong>Base
+                di conoscenza Prolog </strong></a></p>
+          <hr>
+          <p><a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/req-analysis/tearoomClientDemo/src/client.qak">Simulazione
+              di Client</a> espressa con metamodello qa per interagire con il
+            modello.</p>
+          <hr>
+          <p><a href="https://github.com/marcogozzi/ISS-2020-Docs/tree/master/prob-analysis/problem-analysis-s3/test/test">Test
+              JUnit</a>, logicamente uguali a quelli espressi in Requirement
+            Analysis ma con tempistiche appropriate</p>
+          <hr> </div>
+        <ul>
+        </ul>
+      </div>
+      <h2>Project</h2>
+      <h3> Waiter </h3>
+      <p> Dall'analisi del problema risulta opportuno decomporre in più parti il
+        sottosistema Waiter, esattamente tre seguendo il principio di Singola
+        Responsabilità: </p>
+      <ul>
+        <li> Waiter: è quell'attore che si occupa della politica (cioè elaborare
+          i task dal punto di vista logico) e che gestisce lo stato della
+          stanza;</li>
+        <li> Robot: è quell'attore a cui il Waiter demanda lo spostamento
+          fisico; come evidenziato in analisi del problema, il meccanismo è
+          implementabile mediante un <kc>algoritmo di planning-scheduling</kc>,
+          in cui, date posizioni iniziale e finale, si ottiene una serie di
+          azioni per raggiungere il goal; in questo modo, risulta semplice, a
+          livello di modello, trovare la sequenza di mosse da percorrere per
+          arrivare alla destinazione goal; <a href="http://htmlpreview.github.io/?https://github.com/anatali/iss2020LabBo/blob/master/it.unibo.planner20/userDocs/LabPlanner.html">come
+            visto a lezione</a> è disponibile una libreria software che
+          implementa tale algoritmo: la definizione formale è data dal file <a
+            href="https://github.com/anatali/iss2020LabBo/blob/master/unibolibs/it.unibo.planner20-1.0.jar"
+            target="code"><span style="color: black;"></span>it.unibo.planner20-1.0.jar</a>.<br>
+          L'attore Robot NON si occupa direttamente dello spostamento fisico del
+          ddr waiter ma sfrutta un altro attore (basicrobot);</li>
+        <li>Basicrobot: attore che si occupa di ricevere messaggi applicativi di
+          movimento elementari e tradurli in movimenti fisici per vari tipi di
+          robot reali e virtuali; formalmente definito nel progetto <a href="https://github.com/anatali/iss2020LabBo/tree/master/it.unibo.qak20.basicrobot">basicrobot</a>;
+          permette di mantenere separati due meccanismi indipendenti (planning
+          ed esecuzione).</li>
+      </ul>
+      <p>Per la comunicazione Robot - basicrobot sono stati introdotti alcuni
+        messaggi nel modello:</p>
+      <table border="1" width="100%">
+        <thead>
+          <tr>
+            <th class="equalfour">Message name<br>
+            </th>
+            <th class="equalfour">Dispatch<br>
+            </th>
+            <th class="equalfour">Request/Reply<br>
+            </th>
+            <th class="equalfour">Event<br>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>step</td>
+            <td style="background-color: rgba(255, 255, 255, 0.4);"><br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Comunicazione
+              standard con il basicrobot</td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>stepDone<br>
+            </td>
+            <td style="background-color: rgba(255, 255, 255, 0.4);"><br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Comunicazione
+              standard con il basicrobot </td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>stepFail<br>
+            </td>
+            <td style="background-color: rgba(255, 255, 255, 0.4);"><br>
+            </td>
+            <td style="background-color: rgba(0, 254, 0, 0.4);">Comunicazione
+              standard con il basicrobot</td>
+            <td><br>
+            </td>
+          </tr>
+          <tr>
+            <td>cmd<br>
+            </td>
+            <td style="background-color: rgba(0, 255, 0, 0.4);">Comunicazione
+              standard con il basicrobot </td>
+            <td style="background-color: rgba(255, 255, 255, 0.4);"><br>
+            </td>
+            <td><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <table border="0" width="100%">
+        <tbody>
+          <tr>
+            <td style="text-align: center;"><strong> Codice di progetto </strong></td>
+            <td style="text-align: center; width:70%"><strong> Architettura del
+                progetto </strong></td>
+          </tr>
+          <tr>
+            <td>
+              <div>
+                <hr>
+                <p> <a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/project/project-sprint3/src/tearoom-project-sprint3.qak"><strong>Modello
+                      qak del progetto<br>
+                    </strong></a></p>
+                <hr>
+                <p> <a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/project/project-sprint3/tearoomKB-project-sprint3.pl"><strong>Base
+                      di conoscenza Prolog </strong></a></p>
+                <hr>
+                <p><a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/project/client-demo-web/src/client-web.qak">Simulazione
+                    di Client</a> espressa con metamodello qa per interagire con
+                  il modello tramite interfaccia web.</p>
+                <hr> </div>
+            </td>
+            <td><img src="https://raw.githubusercontent.com/marcogozzi/ISS-2020-Docs/master/project/robot-web-sprint3/userDocs/architettura.png"
+                alt="architettura" title="architettura" style="max-width: 800px;"><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <p> <strong>Sprint 2 </strong></p>
+      Per interazione con web:<br>
+      <ul>
+        <li>due topic MapTopic e ControlTopic su cui pubblicare rispettivamente<br>
+          la mappa della stanza aggiornata come conosciuta dal planner e lo
+          stato <br>
+          del Robot, cioè se controllato automaticamente (dal planner) o
+          manualmente<br>
+          tramite sezione dedicata sulla pagina web; si passa da una modalità
+          all'altra<br>
+          inviando al Robot un <em>dispatch manual : manual(_)</em>; </li>
+      </ul>
+      Per interruzione task:
+      <ul>
+        <li>il messaggio doMove è stato sostituito da un timer che scatta se non
+          arriva<br>
+          un dispatch stopPlan per cancellare il piano di movimento attuale;<br>
+        </li>
+      </ul>
+      Per gestione imprecisione:
+      <ul>
+        <li>è stato introdotto un algoritmo basilare per gestire l'imprecisione
+          dei movimenti:<br>
+          se il planner afferma che è possibile effettuare uno step ma il robot
+          fallisce, si tenta<br>
+          di rieseguire tale step un certo numero di volte; prima di ciascuna di
+          esse si arretra<br>
+          per un lasso di tempo incrementale; se dopo essere arretrato per un
+          tempo inferiore<br>
+          a quello di uno step, lo step non è stato completato allora è
+          possibile che prima <br>
+          dell'ultima rotazione il robot si sia portato troppo avanti, quindi si
+          arretra lungo<br>
+          la precedente direzione (stato handleFailRebounce). </li>
+      </ul>
+      <br>
+      <p> <strong>Sprint 3 </strong></p>
+      <div> Introduzione di un nuovo attore waiterkb che centralizzi le basi di
+        conoscenza degli attori che realizzano il Waiter (waiter e robot). Tale
+        attore è (potenzialmente) interrogabile per conoscere lo stato
+        complessivo del sistema. </div>
+      <div><br>
+      </div>
+      <h3> Stato </h3>
+      <div> <strong>Sprint 1<br>
+        </strong></div>
+      <div><strong></strong>Lo&nbsp; stato è mantenuto dagli attori waiter e
+        robot; la posizione fisica del ddr è aggiornata solamente al termine
+        dell'esecuzione dei piani (sia in caso di successo che di fallimento);
+        ogni cambiamento di stato viene reso disponibile tramite protocollo CoAP
+        e MQTT (versione 2.5 libreria kactor). <br>
+        Per questo motivo l'interfaccia web è sufficiente che osservi tramite
+        protocollo CoAP l'attore Waiter per visualizzare lo stato corrente della
+        tearoom.</div>
+      <div><strong> </strong></div>
+      <div><strong><br>
+        </strong></div>
+      <div><strong>Sprint 2</strong></div>
+      <div>Con una modifica alla classe ActorBasic.kt nella libreria kactor è
+        ora possibile ricevere gli aggiornamenti dello stato di un attore
+        MQTT-connesso di nome X sottoscrivendosi alla topic "unibo/qak/X/state";
+        per ricevere gli aggiornamenti di stato di tutti gli attori, è possibile
+        sottoscriversi alla medesima topic con wildcard "+" al posto del nome
+        dell'attore (i.e. sottoscrivendosi a "unibo/qak/+/state").</div>
+      <div>Per ottenere questo comportamento aggiungere a ActorBasic.kt il
+        seguente codice all'interno del metodo <em>updateResourceRep</em>.</div>
+      <pre>if( context?.mqttAddr?.length ?: 0 &gt; 0  ) {
+            if( ! mqttConnected ){
+                mqtt.connect(name, context!!.mqttAddr)
+                mqttConnected = true
+            }
+            sysUtil.traceprintln("$tt ActorBasic publish Mqtt state | actorName=$name : $v")
+			mqtt.publish( "unibo/qak/$name/state", v )
+		}</pre>
+      <strong><br>
+      </strong></div>
+    <div class="body"><strong>Sprint 3</strong></div>
+    <div class="body">Con l'introduzione della classe kbMqtt.kt è possibile
+      integrare le due basi di conoscenza di waiter e robot e, ad esempio,
+      fornire una visualizzazione della stanza che riporti la situazione fisica
+      della stanza (dove si trovano gli oggetti, mantenuta nell'attore robot) e
+      quella logica (in che stato si trovano i tavoli).</div>
+    <div class="body">Racchiudendo un oggetto kbMqtt in un attore (waiterkb) è
+      possibile realizzare una <b><kc>base di conoscenza centralizzata e
+          qak-interrogabile</kc></b>.</div>
+    <div class="body"><br>
+      <h3> Frontend web, partendo da quanto visto <a href="http://htmlpreview.github.io/?https://raw.githubusercontent.com/anatali/iss2020LabBo/master/robotWeb2020/userdocs/RobotWebonSpring.html">a
+          lezione</a></h3>
+      <h4> <a href="https://github.com/marcogozzi/ISS-2020-Docs/tree/master/project/robot-web-sprint3/src/main/java/it/unibo/robotWeb2020">Server</a>,
+        in particolare per il <a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/project/robot-web-sprint3/src/main/java/it/unibo/robotWeb2020/RobotController.java">controller</a>
+      </h4>
+      <div> Uso di:
+        <ul>
+          <li>Spring Boot per velocizzare lo sviluppo, nascondendo il vero
+            server Web e ottenendo accesso a varie funzioni, tra cui gestione
+            semplificata del protocollo <kc>WebSocket</kc> che permette di
+            interagire con i client web utilizzando <kc>modello push</kc>
+            invece che pull (aggiornamento automatico della pagina sul client
+            web);</li>
+          <li>libreria <em>it.unibo.kactor</em> per la gestione della logica
+            applicativa (e.g. creazione corretta di messaggi);</li>
+          <li>protocollo MQTT per inviare messaggi al sistema come entità aliena
+            e per ricevere aggiornamenti di stato anche da attori non noti a
+            tempo di sviluppo.</li>
+        </ul>
+      </div>
+      <h4> Client, <a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/project/robot-web-sprint3/src/main/resources/templates/robotGuiSocket.html">pagina
+          HTML</a> di base</h4>
+      <div> Per gestione DOM e comunicazione con server (<a href="https://github.com/marcogozzi/ISS-2020-Docs/blob/master/project/robot-web-sprint3/src/main/resources/static/app.js">app.js</a>):
+        <ul>
+          <li>Javascript e jQuery per modificare il DOM della pagina;</li>
+          <li>Librerie stomp + sockjs per realizzare WebSocket lato client.</li>
+        </ul>
+      </div>
+      <p> <img src="https://raw.githubusercontent.com/marcogozzi/ISS-2020-Docs/master/project/robot-web-sprint3/userDocs/webUIs3.png"
+          style="border: 5px solid #555;" width="75%"> </p>
+      <br>
+      <h2> Sprint review 1</h2>
+      <div>
+        <ul>
+          <li>Utilizzando il robot virtuale introdotto a lezione, la precisione
+            dei movimenti è scarsa e richede numerosi interventi manuali; nel
+            prossimo sprint è opportuno cercare di mitigare questo difetto;</li>
+          <li>può essere opportuno fornire tramite l'interfaccia web alcuni
+            comandi per comandare fisicamente il robot in modo che, in caso di
+            disallineamento dovuto a imprecisione dei movimenti, il manager
+            possa risolvere remotamente la situazione;</li>
+          <li>la presenza di un unico sensore (di collisione) può non essere
+            sufficiente nel robot fisico per garantire la precisione richiesta.</li>
+        </ul>
+      </div>
+      <h2> Sprint review 2</h2>
+      <div>
+        <ul>
+          <li>Con il nuovo algoritmo di gestione del Robot, esso richiede quasi
+            nessuna attenzione da parte di un essere umano MA non è ancora
+            perfetto in quanto <strong>la presenza di un unico sensore (di
+              collisione) non è sufficiente per garantire la precisione
+              richiesta per un controllo completamente automatico.</strong></li>
+          <li>Fornire uno script per la compilazione automatica del codice
+            sorgente per piattaforme Linux e Windows.</li>
+        </ul>
+      </div>
+      <h2> Sprint review 3</h2>
+      <div> Con l'introduzione di waiterkb è possibile passare a un sistema con
+        molteplici entità attive (e.g. più di un waiter) che utilizzano tale
+        attore come supporto per programmare la propria attività.<br>
+        <kc>Ad esempio, quando un tavolo viene liberato da un Client e necessita
+          di pulizia, waiterkb può avvertire tutti i waiter non impegnati in
+          altri task ed assegnare tale compito al primo che risponde.</kc></div>
+      <br>
+      <br>
+      <br>
+      <hr>
+      <div style="background-color: rgba(86, 56, 253, 0.7); width: 40%; text-align: left; color: white;">By
+        Marco Gozzi<br>
+        email: marco.gozzi3@studio.unibo.it <br>
+        <img src="https://raw.githubusercontent.com/marcogozzi/ISS-2020-Docs/master/io.png"
+          alt="github.com/marcogozzi/" align=""> </div>
+    </div>
+  </body>
+</html>

@@ -595,21 +595,44 @@ class Waiter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sco
 					action { //it:State
 						if(Debug) 
 						println("waiter doClean")
-						if( checkMsgContent( Term.createTerm("cleantable(Num)"), Term.createTerm("cleantable(Num)"), 
+						 var CurrentTeaTable = ""  
+						solve("waiter(atteatable(Num))","") //set resVar	
+						if( currentSolution.isSuccess() ) { CurrentTeaTable = getCurSol("Num").toString()  
+						}
+						else
+						{}
+						solve("waiter(cleaning(Num))","") //set resVar	
+						if( currentSolution.isSuccess() ) { CurrentTeaTable = getCurSol("Num").toString()  
+						}
+						else
+						{}
+						solve("waiter(cleaned(Num))","") //set resVar	
+						if( currentSolution.isSuccess() ) { CurrentTeaTable = getCurSol("Num").toString()  
+						}
+						else
+						{}
+						if( checkMsgContent( Term.createTerm("cleantable(Num)"), Term.createTerm("cleantable($CurrentTeaTable)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								 val TableNum = payloadArg(0)  
-								solve("updateWaiterState(atteatable($TableNum),cleaning($TableNum))","") //set resVar	
+								solve("updateWaiterState(X,cleaning($CurrentTeaTable))","") //set resVar	
 								delay(CleanDelayTime)
-								solve("cleanTable($TableNum,NewStatus)","") //set resVar	
-								 val NewStatus = getCurSol("NewStatus").toString()  
+								solve("cleanTable($CurrentTeaTable,NewStatus)","") //set resVar	
+								if( currentSolution.isSuccess() ) { val NewStatus = getCurSol("NewStatus").toString()  
 								if(  NewStatus == "clean"  
-								 ){forward("cleantableok", "cleantableok($TableNum)" ,"waiter" ) 
-								solve("updateWaiterState(X,cleaned($TableNum))","") //set resVar	
+								 ){forward("cleantableok", "cleantableok($CurrentTeaTable)" ,"waiter" ) 
+								solve("updateWaiterState(X,cleaned($CurrentTeaTable))","") //set resVar	
 								}
 								else
-								 {forward("cleantable", "cleantable($TableNum)" ,"waiter" ) 
-								 solve("updateWaiterState(X,cleaning($TableNum,$NewStatus))","") //set resVar	
+								 {forward("cleantable", "cleantable($CurrentTeaTable)" ,"waiter" ) 
+								 solve("updateWaiterState(X,cleaning($CurrentTeaTable))","") //set resVar	
 								 }
+								}
+								else
+								{}
+						}else{
+							if( checkMsgContent( Term.createTerm("cleantable(Num)"), Term.createTerm("cleantable(OtherTeaTable)"), 
+							                        currentMsg.msgContent()) ) { //set msgArgList
+									 forwardWithDelay("cleantable","cleantable(${payloadArg(0)})","waiter",100L)  
+							}
 						}
 						solve("roomstate(S)","") //set resVar	
 						if( currentSolution.isSuccess() ) {updateResourceRep( getCurSol("S").toString()  

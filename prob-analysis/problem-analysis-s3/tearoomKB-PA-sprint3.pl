@@ -31,7 +31,7 @@ pos( teatable(2), 2, 5 ).
  
 %% ------------------------------------------ 
 %% Teatables
-%% teatable(Num, {free, reserved(Cid), busy(Cid)}, {clean, dirty}).
+%% teatable(Num, {free, reserved(Cid), busy(Cid)}, {clean, dirty, cleanedA, cleanedB}).
 %% ------------------------------------------ 
 teatable( 1, free, clean ).
 teatable( 2, free, clean ). 
